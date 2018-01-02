@@ -1,4 +1,4 @@
-package pl.vanta.adventofcode.day1
+package pl.vanta.adventofcode.year2017.day1
 
 import spock.lang.Specification
 import spock.lang.Unroll

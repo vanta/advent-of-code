@@ -1,4 +1,4 @@
-package pl.vanta.adventofcode.day1
+package pl.vanta.adventofcode.year2017.day1
 
 
 class Main {
