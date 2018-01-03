@@ -4,11 +4,11 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 
-class SolverSpec extends Specification {
+class Solver21Spec extends Specification {
     @Unroll
     def "should solve examples (#input -> #output)"() {
         expect:
-        Solver.solve(input) == output
+        Solver1.solve(input) == output
 
         where:
         input      || output
@@ -21,7 +21,7 @@ class SolverSpec extends Specification {
     @Unroll
     def "should find groups (#input -> #output)"() {
         expect:
-        Solver.findGroups(input) == output
+        Solver1.findGroups(input) == output
 
         where:
         input           || output

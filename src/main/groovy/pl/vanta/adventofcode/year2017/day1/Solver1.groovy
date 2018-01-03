@@ -1,7 +1,7 @@
 package pl.vanta.adventofcode.year2017.day1
 
 
-class Solver {
+class Solver1 {
     static pattern = /.*?(.)(\1+).*?/
 
     static int solve(String input) {
