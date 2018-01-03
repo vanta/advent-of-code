@@ -4,7 +4,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 
-class Solver21Spec extends Specification {
+class Solver1Spec extends Specification {
     @Unroll
     def "should solve examples (#input -> #output)"() {
         expect:
