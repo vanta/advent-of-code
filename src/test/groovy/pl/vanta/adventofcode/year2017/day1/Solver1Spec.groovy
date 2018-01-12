@@ -1,9 +1,10 @@
 package pl.vanta.adventofcode.year2017.day1
 
 import spock.lang.Specification
+import spock.lang.Title
 import spock.lang.Unroll
 
-
+@Title("Specification for solver for Advent of Code - Day 1")
 class Solver1Spec extends Specification {
     @Unroll
     def "should solve examples (#input -> #output)"() {

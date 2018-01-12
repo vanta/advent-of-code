@@ -6,8 +6,18 @@ repositories {
 }
 
 dependencies {
+    compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.13'
+        
     testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
     testCompile 'com.blogspot.toomuchcoding:spock-subjects-collaborators-extension:1.2.2'
     testCompile 'cglib:cglib-nodep:3.2.5'
-    testCompile 'org.objenesis:objenesis:2.6'
+    testCompile 'com.athaydes:spock-reports:1.4.0'
+
+    testCompile 'org.slf4j:slf4j-simple:1.7.13'
+
+    //TODO add Jacoco 
+}
+
+test {
+    systemProperty 'com.athaydes.spockframework.report.showCodeBlocks', true
 }
