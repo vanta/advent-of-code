@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'groovy'
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 sourceCompatibility = 15
