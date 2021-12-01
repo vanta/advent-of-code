@@ -9,46 +9,22 @@ import static pl.vanta.adventofcode.year2021.day1.Solver.solve2
 
 class SolverSpec extends Specification {
     def 'should solve example data - part 1'() {
-        given:
-        def integers = parse(Main.getResource("/2021/example-day1.txt").text)
-
-        when:
-        def result = solve(integers)
-
-        then:
-        result == 7
+        expect:
+        solve(parse(Main.getResource("/2021/example-day1.txt").text)) == 7
     }
 
     def 'should solve real data - part 1'() {
-        given:
-        def integers = parse(Main.getResource("/2021/day1.txt").text)
-
-        when:
-        def result = solve(integers)
-
-        then:
-        result == 1692
+        expect:
+        solve(parse(Main.getResource("/2021/day1.txt").text)) == 1692
     }
 
     def 'should solve example data - part 2'() {
-        given:
-        def integers = parse(Main.getResource("/2021/example-day1.txt").text)
-
-        when:
-        def result = solve2(integers)
-
-        then:
-        result == 5
+        expect:
+        solve2(parse(Main.getResource("/2021/example-day1.txt").text)) == 5
     }
 
     def 'should solve real data - part 2'() {
-        given:
-        def integers = parse(Main.getResource("/2021/day1.txt").text)
-
-        when:
-        def result = solve2(integers)
-
-        then:
-        result == 1724
+        expect:
+        solve2(parse(Main.getResource("/2021/day1.txt").text)) == 1724
     }
 }
