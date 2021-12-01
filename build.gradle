@@ -5,17 +5,18 @@ repositories {
     jcenter()
 }
 
+sourceCompatibility = 15
+targetCompatibility = 15
+
 dependencies {
-    compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.13'
+    implementation group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.13'
         
-    testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
-    testCompile 'com.blogspot.toomuchcoding:spock-subjects-collaborators-extension:1.2.2'
-    testCompile 'cglib:cglib-nodep:3.2.5'
-    testCompile 'com.athaydes:spock-reports:1.4.0'
+    testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4'
+    testImplementation 'com.blogspot.toomuchcoding:spock-subjects-collaborators-extension:1.2.2'
+    testImplementation 'cglib:cglib-nodep:3.2.5'
+    testImplementation 'com.athaydes:spock-reports:1.4.0'
 
-    testCompile 'org.slf4j:slf4j-simple:1.7.13'
-
-    //TODO add Jacoco 
+    testImplementation 'org.slf4j:slf4j-simple:1.7.13'
 }
 
 test {
