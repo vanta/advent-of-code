@@ -12,7 +12,6 @@ dependencies {
     implementation 'org.codehaus.groovy:groovy-all:2.5.15'
         
     testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4'
-    testImplementation 'com.blogspot.toomuchcoding:spock-subjects-collaborators-extension:1.2.2'
     testImplementation 'cglib:cglib-nodep:3.2.5'
     testImplementation 'com.athaydes:spock-reports:1.4.0'
 
