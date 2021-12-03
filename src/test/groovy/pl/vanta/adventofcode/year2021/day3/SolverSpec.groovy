@@ -19,7 +19,7 @@ class SolverSpec extends Specification {
 
     def 'should solve example data - part 2'() {
         expect:
-        solve2(parse(Main.getResource("/2021/example-day3.txt").text)) == 900
+        solve2(parse(Main.getResource("/2021/example-day3.txt").text)) == 230
     }
 
     def 'should solve real data - part 2'() {
