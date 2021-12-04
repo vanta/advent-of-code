@@ -24,7 +24,6 @@ class Day4 {
         -1
     }
 
-
     static int solve2(Bingo input) {
         -1
     }
@@ -76,12 +75,18 @@ class Day4 {
 
         boolean isWinning() {
             for (int i = 0; i < 5; i++) {
-                if (isWinning(marked[i])) {
+                if (isWinning(marked[i][0], marked[i][1], marked[i][2], marked[i][3], marked[i][4])) {
                     return true
                 }
             }
 
-            //todo check columns
+            for (int i = 0; i < 5; i++) {
+                if (isWinning(marked[0][i], marked[1][i], marked[2][i], marked[3][i], marked[4][i])) {
+                    return true
+                }
+            }
+
+            false
         }
 
         static boolean isWinning(boolean[] row) {
