@@ -1,4 +1,4 @@
-package pl.vanta.adventofcode.year2021.day1
+package pl.vanta.adventofcode.year2021
 
 class Parser {
     static List<Integer> parse(String input) {

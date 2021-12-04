@@ -1,9 +1,9 @@
-package pl.vanta.adventofcode.year2021.day3
+package pl.vanta.adventofcode.year2021
 
 
 import static java.lang.Integer.parseInt
 
-class Solver {
+class Day4Solver {
     static int solve(List<String> input) {
         int[] counts = new int[input[0].length()]
 

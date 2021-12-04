@@ -1,6 +1,6 @@
-package pl.vanta.adventofcode.year2021.day1
+package pl.vanta.adventofcode.year2021
 
-class Solver {
+class Day1Solver {
     static int solve(List<Integer> input) {
         int counter = 0
         int result = 0

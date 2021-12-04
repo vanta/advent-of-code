@@ -1,13 +1,13 @@
-package pl.vanta.adventofcode.year2021.day1
+package pl.vanta.adventofcode.year2021
 
 
 import spock.lang.Specification
 
-import static pl.vanta.adventofcode.year2021.day1.Parser.parse
-import static pl.vanta.adventofcode.year2021.day1.Solver.solve
-import static pl.vanta.adventofcode.year2021.day1.Solver.solve2
+import static pl.vanta.adventofcode.year2021.Parser.parse
+import static pl.vanta.adventofcode.year2021.Day1Solver.solve
+import static pl.vanta.adventofcode.year2021.Day1Solver.solve2
 
-class SolverSpec extends Specification {
+class Day1SolverSpec extends Specification {
     def 'should solve example data - part 1'() {
         expect:
         solve(parse(Main.getResource("/2021/example-day1.txt").text)) == 7

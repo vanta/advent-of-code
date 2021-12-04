@@ -1,6 +1,6 @@
-package pl.vanta.adventofcode.year2021.day2
+package pl.vanta.adventofcode.year2021
 
-class Solver {
+class Day2Solver {
     static int solve(List<Tuple2<String, Integer>> input) {
         def forward = input
                 .findAll { it.first == 'forward' }

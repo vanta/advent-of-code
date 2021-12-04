@@ -1,6 +1,6 @@
-package pl.vanta.adventofcode.year2021.day2
+package pl.vanta.adventofcode.year2021
 
-class Parser {
+class Day2Parser {
     static List<Tuple2<String, Integer>> parse(String input) {
         input
                 .split("\n")
