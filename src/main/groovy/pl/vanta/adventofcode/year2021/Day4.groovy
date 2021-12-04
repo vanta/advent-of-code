@@ -24,7 +24,23 @@ class Day4 {
         -1
     }
 
-    static int solve2(Bingo input) {
+    static int solve2(Bingo bingo) {
+        def boardsLeft = new ArrayList<>(bingo.boards)
+
+        for (def number : bingo.numbers) {
+            for (def board : new ArrayList<>(boardsLeft)) {
+                def winning = board.mark(number)
+
+                if (winning) {
+                    if (boardsLeft.size() == 1) {
+                        return board.calculateScore(number)
+                    }
+                    
+                    boardsLeft.remove(board)
+                }
+            }
+        }
+
         -1
     }
 
