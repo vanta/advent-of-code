@@ -2,6 +2,7 @@ package pl.vanta.adventofcode.year2021
 
 import static java.lang.Integer.signum
 import static java.lang.Math.abs
+import static java.lang.Math.max
 
 class Day5 {
     static List<Line> parse(String input) {
@@ -80,19 +81,31 @@ class Day5 {
         }
 
         boolean isCounterDiagonal() {
-            p1.x - p1.y == p2.y - p2.x
+            p1.x + p1.y == p2.x + p2.y
+        }
+
+        int length() {
+            max(abs(p1.x - p2.x), abs(p1.y - p2.y))
         }
 
         List<Point> getPoints() {
             def points = new ArrayList<Point>()
 
             if (isHorizontal()) {
-                for (int i = 0; i <= abs(p2.x - p1.x); i++) {
+                for (int i = 0; i <= length(); i++) {
                     points << new Point(x: p1.x + (i * signum(p2.x - p1.x)), y: p1.y)
                 }
             } else if (isVertical()) {
-                for (int i = 0; i <= abs(p2.y - p1.y); i++) {
+                for (int i = 0; i <= length(); i++) {
                     points << new Point(x: p1.x, y: p1.y + (i * signum(p2.y - p1.y)))
+                }
+            } else if (isDiagonal()) {
+                for (int i = 0; i <= length(); i++) {
+                    points << new Point(x: p1.x + (i * signum(p2.x - p1.x)), y: p1.y + (i * signum(p2.y - p1.y)))
+                }
+            } else { //counter diagonal
+                for (int i = 0; i <= length(); i++) {
+                    points << new Point(x: p1.x + (i * signum(p2.x - p1.x)), y: p1.y + (i * signum(p2.y - p1.y)))
                 }
             }
 
