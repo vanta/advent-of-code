@@ -91,18 +91,11 @@ class Day5 {
         List<Point> getPoints() {
             def points = new ArrayList<Point>()
 
-            if (isHorizontal()) {
-                for (int i = 0; i <= length(); i++) {
-                    points << new Point(x: p1.x + (i * signum(p2.x - p1.x)), y: p1.y)
-                }
-            } else if (isVertical()) {
-                for (int i = 0; i <= length(); i++) {
-                    points << new Point(x: p1.x, y: p1.y + (i * signum(p2.y - p1.y)))
-                }
-            } else { //counter diagonal
-                for (int i = 0; i <= length(); i++) {
-                    points << new Point(x: p1.x + (i * signum(p2.x - p1.x)), y: p1.y + (i * signum(p2.y - p1.y)))
-                }
+            for (int i = 0; i <= length(); i++) {
+                points << new Point(
+                        x: p1.x + (i * signum(p2.x - p1.x)),
+                        y: p1.y + (i * signum(p2.y - p1.y))
+                )
             }
 
             points
