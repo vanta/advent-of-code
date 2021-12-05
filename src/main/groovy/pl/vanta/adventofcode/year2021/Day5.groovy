@@ -32,6 +32,19 @@ class Day5 {
         countIntersections(size, marked)
     }
 
+    static int solve2(List<Line> lines) {
+        int size = 1000
+        int[][] marked = new int[size][size]
+
+        lines
+                .findAll { it.isHorizontalOrVertica() || it.isDiagonal() }
+                .each {
+                    markLine(it, marked)
+                }
+
+        countIntersections(size, marked)
+    }
+
     static void markLine(Line line, int[][] marked) {
         def points = line.getPoints()
 
@@ -50,19 +63,6 @@ class Day5 {
             }
         }
         result
-    }
-
-    static int solve2(List<Line> lines) {
-        int size = 1000
-        int[][] marked = new int[size][size]
-
-        lines
-                .findAll { it.isHorizontalOrVertica() || it.isDiagonal() }
-                .each {
-                    markLine(it, marked)
-                }
-
-        countIntersections(size, marked)
     }
 
     static class Line {
@@ -92,19 +92,9 @@ class Day5 {
 
             points
         }
-
-        @Override
-        String toString() {
-            "$p1 -> $p2"
-        }
     }
 
     static class Point {
         int x, y
-
-        @Override
-        String toString() {
-            "$x,$y"
-        }
     }
 }
