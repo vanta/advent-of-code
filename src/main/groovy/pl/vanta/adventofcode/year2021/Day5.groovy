@@ -24,7 +24,7 @@ class Day5 {
         int[][] marked = new int[size][size]
 
         lines
-                .findAll { it.isHorizontal() || it.isVertical() }
+                .findAll { it.isHorizontalOrVertica() }
                 .each {
                     markLine(it, marked)
                 }
@@ -57,7 +57,7 @@ class Day5 {
         int[][] marked = new int[size][size]
 
         lines
-                .findAll { it.isHorizontal() || it.isVertical() || it.isDiagonal() || it.isCounterDiagonal() }
+                .findAll { it.isHorizontalOrVertica() || it.isDiagonal() }
                 .each {
                     markLine(it, marked)
                 }
@@ -68,20 +68,12 @@ class Day5 {
     static class Line {
         Point p1, p2
 
-        boolean isHorizontal() {
-            p1.y == p2.y
-        }
-
-        boolean isVertical() {
-            p1.x == p2.x
+        boolean isHorizontalOrVertica() {
+            (p1.y == p2.y) || (p1.x == p2.x)
         }
 
         boolean isDiagonal() {
-            p1.x - p1.y == p2.x - p2.y
-        }
-
-        boolean isCounterDiagonal() {
-            p1.x + p1.y == p2.x + p2.y
+            (p1.x - p1.y == p2.x - p2.y) || (p1.x + p1.y == p2.x + p2.y)
         }
 
         int length() {
