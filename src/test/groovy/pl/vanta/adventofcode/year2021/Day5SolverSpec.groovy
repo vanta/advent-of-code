@@ -24,7 +24,7 @@ class Day5SolverSpec extends Specification {
 
     def 'should solve real data - part 2'() {
         expect:
-        solve2(parse(Day5.getResource("/2021/day5.txt").text)) == 0
+        solve2(parse(Day5.getResource("/2021/day5.txt").text)) == 21038
     }
 
 }

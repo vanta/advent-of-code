@@ -99,10 +99,6 @@ class Day5 {
                 for (int i = 0; i <= length(); i++) {
                     points << new Point(x: p1.x, y: p1.y + (i * signum(p2.y - p1.y)))
                 }
-            } else if (isDiagonal()) {
-                for (int i = 0; i <= length(); i++) {
-                    points << new Point(x: p1.x + (i * signum(p2.x - p1.x)), y: p1.y + (i * signum(p2.y - p1.y)))
-                }
             } else { //counter diagonal
                 for (int i = 0; i <= length(); i++) {
                     points << new Point(x: p1.x + (i * signum(p2.x - p1.x)), y: p1.y + (i * signum(p2.y - p1.y)))
