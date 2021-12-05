@@ -1,5 +1,8 @@
 package pl.vanta.adventofcode.year2021
 
+import static java.lang.Integer.signum
+import static java.lang.Math.abs
+
 class Day5 {
     static List<Line> parse(String input) {
         input.split("\n")
@@ -19,16 +22,13 @@ class Day5 {
         int size = 1000
         int[][] marked = new int[size][size]
 
-        markLines(lines, marked)
-        countIntersections(size, marked)
-    }
-
-    private static List<Line> markLines(List<Line> lines, int[][] marked) {
         lines
                 .findAll { it.isHorizontal() || it.isVertical() }
                 .each {
                     markLine(it, marked)
                 }
+
+        countIntersections(size, marked)
     }
 
     static void markLine(Line line, int[][] marked) {
@@ -52,8 +52,16 @@ class Day5 {
     }
 
     static int solve2(List<Line> lines) {
+        int size = 1000
+        int[][] marked = new int[size][size]
 
-        -1
+        lines
+                .findAll { it.isHorizontal() || it.isVertical() || it.isDiagonal() || it.isCounterDiagonal() }
+                .each {
+                    markLine(it, marked)
+                }
+
+        countIntersections(size, marked)
     }
 
     static class Line {
@@ -67,28 +75,24 @@ class Day5 {
             p1.x == p2.x
         }
 
+        boolean isDiagonal() {
+            p1.x - p1.y == p2.x - p2.y
+        }
+
+        boolean isCounterDiagonal() {
+            p1.x - p1.y == p2.y - p2.x
+        }
+
         List<Point> getPoints() {
             def points = new ArrayList<Point>()
 
             if (isHorizontal()) {
-                if (p1.x > p2.x) {
-                    for (int i = p2.x; i <= p1.x; i++) {
-                        points << new Point(x: i, y: p1.y)
-                    }
-                } else {
-                    for (int i = p1.x; i <= p2.x; i++) {
-                        points << new Point(x: i, y: p1.y)
-                    }
+                for (int i = 0; i <= abs(p2.x - p1.x); i++) {
+                    points << new Point(x: p1.x + (i * signum(p2.x - p1.x)), y: p1.y)
                 }
-            } else {
-                if (p1.y > p2.y) {
-                    for (int i = p2.y; i <= p1.y; i++) {
-                        points << new Point(x: p1.x, y: i)
-                    }
-                } else {
-                    for (int i = p1.y; i <= p2.y; i++) {
-                        points << new Point(x: p1.x, y: i)
-                    }
+            } else if (isVertical()) {
+                for (int i = 0; i <= abs(p2.y - p1.y); i++) {
+                    points << new Point(x: p1.x, y: p1.y + (i * signum(p2.y - p1.y)))
                 }
             }
 
@@ -97,7 +101,7 @@ class Day5 {
 
         @Override
         String toString() {
-            "$p1 -> $p2 (${isHorizontal() || isVertical()})"
+            "$p1 -> $p2"
         }
     }
 
