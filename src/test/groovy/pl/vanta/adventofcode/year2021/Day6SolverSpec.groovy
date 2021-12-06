@@ -9,12 +9,12 @@ import static pl.vanta.adventofcode.year2021.Day6.solve2
 class Day6SolverSpec extends Specification {
     def 'should solve example data - part 1'() {
         expect:
-        solve(parse(Day6.getResource("/2021/example-day6.txt").text)) == 5
+        solve(parse(Day6.getResource("/2021/example-day6.txt").text)) == 5934
     }
 
     def 'should solve real data - part 1'() {
         expect:
-        solve(parse(Day6.getResource("/2021/day6.txt").text)) == 7297
+        solve(parse(Day6.getResource("/2021/day6.txt").text)) == 352872
     }
 
     def 'should solve example data - part 2'() {
