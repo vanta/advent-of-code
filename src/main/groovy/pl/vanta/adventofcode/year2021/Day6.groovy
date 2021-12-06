@@ -9,23 +9,18 @@ class Day6 {
     }
 
     static int solve(List<Integer> numbers) {
-        def fishes = new Fishes(numbers)
-        println "Initial: $fishes"
-
-        for (int i = 0; i < DAYS; i++) {
-            fishes.dayPasses()
-
-            println "After $i days: $fishes"
-        }
-
-        fishes.count()
+        internalSolve(numbers, DAYS)
     }
 
     static long solve2(List<Integer> numbers) {
+        internalSolve(numbers, DAYS2)
+    }
+
+    private static long internalSolve(List<Integer> numbers, int days) {
         def fishes = new Fishes(numbers)
         println "Initial: $fishes"
 
-        for (int i = 0; i < DAYS2; i++) {
+        for (int i = 0; i < days; i++) {
             fishes.dayPasses()
 
             println "After $i days: $fishes"
@@ -55,7 +50,7 @@ class Day6 {
             newShoal[6] = shoal[7] + shoal[0]
             newShoal[7] = shoal[8]
             newShoal[8] = shoal[0]
-            
+
             shoal = newShoal
         }
 
