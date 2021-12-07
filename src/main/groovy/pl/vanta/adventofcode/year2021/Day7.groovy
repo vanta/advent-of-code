@@ -17,7 +17,7 @@ class Day7 {
         def minFuel = MAX_VALUE
 
         for (int position = 0; position <= max; position++) {
-            def fuel = checkPosition(position, positions)
+            def fuel = checkPosition(position, positions, { int a, int b -> sumFuel(a, b) })
 
             if (fuel < minFuel) {
                 minFuel = fuel
@@ -25,14 +25,6 @@ class Day7 {
         }
 
         minFuel
-    }
-
-    static int checkPosition(int position, List<Integer> positions) {
-        int fuel = 0
-        for (int number : positions) {
-            fuel += abs(number - position)
-        }
-        fuel
     }
 
     static long solve2(List<Integer> positions) {
@@ -42,7 +34,7 @@ class Day7 {
         def minFuel = MAX_VALUE
 
         for (int position = 0; position <= max; position++) {
-            def fuel = checkPosition2(position, positions)
+            def fuel = checkPosition(position, positions, { int a, int b -> sumFuel2(a, b) })
 
             if (fuel < minFuel) {
                 minFuel = fuel
@@ -52,15 +44,21 @@ class Day7 {
         minFuel
     }
 
-    static int checkPosition2(int position, List<Integer> positions) {
+    static int checkPosition(int position, List<Integer> positions, Closure<Integer> distanceFunction) {
         int fuel = 0
-        for (int p : positions) {
-            fuel += sumFuel(abs(p - position))
+        for (int number : positions) {
+            fuel += distanceFunction.call(position, number)
         }
         fuel
     }
 
-    static int sumFuel(int n) {
+    private static int sumFuel(int a, int b) {
+        abs(a - b)
+    }
+
+    private static int sumFuel2(int a, int b) {
+        int n = abs(a - b)
         n * (n + 1) / 2
     }
+
 }
