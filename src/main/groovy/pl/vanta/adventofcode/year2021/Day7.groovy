@@ -11,30 +11,21 @@ class Day7 {
     }
 
     static int solve(List<Integer> positions) {
-        println "Input size=${positions.size()}"
-
-        def max = positions.max()
-        def minFuel = MAX_VALUE
-
-        for (int position = 0; position <= max; position++) {
-            def fuel = checkPosition(position, positions, { int a, int b -> sumFuel(a, b) })
-
-            if (fuel < minFuel) {
-                minFuel = fuel
-            }
-        }
-
-        minFuel
+        calculatePositions(positions) { int a, int b -> sumFuel(a, b) }
     }
 
     static long solve2(List<Integer> positions) {
+        calculatePositions(positions) { int a, int b -> sumFuel2(a, b) }
+    }
+
+    private static int calculatePositions(List<Integer> positions, Closure<Integer> cl) {
         println "Input size=${positions.size()}"
 
         def max = positions.max()
         def minFuel = MAX_VALUE
 
         for (int position = 0; position <= max; position++) {
-            def fuel = checkPosition(position, positions, { int a, int b -> sumFuel2(a, b) })
+            def fuel = checkPosition(position, positions, cl)
 
             if (fuel < minFuel) {
                 minFuel = fuel
