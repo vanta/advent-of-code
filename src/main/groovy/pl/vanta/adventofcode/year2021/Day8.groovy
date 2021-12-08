@@ -71,20 +71,20 @@ class Day8 {
             l5.remove(x3)
             mapping.put(x3, '3')
 
-            def x6 = l6.find { !it.containsAll(x3) }
-            l6.remove(x6)
-            mapping.put(x6, '6')
-
             def x9 = l6.find { it.containsAll(x3) }
             l6.remove(x9)
             mapping.put(x9, '9')
-            mapping.put(l6[0], '0')
+
+            def x0 = l6.find { it.containsAll(x1) }
+            l6.remove(x0)
+            mapping.put(x0, '0')
+            mapping.put(l6[0], '6')
 
             def diff = x4 - x1
             def x5 = l5.find { it.containsAll(diff) }
             l5.remove(x5)
             mapping.put(x5, '5')
-            mapping.put(l5[0], '6')
+            mapping.put(l5[0], '2')
         }
     }
 
