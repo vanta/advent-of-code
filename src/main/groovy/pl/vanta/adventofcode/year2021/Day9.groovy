@@ -26,25 +26,66 @@ class Day9 {
     }
 
     static long solve2(int[][] input) {
+        def lowest = []
 
+        for (int i = 0; i < input.length; i++) {
+            for (int j = 0; j < input[i].length; j++) {
+                if (isLowest(input, i, j)) {
+                    lowest << [i, j]
+                }
+            }
+        }
 
-        0
+        def basinsSizes = lowest
+                .collect { findBasinSize(it[0], it[1], input, []) }
+                .sort()
+                .reverse()
+
+        basinsSizes[0] * basinsSizes[1] * basinsSizes[2]
     }
 
-    static boolean isLowest(int[][] ints, int i, int j) {
-        if (i > 0 && ints[i][j] >= ints[i - 1][j]) {
+    static boolean isLowest(int[][] input, int i, int j) {
+        int current = input[i][j]
+
+        if (i > 0 && current >= input[i - 1][j]) {
             return false
         }
-        if (j > 0 && ints[i][j] >= ints[i][j - 1]) {
+        if (j > 0 && current >= input[i][j - 1]) {
             return false
         }
-        if (i < ints.length - 1 && ints[i][j] >= ints[i + 1][j]) {
+        if (i < input.length - 1 && current >= input[i + 1][j]) {
             return false
         }
-        if (j < ints[i].length - 1 && ints[i][j] >= ints[i][j + 1]) {
+        if (j < input[i].length - 1 && current >= input[i][j + 1]) {
             return false
         }
 
         return true
+    }
+
+    static int findBasinSize(int i, int j, int[][] input, def basin) {
+        int current = input[i][j]
+        basin << [i, j]
+
+        int result = 0
+
+        result += checkLocation(i - 1, j, current, input, basin)
+        result += checkLocation(i, j - 1, current, input, basin)
+        result += checkLocation(i + 1, j, current, input, basin)
+        result += checkLocation(i, j + 1, current, input, basin)
+
+        result + 1
+    }
+
+    static int checkLocation(int i, int j, int current, int[][] input, def basin) {
+        if (i >= 0 && j >= 0 && i < input.length && j < input[i].length
+                && current < input[i][j]
+                && input[i][j] < 9
+                && !basin.contains([i, j])) {
+            
+            return findBasinSize(i, j, input, basin)
+        }
+
+        return 0
     }
 }

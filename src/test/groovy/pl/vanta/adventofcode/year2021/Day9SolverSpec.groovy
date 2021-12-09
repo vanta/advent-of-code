@@ -19,12 +19,12 @@ class Day9SolverSpec extends Specification {
 
     def 'should solve example data - part 2'() {
         expect:
-        solve2(parse(Day9.getResource("/2021/example-day9.txt").text)) == 61_229
+        solve2(parse(Day9.getResource("/2021/example-day9.txt").text)) == 1_134
     }
 
     def 'should solve real data - part 2'() {
         expect:
-        solve2(parse(Day9.getResource("/2021/day9.txt").text)) == 986_034
+        solve2(parse(Day9.getResource("/2021/day9.txt").text)) == 827_904
     }
 
 }
