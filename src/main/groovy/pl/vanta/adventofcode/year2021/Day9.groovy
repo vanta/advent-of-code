@@ -80,8 +80,8 @@ class Day9 {
     static int checkLocation(int i, int j, int current, int[][] input, def basin) {
         if (i >= 0 && j >= 0 && i < input.length && j < input[i].length
                 && input[i][j] < 9
-                && current < input[i][j]
-                && !basin.contains([i, j])) {
+                && !basin.contains([i, j])
+                && current < input[i][j]) {
             
             return findBasinSize(i, j, input, basin)
         }
