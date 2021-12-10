@@ -23,7 +23,7 @@ class Day10 {
         index >= 0 ? POINTS.get(it[index]) : 0
     }
 
-    static int solve2(String[] input) {
+    static long solve2(String[] input) {
         def list = input
                 .collect { getClosingSequence(it) }
                 .findAll {it}
@@ -75,9 +75,9 @@ class Day10 {
                 .join('')
     }
 
-    static int getPoints2(String s) {
+    static long getPoints2(String s) {
         s.chars
                 .collect{POINTS2.get(it.toString())}
-                .inject(0) {acc, val -> acc * 5 + val}
+                .inject(0L) {acc, val -> acc * 5 + val}
     }
 }
