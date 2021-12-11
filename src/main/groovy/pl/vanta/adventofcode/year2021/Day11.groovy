@@ -14,8 +14,14 @@ class Day11 {
     }
 
     static long solve2(int[][] input) {
-
-        -1
+        int counter = 0
+        def flashes = 0
+        
+        while(flashes != 100 || flashes == 0) {
+            flashes = processDay(input, counter++)
+        }
+        
+        counter
     }
 
     static int processDay(int[][] ints, int day) {
