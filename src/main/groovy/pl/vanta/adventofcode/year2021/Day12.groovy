@@ -17,7 +17,7 @@ class Day12 {
         paths.size()
     }
 
-    static long solve2(int[][] input) {
+    static long solve2(List<Connection> input) {
 
         0
     }
@@ -42,13 +42,14 @@ class Day12 {
     }
 
     static Set<List<Cave>> findPaths(Cave start, Cave end) {
-        def paths = [] as Set<List<Cave>>
+        def paths = [] 
 
-        boolean found = false
+        boolean found = true
         while (found) {
             def list = []
-            found = findPath(start, end, list)
+            found = findPath(start, end, list, paths)
             if (found) {
+                println("Found path=$list")
                 paths << list
             }
         }
@@ -56,7 +57,7 @@ class Day12 {
         paths
     }
 
-    static boolean findPath(Cave current, Cave end, List<Cave> path) {
+    static boolean findPath(Cave current, Cave end, List<Cave> path, Set<List<Cave>> alreadyFound) {
         path << current
 
         if (path.last() == end) {
