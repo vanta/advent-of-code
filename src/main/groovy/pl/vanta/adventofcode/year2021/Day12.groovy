@@ -9,8 +9,8 @@ class Day12 {
 
     static int solve(List<Connection> input) {
         def caves = buildCavesGraph(input)
-        def start = caves.find { it.isStart() }
-        def end = caves.find { it.isEnd() }
+        def start = caves.find { (it.name == 'start') }
+        def end = caves.find { (it.name == 'end') }
 
         def paths = []
         findPath(start, end, [] as Stack, paths)
@@ -75,17 +75,8 @@ class Day12 {
             name.toLowerCase() == name
         }
 
-        boolean isStart() {
-            name == 'start'
-        }
-
-        boolean isEnd() {
-            name == 'end'
-        }
-
         @Override
         String toString() {
-//            "$name->${neighbours.name}"
             "$name"
         }
 
