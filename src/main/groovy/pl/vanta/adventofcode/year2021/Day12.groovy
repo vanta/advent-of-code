@@ -12,7 +12,8 @@ class Day12 {
         def start = caves.find { it.isStart() }
         def end = caves.find { it.isEnd() }
 
-        def paths = findPaths(start, end)
+        def paths = []
+        findPath(start, end, [] as Stack, paths)
         println(paths)
         paths.size()
     }
@@ -41,43 +42,19 @@ class Day12 {
         caves
     }
 
-    static Set<List<Cave>> findPaths(Cave start, Cave end) {
-        def paths = [] 
+    static void findPath(Cave current, Cave end, List<Cave> parentPath, def alreadyFound) {
+        def currentPath = parentPath + [current]
 
-        boolean found = true
-        while (found) {
-            def list = []
-            found = findPath(start, end, list, paths)
-            if (found) {
-                println("Found path=$list")
-                paths << list
-            }
+        if (current == end) {
+            alreadyFound << currentPath
+            return
         }
 
-        paths
-    }
-
-    static boolean findPath(Cave current, Cave end, List<Cave> path, Set<List<Cave>> alreadyFound) {
-        path << current
-
-        if (path.last() == end) {
-            return true
-        }
-
-        def toVisit = current.neighbours
-                .findAll { !it.isSmall() || !path.contains(it) }
-
-        if (toVisit.isEmpty()) {
-            return false
-        } else {
-            boolean foundEnd = false
-            while (!foundEnd && toVisit.iterator().hasNext()) {
-                def n = toVisit.iterator().next()
-
-                foundEnd = findPath(n, end, path)
-            }
-            return foundEnd
-        }
+        current.neighbours
+                .findAll { !it.isSmall() || !currentPath.contains(it) }
+                .each {
+                    findPath(it, end, currentPath, alreadyFound)
+                }
     }
 
     static class Connection {
