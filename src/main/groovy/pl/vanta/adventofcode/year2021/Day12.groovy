@@ -13,7 +13,7 @@ class Day12 {
         def end = caves.find { (it.name == 'end') }
 
         def paths = []
-        findPath(start, end, [] as Stack, paths)
+        findPath(start, end, [], paths)
         println(paths)
         paths.size()
     }
@@ -51,10 +51,14 @@ class Day12 {
         }
 
         current.neighbours
-                .findAll { !it.isSmall() || !currentPath.contains(it) }
+                .findAll { canVisit(it, currentPath) }
                 .each {
                     findPath(it, end, currentPath, alreadyFound)
                 }
+    }
+
+    private static boolean canVisit(Cave it, List<Cave> currentPath) {
+        !it.isSmall() || !currentPath.contains(it)
     }
 
     static class Connection {
