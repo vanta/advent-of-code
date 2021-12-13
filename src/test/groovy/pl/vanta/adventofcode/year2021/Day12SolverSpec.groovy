@@ -30,5 +30,4 @@ class Day12SolverSpec extends Specification {
         expect:
         solve2(parse(Day12.getResource("/2021/day12.txt").text)) == 220
     }
-
 }

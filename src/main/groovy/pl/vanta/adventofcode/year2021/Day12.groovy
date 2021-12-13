@@ -13,14 +13,25 @@ class Day12 {
         def end = caves.find { (it.name == 'end') }
 
         def paths = []
-        findPath(start, end, [], paths)
-        println(paths)
+        findPath(start, end, new Path(), paths)
+        paths.each {
+            println it
+        }
+
         paths.size()
     }
 
     static long solve2(List<Connection> input) {
+        def caves = buildCavesGraph(input)
+        def start = caves.find { (it.name == 'start') }
+        def end = caves.find { (it.name == 'end') }
 
-        0
+        def paths = []
+        findPath(start, end, new Path2(), paths)
+        paths.each {
+            println it
+        }
+        paths.size()
     }
 
     static Set<Cave> buildCavesGraph(List<Connection> connections) {
@@ -42,8 +53,8 @@ class Day12 {
         caves
     }
 
-    static void findPath(Cave current, Cave end, List<Cave> parentPath, def alreadyFound) {
-        def currentPath = parentPath + [current]
+    static void findPath(Cave current, Cave end, Path parentPath, def alreadyFound) {
+        def currentPath = parentPath.add(current)
 
         if (current == end) {
             alreadyFound << currentPath
@@ -51,14 +62,10 @@ class Day12 {
         }
 
         current.neighbours
-                .findAll { canVisit(it, currentPath) }
+                .findAll { currentPath.canVisit(it) }
                 .each {
                     findPath(it, end, currentPath, alreadyFound)
                 }
-    }
-
-    private static boolean canVisit(Cave it, List<Cave> currentPath) {
-        !it.isSmall() || !currentPath.contains(it)
     }
 
     static class Connection {
@@ -79,6 +86,10 @@ class Day12 {
             name.toLowerCase() == name
         }
 
+        boolean isStart() {
+            name == 'start'
+        }
+
         @Override
         String toString() {
             "$name"
@@ -92,6 +103,57 @@ class Day12 {
         @Override
         int hashCode() {
             name.hashCode()
+        }
+    }
+
+    static class Path {
+        List<Cave> path = []
+
+        boolean canVisit(Cave c) {
+            !c.isSmall() || !path.contains(c)
+        }
+
+        Path add(Cave c) {
+            new Path(path: path + [c])
+        }
+
+        @Override
+        String toString() {
+            path.toString()
+        }
+    }
+
+    static class Path2 extends Path {
+        final boolean smallCaveVisitedTwice
+
+        Path2(List<Cave> path = []) {
+            this.path = path
+            smallCaveVisitedTwice = !this.path
+                    .findAll { it.isSmall() }
+                    .groupBy { it.name }
+                    .findAll { it.value.size() > 1 }
+                    .isEmpty()
+        }
+
+        Path2 add(Cave c) {
+            new Path2(path + [c])
+        }
+
+        @Override
+        boolean canVisit(Cave c) {
+            if (c.isStart()) {
+                return false
+            }
+
+            if (!c.isSmall()) {
+                return true
+            }
+
+            if (!path.contains(c)) {
+                return true
+            }
+
+            return !smallCaveVisitedTwice
         }
     }
 }
