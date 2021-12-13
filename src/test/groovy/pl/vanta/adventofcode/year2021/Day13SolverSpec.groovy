@@ -19,11 +19,11 @@ class Day13SolverSpec extends Specification {
 
     def 'should solve example data - part 2'() {
         expect:
-        solve2(parse(Day13.getResource("/2021/example-day13.txt").text)) == -1
+        solve2(parse(Day13.getResource("/2021/example-day13.txt").text)) == 'O'
     }
 
     def 'should solve real data - part 2'() {
         expect:
-        solve2(parse(Day13.getResource("/2021/day13.txt").text)) == -1
+        solve2(parse(Day13.getResource("/2021/day13.txt").text)) == 'LRGPRECB'
     }
 }

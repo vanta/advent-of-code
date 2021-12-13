@@ -24,7 +24,12 @@ class Day13 {
         input.paper.countDots()
     }
 
-    static long solve2(Input input) {
+    static String solve2(Input input) {
+        def fold = input.folds.each {
+            input.paper.fold(it.getOrientation(), it.getValue())
+        }
+
+        input.paper.print()
 
         0
     }
@@ -64,15 +69,26 @@ class Day13 {
             if (X == orientation) {
                 dotsToRemove = dots.findAll { it.getFirst() > value }
                 dotsToAdd = dotsToRemove.collect { new Tuple2<>(maxX - it.getFirst(), it.getSecond()) }
+                maxX = value - 1
             } else {
                 dotsToRemove = dots.findAll { it.getSecond() > value }
                 dotsToAdd = dotsToRemove.collect { new Tuple2<>(it.getFirst(), maxY - it.getSecond()) }
+                maxY = value - 1
             }
 
             dots.removeAll(dotsToRemove)
             dots.addAll(dotsToAdd)
 
             println("Dots=$dots")
+        }
+
+        void print() {
+            for (int j = 0; j <= maxY; j++) {
+                for (int i = 0; i <= maxX; i++) {
+                    print(dots.contains(new Tuple2(i, j)) ? '#' : '.')
+                }
+                print('\n')
+            }
         }
     }
 }
