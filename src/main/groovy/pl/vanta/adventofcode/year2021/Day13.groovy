@@ -18,9 +18,12 @@ class Day13 {
 
     static int solve(Input input) {
 
+        0
     }
 
     static long solve2(Input input) {
+
+        0
     }
 
     static class Input {
