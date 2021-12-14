@@ -14,7 +14,7 @@ class Day14SolverSpec extends Specification {
 
     def 'should solve real data - part 1'() {
         expect:
-        solve(parse(Day14.getResource("/2021/day14.txt").text)) == 1
+        solve(parse(Day14.getResource("/2021/day14.txt").text)) == 2027
     }
 
     def 'should solve example data - part 2'() {

@@ -8,7 +8,7 @@ class Day14 {
 
         def rules = lines
                 .drop(2)
-                .collect { new Rule(from: it[0..1], to: it[6]) }
+                .collectEntries { [it[0..1], it[6]] }
 
         new Input(pairs: pairs, rules: rules)
     }
@@ -30,7 +30,14 @@ class Day14 {
             input.apply()
         }
 
-        0
+        def freq = countFrequency(input.getPolymer())
+
+        LinkedHashMap sortedMap = freq.sort { a, b -> a.value <=> b.value }
+
+        def first = sortedMap.values().first()
+        def last = sortedMap.values().last()
+
+        last - first
     }
 
     static int solve2(Input input) {
@@ -38,17 +45,36 @@ class Day14 {
         0
     }
 
-    static class Input {
-        List<String> pairs
-        List<Rule> rules
-
-        void apply() {
-            pairs.collect {}
+    static Map<String, Integer> countFrequency(String s) {
+        def result = [:]
+        s.chars.each {
+            def count = result.getOrDefault(it as String, 0)
+            result.put(it as String, count + 1)
         }
+        result
     }
 
-    static class Rule {
-        String from
-        String to
+    static class Input {
+        List<String> pairs
+        Map<String, String> rules
+
+        void apply() {
+            pairs = pairs
+                    .collect { processPair(it) }
+                    .flatten()
+        }
+
+        List<String> processPair(String pair) {
+            if (rules.containsKey(pair)) {
+                def toInsert = rules.get(pair)
+                return [pair[0] + toInsert, toInsert + pair[1]]
+            }
+
+            return [pair]
+        }
+
+        String getPolymer() {
+            pairs.first()[0] + pairs.collect { it[1] }.join()
+        }
     }
 }
