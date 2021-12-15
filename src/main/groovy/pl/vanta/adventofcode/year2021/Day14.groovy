@@ -11,24 +11,23 @@ class Day14 {
         new Input(lines[0], rules)
     }
 
-    static int solve(Input input) {
+    static long solve(Input input) {
         (1..10).each {
             input.apply()
         }
 
-        LinkedHashMap sortedMap = input.frequency.sort { a, b -> a.value <=> b.value }
-
-        def first = sortedMap.values().first()
-        def last = sortedMap.values().last()
-
-        last - first
+        calculateFrequencyDiff(input)
     }
 
-    static int solve2(Input input) {
+    static long solve2(Input input) {
         (1..40).each {
             input.apply()
         }
 
+        calculateFrequencyDiff(input)
+    }
+
+    private static long calculateFrequencyDiff(Input input) {
         LinkedHashMap sortedMap = input.frequency.sort { a, b -> a.value <=> b.value }
 
         def first = sortedMap.values().first()
