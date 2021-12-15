@@ -4,35 +4,19 @@ class Day14 {
     static Input parse(String input) {
         def lines = input.readLines()
 
-        def pairs = getPairs(lines[0])
-
         def rules = lines
                 .drop(2)
                 .collectEntries { [it[0..1], it[6]] }
 
-        new Input(pairs: pairs, rules: rules)
-    }
-
-    private static List<String> getPairs(String line) {
-        List<String> result = []
-
-        for (int i = 0; i < line.chars.length - 1; i++) {
-            result.add(line[i] + line[i + 1])
-        }
-
-        result
+        new Input(lines[0], rules)
     }
 
     static int solve(Input input) {
-
-
-        (0..9).each {
+        (1..10).each {
             input.apply()
         }
 
-        def freq = countFrequency(input.getPolymer())
-
-        LinkedHashMap sortedMap = freq.sort { a, b -> a.value <=> b.value }
+        LinkedHashMap sortedMap = input.frequency.sort { a, b -> a.value <=> b.value }
 
         def first = sortedMap.values().first()
         def last = sortedMap.values().last()
@@ -41,40 +25,72 @@ class Day14 {
     }
 
     static int solve2(Input input) {
-
-        0
-    }
-
-    static Map<String, Integer> countFrequency(String s) {
-        def result = [:]
-        s.chars.each {
-            def count = result.getOrDefault(it as String, 0)
-            result.put(it as String, count + 1)
+        (1..40).each {
+            input.apply()
         }
-        result
+
+        LinkedHashMap sortedMap = input.frequency.sort { a, b -> a.value <=> b.value }
+
+        def first = sortedMap.values().first()
+        def last = sortedMap.values().last()
+
+        last - first
     }
 
     static class Input {
-        List<String> pairs
-        Map<String, String> rules
+        String polymer
+        Map<String, Long> pairs
+        Map<String, String> injections
+        Map<String, Long> frequency
 
-        void apply() {
-            pairs = pairs
-                    .collect { processPair(it) }
-                    .flatten()
+        Input(String polymer, Map<String, String> injections) {
+            this.polymer = polymer
+            this.injections = injections
+            this.pairs = buildPairs()
+            this.frequency = buildFrequency()
         }
 
-        List<String> processPair(String pair) {
-            if (rules.containsKey(pair)) {
-                def toInsert = rules.get(pair)
-                return [pair[0] + toInsert, toInsert + pair[1]]
+        private Map<String, Long> buildPairs() {
+            Map<String, Long> result = [:]
+
+            for (int i = 0; i < polymer.chars.length - 1; i++) {
+                def pair = polymer[i] + polymer[i + 1]
+                long count = result.getOrDefault(pair, 0L)
+
+                result.put(pair, count + 1)
             }
 
-            return [pair]
+            result
         }
 
-        String getPolymer() {
-            pairs.first()[0] + pairs.collect { it[1] }.join()
+        void apply() {
+            Map<String, Long> newPairs = [:]
+
+            pairs.each { entry ->
+                def toInject = injections.get(entry.key)
+
+                if (toInject) {
+                    def newPair1 = entry.key[0] + toInject
+                    def newPair2 = toInject + entry.key[1]
+
+                    frequency.merge(toInject, entry.value, { v1, v2 -> v1 + v2 })
+
+                    newPairs.merge(newPair1, entry.value, { v1, v2 -> v1 + v2 })
+                    newPairs.merge(newPair2, entry.value, { v1, v2 -> v1 + v2 })
+                } else {
+                    newPairs.merge(entry.key, entry.value, { v1, v2 -> v1 + v2 })
+                }
+            }
+
+            pairs = newPairs
+        }
+
+        Map<String, Long> buildFrequency() {
+            def result = [:]
+            polymer.chars.each {
+                result.merge(it as String, 1, { v1, v2 -> v1 + v2 })
+            }
+            result
         }
     }
 }
