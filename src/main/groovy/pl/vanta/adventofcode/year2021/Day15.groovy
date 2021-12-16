@@ -64,7 +64,33 @@ class Day15 {
     }
 
     static long solve2(int[][] input) {
+        int[][] newInput = buildNewInput(input)
 
+        solve(newInput)
+    }
+
+    static int[][] buildNewInput(int[][] input) {
+        def size = input.length
+        def result = new int[size * 5][size * 5]
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                result[i][j] = input[i][j]
+
+                for (int x = 0; x < 5; x++) {
+                    for (int y = 0; y < 5; y++) {
+                        result[i + size * x][j + size * y] = aaa(input[i][j], x, y)
+                    }
+                }
+            }
+        }
+
+        result
+    }
+
+    private static int aaa(int value, int x, int y) {
+        def newValue = value + x + y
+        newValue < 10 ? newValue : (newValue - 9)
     }
 
     static class Vertex {
