@@ -25,13 +25,13 @@ class Day15 {
         while (!queue.isEmpty()) {
             def vertex = queue.remove()
 
-            for (def d : getNeighbours(mapping, vertex)) {
-                if (queue.contains(d)) {
-                    def dist = vertex.distance + d.value
-                    if (d.distance > dist) {
-                        d.distance = dist
-                        queue.remove(d)
-                        queue.add(d)
+            for (def neighbour : getNeighbours(mapping, vertex)) {
+                if (queue.contains(neighbour)) {
+                    def dist = vertex.distance + neighbour.value
+                    if (neighbour.distance > dist) {
+                        neighbour.distance = dist
+                        queue.remove(neighbour)
+                        queue.add(neighbour)
                     }
                 }
             }
@@ -49,22 +49,16 @@ class Day15 {
         }
     }
 
-    private static Vertex buildVertex(int i, int j, int value) {
-        if (i == 0 && j == 0) {
-            new Vertex(x: i, y: j, distance: 0, value: value)
-        } else {
-            new Vertex(x: i, y: j, value: value)
-        }
-    }
-
     static Map<Tuple2, Vertex> buildMapping(int[][] input) {
         Map<Tuple2, Vertex> mapping = [:]
 
         for (int i = 0; i < input.length; i++) {
             for (int j = 0; j < input.length; j++) {
-                mapping.put(new Tuple2(i, j), buildVertex(i, j, input[i][j]))
+                mapping.put(new Tuple2(i, j), new Vertex(x: i, y: j, value: input[i][j]))
             }
         }
+
+        mapping.get(new Tuple2(0, 0)).distance = 0
 
         mapping
     }
