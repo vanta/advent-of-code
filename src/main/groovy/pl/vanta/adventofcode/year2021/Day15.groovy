@@ -11,23 +11,23 @@ class Day15 {
     }
 
     static long solve(int[][] input) {
-        List<Vertex> visited = []
         Map<Tuple2, Vertex> mapping = buildMapping(input)
         PriorityQueue<Vertex> queue = new PriorityQueue<Vertex>(mapping.size(), { a, b -> a.distance <=> b.distance })
         queue.addAll(mapping.values())
 
-        def start = mapping.get(new Tuple2(0, 0))
+        calculateDistances(queue, mapping)
+
         def end = mapping.get(new Tuple2(input.length - 1, input.length - 1))
+        end.distance
+    }
 
+    private static void calculateDistances(PriorityQueue<Vertex> queue, Map<Tuple2, Vertex> mapping) {
         while (!queue.isEmpty()) {
-
             def vertex = queue.remove()
-
-            visited << vertex
 
             for (def d : getNeighbours(mapping, vertex)) {
                 if (queue.contains(d)) {
-                    def dist = vertex.distance + input[d.x][d.y]
+                    def dist = vertex.distance + d.value
                     if (d.distance > dist) {
                         d.distance = dist
                         queue.remove(d)
@@ -36,8 +36,6 @@ class Day15 {
                 }
             }
         }
-
-        end.distance
     }
 
     static List<Vertex> getNeighbours(Map<Tuple2, Vertex> mapping, Vertex vertex) {
@@ -51,11 +49,11 @@ class Day15 {
         }
     }
 
-    private static Vertex buildVertex(int i, int j) {
+    private static Vertex buildVertex(int i, int j, int value) {
         if (i == 0 && j == 0) {
-            new Vertex(x: i, y: j, distance: 0)
+            new Vertex(x: i, y: j, distance: 0, value: value)
         } else {
-            new Vertex(x: i, y: j)
+            new Vertex(x: i, y: j, value: value)
         }
     }
 
@@ -64,7 +62,7 @@ class Day15 {
 
         for (int i = 0; i < input.length; i++) {
             for (int j = 0; j < input.length; j++) {
-                mapping.put(new Tuple2(i, j), buildVertex(i, j))
+                mapping.put(new Tuple2(i, j), buildVertex(i, j, input[i][j]))
             }
         }
 
@@ -77,6 +75,7 @@ class Day15 {
 
     static class Vertex {
         int x, y
+        int value
         int distance = MAX_VALUE
 
         @Override
