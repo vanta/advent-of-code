@@ -14,13 +14,6 @@ class Day15 {
         List<Vertex> visited = []
         Map<Tuple2, Vertex> mapping = buildMapping(input)
         PriorityQueue<Vertex> queue = new PriorityQueue<Vertex>(mapping.size(), { a, b -> a.distance <=> b.distance })
-//        PriorityQueue<Vertex> queue = new PriorityQueue<Vertex>(mapping.size(), new Comparator<Vertex>() {
-//            @Override
-//            int compare(final Vertex o1, final Vertex o2) {
-//                return o1.distance <=> o2.distance
-//            }
-//        })
-
         queue.addAll(mapping.values())
 
         def start = mapping.get(new Tuple2(0, 0))
@@ -82,14 +75,9 @@ class Day15 {
 
     }
 
-    static class Vertex implements Comparable<Vertex> {
+    static class Vertex {
         int x, y
         int distance = MAX_VALUE
-
-        @Override
-        int compareTo(final Vertex v) {
-            distance <=> v.distance
-        }
 
         @Override
         String toString() {
