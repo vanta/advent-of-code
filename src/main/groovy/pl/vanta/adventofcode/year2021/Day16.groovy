@@ -4,7 +4,7 @@ import static java.lang.Integer.parseInt
 import static java.lang.Long.parseLong
 import static java.lang.Long.toBinaryString
 import static pl.vanta.adventofcode.year2021.Day16.OperatorPacket.LENGTH_TYPE_ID_BITS
-import static pl.vanta.adventofcode.year2021.Day16.Packet.LITERAL
+import static pl.vanta.adventofcode.year2021.Day16.LiteralPacket.LITERAL
 
 class Day16 {
     static String parse(String input) {
@@ -33,15 +33,11 @@ class Day16 {
         def version = parseInt(input[0..2], 2)
         def typeId = parseInt(input[3..5], 2)
 
-        if (typeId == LITERAL) {
-            parseLiteralPacket(version, typeId, input.substring(6))
+        if (LiteralPacket.isValid(input)) {
+            LiteralPacket.parse(input)
         } else {
             parseOperatorPacket(version, typeId, input.substring(6))
         }
-    }
-
-    static LiteralPacket parseLiteralPacket(int version, int typeId, String body) {
-        new LiteralPacket(version: version, typeId: typeId, value: parseLiteralPacketValue(body))
     }
 
     static OperatorPacket parseOperatorPacket(int version, int typeId, String body) {
@@ -57,7 +53,7 @@ class Day16 {
         def typeId = parseInt(input[3..5], 2)
 
         if (typeId == LITERAL) {
-            parseLiteralPacket(version, typeId, input.substring(6))
+            LiteralPacket.parse(input.substring(6))
         } else {
             parseOperatorPacket(version, typeId, input.substring(6))
         }
@@ -68,25 +64,7 @@ class Day16 {
 
     }
 
-    static int parseLiteralPacketValue(String literalValue) {
-        def lastChunkProceed = false
-        def index = 0
-        def bits = ''
-
-        while (!lastChunkProceed) {
-            def chunk = literalValue[index..index + 4]
-            bits += chunk[1..4]
-
-            index += 5
-            lastChunkProceed = (chunk[0] == '0')
-        }
-
-        parseInt(bits, 2)
-    }
-
     static abstract class Packet {
-        static final LITERAL = 4
-
         int version
         int typeId
 
@@ -96,7 +74,40 @@ class Day16 {
     }
 
     static class LiteralPacket extends Packet {
+        private static final LITERAL = 4
         int value
+        int length
+
+        static boolean isValid(String input) {
+            parseInt(input[3..5], 2) == LITERAL
+        }
+
+        static LiteralPacket parse(String input) {
+            def version = parseInt(input[0..2], 2)
+            def typeId = parseInt(input[3..5], 2)
+
+            def result = new LiteralPacket(version: version, typeId: typeId)
+
+            result.parseLiteralPacketValue(input.substring(6))
+        }
+
+        LiteralPacket parseLiteralPacketValue(String literalValue) {
+            def lastChunkProceed = false
+            def index = 0
+            def bits = ''
+
+            while (!lastChunkProceed) {
+                def chunk = literalValue[index..index + 4]
+                bits += chunk[1..4]
+                index += 5
+                lastChunkProceed = (chunk[0] == '0')
+            }
+
+            value = parseInt(bits, 2)
+            length = index + 6
+
+            this
+        }
     }
 
     static class OperatorPacket extends Packet {
