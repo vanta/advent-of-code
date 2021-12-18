@@ -20,7 +20,7 @@ class Day16 {
 
         println(packet)
 
-        packet.getAllVersions()
+        packet.getVersionsSum()
     }
 
     static long solve2(String input) {
@@ -37,18 +37,17 @@ class Day16 {
         static final MIN_PACKET_LENGTH = 11
         int version
         int typeId
+        int length
 
-        int getAllVersions() {
+        int getVersionsSum() {
             version
         }
 
-        abstract int getLength()
     }
 
     static class LiteralPacket extends Packet {
         private static final LITERAL = 4
         long value
-        int length
 
         static boolean isValid(String input) {
             parseInt(input[3..5], 2) == LITERAL
@@ -88,8 +87,8 @@ class Day16 {
 
         List<? extends Packet> subPackets = []
 
-        int getAllVersions() {
-            version + subPackets.inject(0, { a, b -> a + b.getAllVersions() })
+        int getVersionsSum() {
+            version + subPackets.inject(0, { a, b -> a + b.getVersionsSum() })
         }
 
         int getLength() {
