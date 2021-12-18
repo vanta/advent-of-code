@@ -24,7 +24,17 @@ class Day16 {
     }
 
     static long solve2(String input) {
-        -1
+        def binary = input
+                .collect { toBinaryString(parseLong(it as String, 16)) }
+                .collect { it.padLeft(4, '0') }
+                .join()
+        println "Input=$input -> binary=$binary"
+
+        def packet = parsePacket(binary)
+
+        println(packet)
+
+        packet.getValue()
     }
 
     static Packet parsePacket(String input) {
@@ -200,21 +210,21 @@ class Day16 {
     static class EqualToPacket extends OperatorPacket {
         @Override
         long getValue() {
-            subPackets[0] == subPackets[1] ? 1L : 0L
+            subPackets[0].getValue() == subPackets[1].getValue() ? 1L : 0L
         }
     }
 
     static class GreaterThanPacket extends OperatorPacket {
         @Override
         long getValue() {
-            subPackets[0] > subPackets[1] ? 1L : 0L
+            subPackets[0].getValue() > subPackets[1].getValue() ? 1L : 0L
         }
     }
 
     static class LessThanPacket extends OperatorPacket {
         @Override
         long getValue() {
-            subPackets[0] < subPackets[1] ? 1L : 0L
+            subPackets[0].getValue() < subPackets[1].getValue() ? 1L : 0L
         }
     }
 }

@@ -54,6 +54,6 @@ class Day16SolverSpec extends Specification {
 
     def 'should solve real data - part 2'() {
         expect:
-        solve2(parse(Day16.getResource("/2021/day16.txt").text)) == -1
+        solve2(parse(Day16.getResource("/2021/day16.txt").text)) == 246225449979
     }
 }
