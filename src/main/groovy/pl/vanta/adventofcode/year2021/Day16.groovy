@@ -3,8 +3,8 @@ package pl.vanta.adventofcode.year2021
 import static java.lang.Integer.parseInt
 import static java.lang.Long.parseLong
 import static java.lang.Long.toBinaryString
-import static pl.vanta.adventofcode.year2021.Day16.OperatorPacket.LENGTH_TYPE_ID_BITS
 import static pl.vanta.adventofcode.year2021.Day16.LiteralPacket.LITERAL
+import static pl.vanta.adventofcode.year2021.Day16.OperatorPacket.LENGTH_TYPE_ID_BITS
 
 class Day16 {
     static String parse(String input) {
@@ -18,7 +18,7 @@ class Day16 {
                 .join()
         println "Input=$input -> binary=$binary"
 
-        def packet = parsePackets(binary)
+        def packet = parsePacket(binary)
 
         println(packet)
 
@@ -29,18 +29,17 @@ class Day16 {
 
     }
 
-    static Packet parsePackets(String input) {
-        def version = parseInt(input[0..2], 2)
-        def typeId = parseInt(input[3..5], 2)
-
-        if (LiteralPacket.isValid(input)) {
-            LiteralPacket.parse(input)
-        } else {
-            parseOperatorPacket(version, typeId, input.substring(6))
-        }
+    static Packet parsePacket(String input) {
+        return LiteralPacket.isValid(input)
+                ? LiteralPacket.parse(input)
+                : parseOperatorPacket(input)
     }
 
-    static OperatorPacket parseOperatorPacket(int version, int typeId, String body) {
+    static OperatorPacket parseOperatorPacket(String input) {
+        def version = parseInt(input[0..2], 2)
+        def typeId = parseInt(input[3..5], 2)
+        def body = input[6]
+
         def subPackets = body[0] == LENGTH_TYPE_ID_BITS
                 ? parseSubPacketsByBits(body.substring(16), parseInt(body[1..15], 2))
                 : parseSubPacketsByNumber(body.substring(16), parseInt(body[1..11], 2))
@@ -112,12 +111,11 @@ class Day16 {
 
     static class OperatorPacket extends Packet {
         static final LENGTH_TYPE_ID_BITS = '0'
-        static final LENGTH_TYPE_ID_COUNT = '1'
 
         List<? extends Packet> subPackets = []
 
         int getAllVersions() {
-            version + subPackets.inject(0, { a, b -> a + b.version })
+            version + subPackets.inject(0, { a, b -> a + b.getAllVersions() })
         }
     }
 
