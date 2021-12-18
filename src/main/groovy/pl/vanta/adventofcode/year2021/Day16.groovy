@@ -41,6 +41,8 @@ class Day16 {
         int getAllVersions() {
             version
         }
+
+        abstract int getLength()
     }
 
     static class LiteralPacket extends Packet {
@@ -82,6 +84,7 @@ class Day16 {
 
     static class OperatorPacket extends Packet {
         static final LENGTH_TYPE_ID_BITS = '0'
+        int length
 
         List<? extends Packet> subPackets = []
 
@@ -89,11 +92,16 @@ class Day16 {
             version + subPackets.inject(0, { a, b -> a + b.getAllVersions() })
         }
 
+        int getLength() {
+            length + +subPackets.inject(0, { a, b -> a + b.getLength() })
+        }
+
         static OperatorPacket parse(String input) {
             def version = parseInt(input[0..2], 2)
             def typeId = parseInt(input[3..5], 2)
 
             def result = new OperatorPacket(version: version, typeId: typeId)
+            result.length = 6
 
             result.parseValue(input.substring(6))
         }
@@ -109,40 +117,40 @@ class Day16 {
         }
 
         List<Packet> parseSubPacketsByBits(String input, int numberOfBits) {
+            this.length += 16
+
             def body = input
             def bitsLeft = numberOfBits
             def packets = []
 
-            while (bitsLeft > MIN_PACKET_LENGTH) {
-                if (LiteralPacket.isValid(body)) {
-                    def packet = LiteralPacket.parse(body)
-                    packets << packet
+            while (bitsLeft >= MIN_PACKET_LENGTH) {
+                def packet = LiteralPacket.isValid(body)
+                        ? LiteralPacket.parse(body)
+                        : parse(body)
 
-                    body = body.substring(packet.length)
-                    bitsLeft -= packet.length
-                } else {
-
-                }
+                packets << packet
+                body = body.substring(packet.length)
+                bitsLeft -= packet.length
             }
 
             packets
         }
 
         List<Packet> parseSubPacketsByNumber(String input, int numberOfPackets) {
+            this.length += 12
+
             def body = input
             def packetsLeft = numberOfPackets
             def packets = []
 
             while (packetsLeft > 0) {
-                if (LiteralPacket.isValid(body)) {
-                    def packet = LiteralPacket.parse(body)
-                    packets << packet
+                def packet = LiteralPacket.isValid(body)
+                        ? LiteralPacket.parse(body)
+                        : parse(body)
 
-                    body = body.substring(packet.length)
-                    packetsLeft--
-                } else {
-
-                }
+                packets << packet
+                body = body.substring(packet.length)
+                packetsLeft--
             }
 
             packets
