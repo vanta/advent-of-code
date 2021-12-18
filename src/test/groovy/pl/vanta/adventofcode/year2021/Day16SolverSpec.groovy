@@ -17,14 +17,14 @@ class Day16SolverSpec extends Specification {
         solve(parsed) == expected
 
         where:
-        example                                                    || expected
-        parse(Day16.getResource('/2021/example-day16.txt').text)   || 6
-        parse(Day16.getResource('/2021/example-day16-6.txt').text) || 9
-        parse(Day16.getResource('/2021/example-day16-7.txt').text) || 14
-        parse(Day16.getResource('/2021/example-day16-2.txt').text) || 16
-        parse(Day16.getResource('/2021/example-day16-3.txt').text) || 12
-        parse(Day16.getResource('/2021/example-day16-4.txt').text) || 23
-        parse(Day16.getResource('/2021/example-day16-5.txt').text) || 31
+        example                          || expected
+        'D2FE28'                         || 6
+        '8A004A801A8002F478'             || 16
+        '620080001611562C8802118E34'     || 12
+        'C0015000016115A2E0802F182340'   || 23
+        'A0016C880162017C3686B18A3D4780' || 31
+        '38006F45291200'                 || 9
+        'EE00D40C823060'                 || 14
     }
 
     def 'should solve real data - part 1'() {
@@ -37,8 +37,24 @@ class Day16SolverSpec extends Specification {
         solve2(parse(Day16.getResource("/2021/example-day16.txt").text)) == 315
     }
 
-    def 'should solve real data - part 2'() {
+    @Unroll
+    def 'should solve real data - part 2 (#example)'() {
+        setup:
+        def parsed = parse(example)
+
         expect:
-        solve2(parse(Day16.getResource("/2021/day16.txt").text)) == 2927
+        solve2(parsed) == expected
+
+        where:
+        example                      || expected
+        'C200B40A82'                 || 3
+        '04005AC33890'               || 54
+        '880086C3E88112'             || 7
+        'CE00C43D881120'             || 9
+        'D8005AC2A8F0'               || 1
+        'F600BC2D8F'                 || 0
+        '9C005AC2F8F0'               || 0
+        '9C0141080250320F1802104A08' || 1
+
     }
 }
