@@ -3,7 +3,8 @@ package pl.vanta.adventofcode.year2021
 import static java.lang.Integer.parseInt
 import static java.lang.Long.parseLong
 import static java.lang.Long.toBinaryString
-import static pl.vanta.adventofcode.year2021.Day16.Packet.getLITERAL
+import static pl.vanta.adventofcode.year2021.Day16.OperatorPacket.LENGTH_TYPE_ID_BITS
+import static pl.vanta.adventofcode.year2021.Day16.Packet.LITERAL
 
 class Day16 {
     static String parse(String input) {
@@ -39,27 +40,16 @@ class Day16 {
         }
     }
 
-    static Packet parseLiteralPacket(int version, int typeId, String body) {
+    static LiteralPacket parseLiteralPacket(int version, int typeId, String body) {
         new LiteralPacket(version: version, typeId: typeId, value: parseLiteralPacketValue(body))
     }
 
-    static Packet parseOperatorPacket(int version, int typeId, String body) {
-        List<Packet> subPackets
-
-        if (body[0] == '0') {
-            int subPacketsBitsLength = parseInt(body[1..15], 2)
-            subPackets = parseSubPacketsByBits(body.substring(16), subPacketsBitsLength)
-        } else {
-            int subPacketsCount = parseInt(body[1..11], 2)
-            subPackets = parseSubPacketsByNumber(body.substring(16), subPacketsCount)
-        }
+    static OperatorPacket parseOperatorPacket(int version, int typeId, String body) {
+        def subPackets = body[0] == LENGTH_TYPE_ID_BITS
+                ? parseSubPacketsByBits(body.substring(16), parseInt(body[1..15], 2))
+                : parseSubPacketsByNumber(body.substring(16), parseInt(body[1..11], 2))
 
         new OperatorPacket(version: version, typeId: typeId, subPackets: subPackets)
-    }
-
-    static List<Packet> parseSubPacketsByNumber(String input, int numberOfPackets) {
-
-
     }
 
     static List<Packet> parseSubPacketsByBits(String input, int numberOfBits) {
@@ -73,8 +63,25 @@ class Day16 {
         }
     }
 
-    static int parseLiteralPacketValue(String s) {
-        -1
+    static List<Packet> parseSubPacketsByNumber(String input, int numberOfPackets) {
+
+
+    }
+
+    static int parseLiteralPacketValue(String literalValue) {
+        def lastChunkProceed = false
+        def index = 0
+        def bits = ''
+
+        while (!lastChunkProceed) {
+            def chunk = literalValue[index..index + 4]
+            bits += chunk[1..4]
+
+            index += 5
+            lastChunkProceed = (chunk[0] == '0')
+        }
+
+        parseInt(bits, 2)
     }
 
     static abstract class Packet {
@@ -93,6 +100,9 @@ class Day16 {
     }
 
     static class OperatorPacket extends Packet {
+        static final LENGTH_TYPE_ID_BITS = '0'
+        static final LENGTH_TYPE_ID_COUNT = '1'
+
         List<? extends Packet> subPackets = []
 
         int getAllVersions() {
