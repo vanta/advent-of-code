@@ -49,17 +49,19 @@ class Day16 {
         int version
         int typeId
         long value
+        protected int length = 6
 
         int getVersionsSum() {
             version
         }
 
-        abstract int getLength()
+        int getLength() {
+            length
+        }
     }
 
     static class LiteralPacket extends Packet {
         private static final LITERAL = 4
-        int length = 6
 
         static boolean isValid(String input) {
             parseInt(input[3..5], 2) == LITERAL
@@ -85,7 +87,7 @@ class Day16 {
             }
 
             value = parseLong(bits, 2)
-            length += index
+            length = length + index
 
             this
         }
@@ -93,20 +95,17 @@ class Day16 {
 
     static abstract class OperatorPacket extends Packet {
         static final LENGTH_TYPE_ID_BITS = '0'
-        int length = 6
 
         List<? extends Packet> subPackets = []
 
+        @Override
         int getVersionsSum() {
             version + subPackets.inject(0, { a, b -> a + b.getVersionsSum() })
         }
 
+        @Override
         int getLength() {
-            length + subPackets.inject(0, { a, b -> a + b.getLength() })
-        }
-
-        long getValue() {
-            value + subPackets.inject(0, { a, b -> a + b.getValue() })
+            super.@length + subPackets.inject(0, { a, b -> a + b.getLength() })
         }
 
         static OperatorPacket parse(String input) {
@@ -139,7 +138,7 @@ class Day16 {
         }
 
         List<Packet> parseSubPacketsByBits(String input, int numberOfBits) {
-            this.length += 16
+            length = length + 16
 
             def body = input
             def bitsLeft = numberOfBits
@@ -159,7 +158,7 @@ class Day16 {
         }
 
         List<Packet> parseSubPacketsByNumber(String input, int numberOfPackets) {
-            this.length += 12
+            length = length + 12
 
             def body = input
             def packetsLeft = numberOfPackets
