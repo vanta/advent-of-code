@@ -47,7 +47,7 @@ class Day16 {
 
     static class LiteralPacket extends Packet {
         private static final LITERAL = 4
-        int value
+        long value
         int length
 
         static boolean isValid(String input) {
@@ -75,7 +75,7 @@ class Day16 {
                 lastChunkProceed = (chunk[0] == '0')
             }
 
-            value = parseInt(bits, 2)
+            value = parseLong(bits, 2)
             length = index + 6
 
             this
