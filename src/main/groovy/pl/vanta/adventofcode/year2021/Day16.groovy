@@ -125,6 +125,8 @@ class Day16 {
                 case 6: return new LessThanPacket(version: version, typeId: typeId)
                 case 7: return new EqualToPacket(version: version, typeId: typeId)
             }
+
+            throw new IllegalArgumentException("Should not happen")
         }
 
         OperatorPacket parseValue(String body) {
