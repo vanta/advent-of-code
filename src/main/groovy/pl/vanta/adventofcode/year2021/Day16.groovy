@@ -1,9 +1,9 @@
 package pl.vanta.adventofcode.year2021
 
-
 import static java.lang.Integer.parseInt
 import static java.lang.Long.parseLong
 import static java.lang.Long.toBinaryString
+import static pl.vanta.adventofcode.year2021.Day16.Packet.getLITERAL
 
 class Day16 {
     static String parse(String input) {
@@ -32,7 +32,7 @@ class Day16 {
         def version = parseInt(input[0..2], 2)
         def typeId = parseInt(input[3..5], 2)
 
-        if (typeId == Packet.LITERAL) {
+        if (typeId == LITERAL) {
             parseLiteralPacket(version, typeId, input.substring(6))
         } else {
             parseOperatorPacket(version, typeId, input.substring(6))
@@ -66,7 +66,7 @@ class Day16 {
         def version = parseInt(input[0..2], 2)
         def typeId = parseInt(input[3..5], 2)
 
-        if (typeId == Packet.LITERAL) {
+        if (typeId == LITERAL) {
             parseLiteralPacket(version, typeId, input.substring(6))
         } else {
             parseOperatorPacket(version, typeId, input.substring(6))
