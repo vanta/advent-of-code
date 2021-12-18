@@ -59,7 +59,7 @@ class Day16 {
 
     static class LiteralPacket extends Packet {
         private static final LITERAL = 4
-        int length
+        int length = 6
 
         static boolean isValid(String input) {
             parseInt(input[3..5], 2) == LITERAL
@@ -85,7 +85,7 @@ class Day16 {
             }
 
             value = parseLong(bits, 2)
-            length = index + 6
+            length += index
 
             this
         }
