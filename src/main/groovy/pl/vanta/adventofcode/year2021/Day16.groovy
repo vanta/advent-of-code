@@ -3,7 +3,6 @@ package pl.vanta.adventofcode.year2021
 import static java.lang.Integer.parseInt
 import static java.lang.Long.parseLong
 import static java.lang.Long.toBinaryString
-import static pl.vanta.adventofcode.year2021.Day16.LiteralPacket.LITERAL
 
 class Day16 {
     static String parse(String input) {
@@ -35,6 +34,7 @@ class Day16 {
     }
 
     static abstract class Packet {
+        static final MIN_PACKET_LENGTH = 11
         int version
         int typeId
 
@@ -101,7 +101,7 @@ class Day16 {
         private OperatorPacket parseValue(String body) {
             def subPackets = body[0] == LENGTH_TYPE_ID_BITS
                     ? parseSubPacketsByBits(body.substring(16), parseInt(body[1..15], 2))
-                    : parseSubPacketsByNumber(body.substring(16), parseInt(body[1..11], 2))
+                    : parseSubPacketsByNumber(body.substring(12), parseInt(body[1..11], 2))
 
             this.subPackets = subPackets
 
@@ -109,10 +109,43 @@ class Day16 {
         }
 
         List<Packet> parseSubPacketsByBits(String input, int numberOfBits) {
+            def body = input
+            def bitsLeft = numberOfBits
+            def packets = []
+
+            while (bitsLeft > MIN_PACKET_LENGTH) {
+                if (LiteralPacket.isValid(body)) {
+                    def packet = LiteralPacket.parse(body)
+                    packets << packet
+
+                    body = body.substring(packet.length)
+                    bitsLeft -= packet.length
+                } else {
+
+                }
+            }
+
+            packets
         }
 
         List<Packet> parseSubPacketsByNumber(String input, int numberOfPackets) {
+            def body = input
+            def packetsLeft = numberOfPackets
+            def packets = []
 
+            while (packetsLeft > 0) {
+                if (LiteralPacket.isValid(body)) {
+                    def packet = LiteralPacket.parse(body)
+                    packets << packet
+
+                    body = body.substring(packet.length)
+                    packetsLeft--
+                } else {
+
+                }
+            }
+
+            packets
         }
     }
 }

@@ -20,11 +20,11 @@ class Day16SolverSpec extends Specification {
         example                                                    || expected
         parse(Day16.getResource('/2021/example-day16.txt').text)   || 6
         parse(Day16.getResource('/2021/example-day16-6.txt').text) || 9
+        parse(Day16.getResource('/2021/example-day16-7.txt').text) || 14
         parse(Day16.getResource('/2021/example-day16-2.txt').text) || 16
         parse(Day16.getResource('/2021/example-day16-3.txt').text) || 12
         parse(Day16.getResource('/2021/example-day16-4.txt').text) || 23
         parse(Day16.getResource('/2021/example-day16-5.txt').text) || 31
-        parse(Day16.getResource('/2021/example-day16-7.txt').text) || 14
     }
 
     def 'should solve real data - part 1'() {
