@@ -32,13 +32,8 @@ class Day16SolverSpec extends Specification {
         solve(parse(Day16.getResource("/2021/day16.txt").text)) == 953
     }
 
-    def 'should solve example data - part 2'() {
-        expect:
-        solve2(parse(Day16.getResource("/2021/example-day16.txt").text)) == 315
-    }
-
     @Unroll
-    def 'should solve real data - part 2 (#example)'() {
+    def 'should solve example data - part 2 (#example)'() {
         setup:
         def parsed = parse(example)
 
@@ -55,6 +50,10 @@ class Day16SolverSpec extends Specification {
         'F600BC2D8F'                 || 0
         '9C005AC2F8F0'               || 0
         '9C0141080250320F1802104A08' || 1
+    }
 
+    def 'should solve real data - part 2'() {
+        expect:
+        solve2(parse(Day16.getResource("/2021/day16.txt").text)) == -1
     }
 }
