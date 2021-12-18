@@ -24,7 +24,7 @@ class Day16 {
     }
 
     static long solve2(String input) {
-
+        -1
     }
 
     static Packet parsePacket(String input) {
@@ -59,9 +59,7 @@ class Day16 {
             def version = parseInt(input[0..2], 2)
             def typeId = parseInt(input[3..5], 2)
 
-            def result = new LiteralPacket(version: version, typeId: typeId)
-
-            result.parseValue(input.substring(6))
+            new LiteralPacket(version: version, typeId: typeId).parseValue(input.substring(6))
         }
 
         private LiteralPacket parseValue(String literalValue) {
@@ -105,9 +103,7 @@ class Day16 {
             def version = parseInt(input[0..2], 2)
             def typeId = parseInt(input[3..5], 2)
 
-            def result = producePacket(typeId, version)
-
-            result.parseValue(input.substring(6))
+            producePacket(typeId, version).parseValue(input.substring(6))
         }
 
         private static OperatorPacket producePacket(int typeId, int version) {
@@ -122,7 +118,7 @@ class Day16 {
             }
         }
 
-        private OperatorPacket parseValue(String body) {
+        OperatorPacket parseValue(String body) {
             def subPackets = body[0] == LENGTH_TYPE_ID_BITS
                     ? parseSubPacketsByBits(body.substring(16), parseInt(body[1..15], 2))
                     : parseSubPacketsByNumber(body.substring(12), parseInt(body[1..11], 2))
