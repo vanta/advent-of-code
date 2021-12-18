@@ -35,19 +35,21 @@ class Day16 {
 
     static abstract class Packet {
         static final MIN_PACKET_LENGTH = 11
+
         int version
         int typeId
-        int length
+        long value
 
         int getVersionsSum() {
             version
         }
 
+        abstract int getLength()
     }
 
     static class LiteralPacket extends Packet {
         private static final LITERAL = 4
-        long value
+        int length
 
         static boolean isValid(String input) {
             parseInt(input[3..5], 2) == LITERAL
@@ -81,9 +83,9 @@ class Day16 {
         }
     }
 
-    static class OperatorPacket extends Packet {
+    static abstract class OperatorPacket extends Packet {
         static final LENGTH_TYPE_ID_BITS = '0'
-        int length
+        int length = 6
 
         List<? extends Packet> subPackets = []
 
@@ -92,17 +94,32 @@ class Day16 {
         }
 
         int getLength() {
-            length + +subPackets.inject(0, { a, b -> a + b.getLength() })
+            length + subPackets.inject(0, { a, b -> a + b.getLength() })
+        }
+
+        long getValue() {
+            value + subPackets.inject(0, { a, b -> a + b.getValue() })
         }
 
         static OperatorPacket parse(String input) {
             def version = parseInt(input[0..2], 2)
             def typeId = parseInt(input[3..5], 2)
 
-            def result = new OperatorPacket(version: version, typeId: typeId)
-            result.length = 6
+            def result = producePacket(typeId, version)
 
             result.parseValue(input.substring(6))
+        }
+
+        private static OperatorPacket producePacket(int typeId, int version) {
+            switch (typeId) {
+                case 0: return new SumPacket(version: version, typeId: typeId)
+                case 1: return new ProductPacket(version: version, typeId: typeId)
+                case 2: return new MinPacket(version: version, typeId: typeId)
+                case 3: return new MaxPacket(version: version, typeId: typeId)
+                case 5: return new GreaterThanPacket(version: version, typeId: typeId)
+                case 6: return new LessThanPacket(version: version, typeId: typeId)
+                case 7: return new EqualToPacket(version: version, typeId: typeId)
+            }
         }
 
         private OperatorPacket parseValue(String body) {
@@ -153,6 +170,55 @@ class Day16 {
             }
 
             packets
+        }
+    }
+
+    static class SumPacket extends OperatorPacket {
+        @Override
+        long getValue() {
+            subPackets.inject(0L, { a, b -> a + b.value })
+        }
+    }
+
+    static class ProductPacket extends OperatorPacket {
+        @Override
+        long getValue() {
+            subPackets.inject(1L, { a, b -> a * b.value })
+        }
+    }
+
+    static class MinPacket extends OperatorPacket {
+        @Override
+        long getValue() {
+            subPackets.collect { it.getValue() }.min()
+        }
+    }
+
+    static class MaxPacket extends OperatorPacket {
+        @Override
+        long getValue() {
+            subPackets.collect { it.getValue() }.max()
+        }
+    }
+
+    static class EqualToPacket extends OperatorPacket {
+        @Override
+        long getValue() {
+            subPackets[0] == subPackets[1] ? 1L : 0L
+        }
+    }
+
+    static class GreaterThanPacket extends OperatorPacket {
+        @Override
+        long getValue() {
+            subPackets[0] > subPackets[1] ? 1L : 0L
+        }
+    }
+
+    static class LessThanPacket extends OperatorPacket {
+        @Override
+        long getValue() {
+            subPackets[0] < subPackets[1] ? 1L : 0L
         }
     }
 }
