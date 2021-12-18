@@ -17,11 +17,11 @@ class Day16 {
                 .join()
         println "Input=$input -> binary=$binary"
 
-        def packets = parsePackets(binary)
+        def packet = parsePackets(binary)
 
-        println(packets)
+        println(packet)
 
-        packets.sum { it.getAllVersions() }
+        packet.getAllVersions()
     }
 
     static long solve2(String input) {
