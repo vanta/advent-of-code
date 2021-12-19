@@ -6,6 +6,9 @@ class Day18 {
     }
 
     static long solve(List<String> input) {
+        def numbers = input.collect { parseNumber(it) }
+
+
         -1
     }
 
@@ -21,6 +24,20 @@ class Day18 {
         -1
     }
 
+    static Number parseNumber(String input) {
 
+    }
+
+    static class Number {
+
+    }
+
+    static class PairNumber extends Number {
+        Number left, right
+    }
+
+    static class RegularNumber extends Number {
+        int value
+    }
 
 }
