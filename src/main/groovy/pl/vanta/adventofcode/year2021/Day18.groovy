@@ -40,10 +40,10 @@ class Day18 {
 
         def left = list[0] instanceof List
                 ? parsePairNumber(list[0] as List, level + 1, current)
-                : new RegularNumber(value: list[0] as int, level: level + 1)
+                : new RegularNumber(value: list[0] as int, level: level + 1, parent: parent)
         def right = list[1] instanceof List
                 ? parsePairNumber(list[1] as List, level + 1, current)
-                : new RegularNumber(value: list[1] as int, level: level + 1)
+                : new RegularNumber(value: list[1] as int, level: level + 1, parent: parent)
 
         current.left = left
         current.right = right
@@ -56,6 +56,10 @@ class Day18 {
         Number parent
 
         abstract int getMagnitude()
+
+        def increaseLevel() {
+            level++
+        }
     }
 
     static class PairNumber extends Number {
@@ -70,6 +74,32 @@ class Day18 {
         int getMagnitude() {
             3 * left.getMagnitude() + 2 * right.getMagnitude()
         }
+
+        @Override
+        def increaseLevel() {
+            super.increaseLevel()
+
+            left.increaseLevel()
+            right.increaseLevel()
+        }
+
+        PairNumber add(Number otherNumber) {
+            def result = new PairNumber(
+                    parent: null,
+                    level: 0
+            )
+
+            this.parent = result
+            otherNumber.parent = result
+
+            this.increaseLevel()
+            otherNumber.increaseLevel()
+
+            result.left = this
+            result.right = otherNumber
+
+            result
+        }
     }
 
     static class RegularNumber extends Number {
@@ -83,6 +113,16 @@ class Day18 {
         @Override
         int getMagnitude() {
             value
+        }
+
+        PairNumber split() {
+            def decimal = (value / 2) as int
+            new PairNumber(
+                    left: new RegularNumber(value: decimal),
+                    right: new RegularNumber(value: value - decimal),
+                    level: this.level,
+                    parent: this.parent
+            )
         }
     }
 
