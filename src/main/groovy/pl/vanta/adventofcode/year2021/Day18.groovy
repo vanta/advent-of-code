@@ -3,20 +3,21 @@ package pl.vanta.adventofcode.year2021
 import groovy.json.JsonSlurper
 
 class Day18 {
-    static List<Number> parse(String input) {
+    static List<PairNumber> parse(String input) {
         input.split('\n').collect { parseNumber(it) }
     }
 
-    static long solve(List<Number> input) {
+    static long solve(List<PairNumber> input) {
         def result = solveAdd(input)
-
         solveMagnitude(result)
     }
 
-    static String solveAdd(List<Number> input) {
+    static String solveAdd(List<PairNumber> input) {
+        def result = input.inject { a, b -> a.add(b) }
 
+        result.reduce()
 
-        ''
+        result.toString()
     }
 
     static long solveMagnitude(String input) {
@@ -29,7 +30,7 @@ class Day18 {
         -1
     }
 
-    static Number parseNumber(String input) {
+    static PairNumber parseNumber(String input) {
         def result = new JsonSlurper().parseText(input)
 
         parsePairNumber(result, 0, null)
@@ -99,6 +100,10 @@ class Day18 {
             result.right = otherNumber
 
             result
+        }
+
+        void reduce() {
+
         }
     }
 
