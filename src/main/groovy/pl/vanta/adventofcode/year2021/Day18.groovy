@@ -8,21 +8,21 @@ class Day18 {
     }
 
     static long solve(List<Number> input) {
-        -1
+        def result = solveAdd(input)
+
+        solveMagnitude(result)
     }
 
     static String solveAdd(List<Number> input) {
-        def numbers = input.collect { parseNumber(it) }
-
-        println("Numbers=$numbers")
-        -1
 
 
         ''
     }
 
     static long solveMagnitude(String input) {
-        -1
+        def number = parseNumber(input)
+
+        number.getMagnitude()
     }
 
     static long solve2(List<String> input) {
@@ -30,25 +30,32 @@ class Day18 {
     }
 
     static Number parseNumber(String input) {
-        def slurper = new JsonSlurper()
-        def result = slurper.parseText(input)
+        def result = new JsonSlurper().parseText(input)
 
-        parseNumber(result, 0)
+        parsePairNumber(result, 0, null)
     }
 
-    static PairNumber parseNumber(List list, int level) {
+    static PairNumber parsePairNumber(List list, int level, Number parent) {
+        def current = new PairNumber(level: level, parent: parent)
+
         def left = list[0] instanceof List
-                ? parseNumber(list[0] as List, level + 1)
+                ? parsePairNumber(list[0] as List, level + 1, current)
                 : new RegularNumber(value: list[0] as int, level: level + 1)
         def right = list[1] instanceof List
-                ? parseNumber(list[1] as List, level + 1)
+                ? parsePairNumber(list[1] as List, level + 1, current)
                 : new RegularNumber(value: list[1] as int, level: level + 1)
 
-        new PairNumber(left: left, right: right, level: level)
+        current.left = left
+        current.right = right
+
+        current
     }
 
-    static class Number {
+    static abstract class Number {
         int level
+        Number parent
+
+        abstract int getMagnitude()
     }
 
     static class PairNumber extends Number {
@@ -58,6 +65,11 @@ class Day18 {
         String toString() {
             "[${left.toString()},${right.toString()}]"
         }
+
+        @Override
+        int getMagnitude() {
+            3 * left.getMagnitude() + 2 * right.getMagnitude()
+        }
     }
 
     static class RegularNumber extends Number {
@@ -66,6 +78,11 @@ class Day18 {
         @Override
         String toString() {
             value as String
+        }
+
+        @Override
+        int getMagnitude() {
+            value
         }
     }
 
