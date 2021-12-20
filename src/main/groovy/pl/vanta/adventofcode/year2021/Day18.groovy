@@ -33,22 +33,22 @@ class Day18 {
         def slurper = new JsonSlurper()
         def result = slurper.parseText(input)
 
-        aaa(result)
+        parseNumber(result, 0)
     }
 
-    static PairNumber aaa(List list) {
+    static PairNumber parseNumber(List list, int level) {
         def left = list[0] instanceof List
-                ? aaa(list[0] as List)
-                : new RegularNumber(value: list[0] as int)
+                ? parseNumber(list[0] as List, level + 1)
+                : new RegularNumber(value: list[0] as int, level: level + 1)
         def right = list[1] instanceof List
-                ? aaa(list[1] as List)
-                : new RegularNumber(value: list[1] as int)
+                ? parseNumber(list[1] as List, level + 1)
+                : new RegularNumber(value: list[1] as int, level: level + 1)
 
-        new PairNumber(left: left, right: right)
+        new PairNumber(left: left, right: right, level: level)
     }
 
     static class Number {
-
+        int level
     }
 
     static class PairNumber extends Number {
