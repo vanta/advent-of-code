@@ -13,9 +13,7 @@ class Day18 {
     }
 
     static String solveAdd(List<PairNumber> input) {
-        def result = input.inject { a, b -> a.add(b) }
-
-        result.reduce()
+        def result = input.inject { a, b -> a.add(b).reduce() }
 
         result.toString()
     }
@@ -61,6 +59,10 @@ class Day18 {
         def increaseLevel() {
             level++
         }
+
+        def split() {
+            null
+        }
     }
 
     static class PairNumber extends Number {
@@ -102,8 +104,25 @@ class Day18 {
             result
         }
 
-        void reduce() {
+        PairNumber reduce() {
+            def canBeReduced = true
 
+            while (canBeReduced) {
+                canBeReduced = explode() || split()
+            }
+
+            this
+        }
+
+        boolean explode() {
+            left.explode
+
+            if (left.level >= 4) {
+                left = new RegularNumber(value: 0, level: 4)
+            }
+            if (right.level >= 4) {
+
+            }
         }
     }
 
