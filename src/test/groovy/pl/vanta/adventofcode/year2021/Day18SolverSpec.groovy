@@ -6,11 +6,9 @@ import spock.lang.Unroll
 
 import static pl.vanta.adventofcode.year2021.Day18.add
 import static pl.vanta.adventofcode.year2021.Day18.explode
-import static pl.vanta.adventofcode.year2021.Day18.magnitude
 import static pl.vanta.adventofcode.year2021.Day18.parse
 import static pl.vanta.adventofcode.year2021.Day18.solve
 import static pl.vanta.adventofcode.year2021.Day18.solve2
-import static pl.vanta.adventofcode.year2021.Day18.split
 import static pl.vanta.adventofcode.year2021.Day18.splitNumber
 
 class Day18SolverSpec extends Specification {
@@ -37,10 +35,10 @@ class Day18SolverSpec extends Specification {
         def step1 = add(input)
 
         then:
-        step1 == '[[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]'
+        step1.toString() == '[[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]'
 
         when:
-        def step2 = magnitude(step1)
+        def step2 = step1.getMagnitude()
 
         then:
         step2 == 4140
@@ -49,7 +47,7 @@ class Day18SolverSpec extends Specification {
     @Unroll
     def 'should solve example data - part 1, step 1 (#input)'() {
         expect:
-        add(parse(Day18.getResource("/2021/$input").text)) == expected
+        add(parse(Day18.getResource("/2021/$input").text)).toString() == expected
 
         where:
         input                 || expected
@@ -85,11 +83,14 @@ class Day18SolverSpec extends Specification {
 
     @Unroll
     def 'should split list'() {
+        setup:
+        def node = Day18.Node.fromList(list)
+
         expect:
-        split(list)
+        node.split()
 
         and:
-        list == expected
+        node.toList() == expected
 
         where:
         list                 || expected
@@ -105,11 +106,14 @@ class Day18SolverSpec extends Specification {
 
     @Unroll
     def 'should not split list'() {
+        setup:
+        def node = Day18.Node.fromList(list)
+
         expect:
-        !split(list)
+        !node.split()
 
         and:
-        list == expected
+        node.toList() == expected
 
         where:
         list   || expected
@@ -128,6 +132,7 @@ class Day18SolverSpec extends Specification {
         where:
         list                                           || expected
         [[[[[9, 8], 1], 2], 3], 4]                     || [[[[0, 9], 2], 3], 4]
+        [[[[[9, 8], [1, 1]], 2], 3], 4]                || [[[[0, [9, 1]], 2], 3], 4]
         [7, [6, [5, [4, [3, 2]]]]]                     || [7, [6, [5, [7, 0]]]]
         [[6, [5, [4, [3, 2]]]], 1]                     || [[6, [5, [7, 0]]], 3]
         [[3, [2, [1, [7, 3]]]], [6, [5, [4, [3, 2]]]]] || [[3, [2, [8, 0]]], [9, [5, [4, [3, 2]]]]]

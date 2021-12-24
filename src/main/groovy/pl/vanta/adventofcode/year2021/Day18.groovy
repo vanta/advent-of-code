@@ -12,88 +12,71 @@ class Day18 {
 
     static long solve(List input) {
         def result = add(input)
-        magnitude(result)
+
+        result.getMagnitude()
     }
 
     static long solve2(List input) {
         -1
     }
 
-    static String add(List input) {
-        def result = input.inject { a, b -> addAndReduce(a as List, b as List) }
-
-        result.toString().replace(' ', '')
+    static Node add(List<Node> input) {
+        input.inject { a, b -> addAndReduce(a, b) }
     }
 
-    static long magnitude(String input) {
-        def number = parseNumber(input)
+    static Node parseNumber(String input) {
+        def list = new JsonSlurper().parseText(input) as List
 
-        getMagnitude(number)
+        Node.fromList(list)
     }
 
-    static List parseNumber(String input) {
-        new JsonSlurper().parseText(input) as List
-    }
+    static Node addAndReduce(Node n1, Node n2) {
+        def result = Node.add(n1, n2)
 
-    static List addAndReduce(List l1, List l2) {
-        reduce([l1, l2])
-    }
+        result.reduce()
 
-    static List reduce(List l) {
-//        def canBeReduced = true
-//
-//        while (canBeReduced) {
-//            canBeReduced = explode(l) || split(l)
-//        }
-
-        l
+        result
     }
 
     static boolean explode(List list) {
-        def l = list[LEFT]
-        def r = list[RIGHT]
-
-        if (l instanceof Integer && r instanceof Integer) {
-            //can explode
-
-        }
-
-
-        return explode(l as List) || explode(r as List)
+        explode(list, 0, null) != null
     }
 
-    static boolean split(List list) {
+    static List explode(List list, int level, List parent) {
+        if (level == 4) {
+            return list
+        }
+
         def l = list[LEFT]
         def r = list[RIGHT]
 
-        if (l instanceof Integer && l >= 10) {
-            list[LEFT] = splitNumber(l)
-            return true
+        if (l instanceof List) {
+            def exploded = explode(l as List, level + 1, list)
+
+            if (exploded) {
+                list[LEFT] = 0
+
+                increase(list, exploded[LEFT], LEFT)
+                increase(list, exploded[RIGHT], RIGHT)
+            }
+
+            return exploded
         }
 
-        if (l instanceof List && split(l as List)) {
-            return true
+        if (r instanceof List) {
+            def exploded = explode(r as List, level + 1, parent)
+
+            if (exploded) {
+                list[RIGHT] = 0
+
+                increase(list, exploded[LEFT], LEFT)
+                increase(list, exploded[RIGHT], RIGHT)
+            }
+
+            return exploded
         }
 
-        if (r instanceof Integer && r >= 10) {
-            list[RIGHT] = splitNumber(r)
-            return true
-        }
-
-        if (r instanceof List && split(r as List)) {
-            return true
-        }
-
-        return false
-    }
-
-    static int getMagnitude(List list) {
-        def l = list[LEFT]
-        def r = list[RIGHT]
-        def left = l instanceof List ? getMagnitude(l) : l as int
-        def right = r instanceof List ? getMagnitude(r) : r as int
-
-        3 * left + 2 * right
+        return null
     }
 
     static List splitNumber(int number) {
@@ -101,5 +84,127 @@ class Day18 {
         def b = number - a
 
         [b as int, a as int]
+    }
+
+    static class Node {
+        protected Node parent
+        Node left
+        Node right
+
+        Node(left, right) {
+            this.left = left
+            this.right = right
+        }
+
+        void attachParentsToChildren() {
+            this.left.parent = this
+            this.right.parent = this
+        }
+
+        static Node fromList(List list) {
+            def left = list[LEFT] instanceof Integer ? new NodeValue(list[LEFT] as int) : fromList(list[LEFT])
+            def right = list[RIGHT] instanceof Integer ? new NodeValue(list[RIGHT] as int) : fromList(list[RIGHT])
+
+            def node = new Node(left, right)
+            node.attachParentsToChildren()
+            node
+        }
+
+        static add(Node n1, Node n2) {
+            new Node(n1, n2)
+        }
+
+        def reduce() {
+
+        }
+
+        int getMagnitude() {
+            3 * left.getMagnitude() + 2 * right.getMagnitude()
+        }
+
+        boolean split() {
+            splitLeft() || splitRight()
+        }
+
+        boolean splitLeft() {
+            if (left instanceof NodeValue) {
+                def values = left.getSplitValues()
+                if (!values.isEmpty()) {
+                    left = new Node(new NodeValue(values[LEFT]), new NodeValue(values[RIGHT]))
+                    left.parent = this
+
+                    return true
+                } else {
+                    return false
+                }
+            } else {
+                return left.split()
+            }
+        }
+
+        boolean splitRight() {
+            if (right instanceof NodeValue) {
+                def values = right.getSplitValues()
+                if (!values.isEmpty()) {
+                    right = new Node(new NodeValue(values[LEFT]), new NodeValue(values[RIGHT]))
+                    right.parent = this
+
+                    return true
+                } else {
+                    return false
+                }
+            } else {
+                return right.split()
+            }
+        }
+
+        def toList() {
+            [left.toList(), right.toList()]
+        }
+
+        @Override
+        String toString() {
+            "[${left.toString()},${right.toString()}]"
+        }
+    }
+
+    static class NodeValue extends Node {
+        int value
+
+        NodeValue(int value) {
+            super(null, null)
+
+            this.value = value
+        }
+
+        @Override
+        String toString() {
+            String.valueOf(value)
+        }
+
+        List getSplitValues() {
+            if (value >= 10) {
+                def a = (value / 2) as int
+                def b = value - a
+
+                return [a, b]
+            }
+            return []
+        }
+
+        @Override
+        boolean split() {
+            false
+        }
+
+        @Override
+        def toList() {
+            value
+        }
+
+        @Override
+        int getMagnitude() {
+            value
+        }
     }
 }
