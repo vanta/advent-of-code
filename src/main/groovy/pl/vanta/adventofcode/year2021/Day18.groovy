@@ -3,151 +3,103 @@ package pl.vanta.adventofcode.year2021
 import groovy.json.JsonSlurper
 
 class Day18 {
-    static List<PairNumber> parse(String input) {
+    private static int LEFT = 0
+    private static int RIGHT = 1
+
+    static List parse(String input) {
         input.split('\n').collect { parseNumber(it) }
     }
 
-    static long solve(List<PairNumber> input) {
-        def result = solveAdd(input)
-        solveMagnitude(result)
+    static long solve(List input) {
+        def result = add(input)
+        magnitude(result)
     }
 
-    static String solveAdd(List<PairNumber> input) {
-        def result = input.inject { a, b -> a.add(b).reduce() }
-
-        result.toString()
-    }
-
-    static long solveMagnitude(String input) {
-        def number = parseNumber(input)
-
-        number.getMagnitude()
-    }
-
-    static long solve2(List<String> input) {
+    static long solve2(List input) {
         -1
     }
 
-    static PairNumber parseNumber(String input) {
-        def result = new JsonSlurper().parseText(input)
+    static String add(List input) {
+        def result = input.inject { a, b -> addAndReduce(a as List, b as List) }
 
-        parsePairNumber(result, 0, null)
+        result.toString().replace(' ', '')
     }
 
-    static PairNumber parsePairNumber(List list, int level, Number parent) {
-        def current = new PairNumber(level: level, parent: parent)
+    static long magnitude(String input) {
+        def number = parseNumber(input)
 
-        def left = list[0] instanceof List
-                ? parsePairNumber(list[0] as List, level + 1, current)
-                : new RegularNumber(value: list[0] as int, level: level + 1, parent: parent)
-        def right = list[1] instanceof List
-                ? parsePairNumber(list[1] as List, level + 1, current)
-                : new RegularNumber(value: list[1] as int, level: level + 1, parent: parent)
-
-        current.left = left
-        current.right = right
-
-        current
+        getMagnitude(number)
     }
 
-    static abstract class Number {
-        int level
-        Number parent
-
-        abstract int getMagnitude()
-
-        def increaseLevel() {
-            level++
-        }
-
-        def split() {
-            null
-        }
+    static List parseNumber(String input) {
+        new JsonSlurper().parseText(input) as List
     }
 
-    static class PairNumber extends Number {
-        Number left, right
-
-        @Override
-        String toString() {
-            "[${left.toString()},${right.toString()}]"
-        }
-
-        @Override
-        int getMagnitude() {
-            3 * left.getMagnitude() + 2 * right.getMagnitude()
-        }
-
-        @Override
-        def increaseLevel() {
-            super.increaseLevel()
-
-            left.increaseLevel()
-            right.increaseLevel()
-        }
-
-        PairNumber add(Number otherNumber) {
-            def result = new PairNumber(
-                    parent: null,
-                    level: 0
-            )
-
-            this.parent = result
-            otherNumber.parent = result
-
-            this.increaseLevel()
-            otherNumber.increaseLevel()
-
-            result.left = this
-            result.right = otherNumber
-
-            result
-        }
-
-        PairNumber reduce() {
-            def canBeReduced = true
-
-            while (canBeReduced) {
-                canBeReduced = explode() || split()
-            }
-
-            this
-        }
-
-        boolean explode() {
-            left.explode
-
-            if (left.level >= 4) {
-                left = new RegularNumber(value: 0, level: 4)
-            }
-            if (right.level >= 4) {
-
-            }
-        }
+    static List addAndReduce(List l1, List l2) {
+        reduce([l1, l2])
     }
 
-    static class RegularNumber extends Number {
-        int value
+    static List reduce(List l) {
+//        def canBeReduced = true
+//
+//        while (canBeReduced) {
+//            canBeReduced = explode(l) || split(l)
+//        }
 
-        @Override
-        String toString() {
-            value as String
-        }
-
-        @Override
-        int getMagnitude() {
-            value
-        }
-
-        PairNumber split() {
-            def decimal = (value / 2) as int
-            new PairNumber(
-                    left: new RegularNumber(value: decimal),
-                    right: new RegularNumber(value: value - decimal),
-                    level: this.level,
-                    parent: this.parent
-            )
-        }
+        l
     }
 
+    static boolean explode(List list) {
+        def l = list[LEFT]
+        def r = list[RIGHT]
+
+        if (l instanceof Integer && r instanceof Integer) {
+            //can explode
+
+        }
+
+
+        return explode(l as List) || explode(r as List)
+    }
+
+    static boolean split(List list) {
+        def l = list[LEFT]
+        def r = list[RIGHT]
+
+        if (l instanceof Integer && l >= 10) {
+            list[LEFT] = splitNumber(l)
+            return true
+        }
+
+        if (l instanceof List && split(l as List)) {
+            return true
+        }
+
+        if (r instanceof Integer && r >= 10) {
+            list[RIGHT] = splitNumber(r)
+            return true
+        }
+
+        if (r instanceof List && split(r as List)) {
+            return true
+        }
+
+        return false
+    }
+
+    static int getMagnitude(List list) {
+        def l = list[LEFT]
+        def r = list[RIGHT]
+        def left = l instanceof List ? getMagnitude(l) : l as int
+        def right = r instanceof List ? getMagnitude(r) : r as int
+
+        3 * left + 2 * right
+    }
+
+    static List splitNumber(int number) {
+        def a = (number / 2) as int
+        def b = number - a
+
+        [b as int, a as int]
+    }
 }
