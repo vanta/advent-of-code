@@ -5,7 +5,6 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import static pl.vanta.adventofcode.year2021.Day18.add
-import static pl.vanta.adventofcode.year2021.Day18.explode
 import static pl.vanta.adventofcode.year2021.Day18.parse
 import static pl.vanta.adventofcode.year2021.Day18.solve
 import static pl.vanta.adventofcode.year2021.Day18.solve2
@@ -70,7 +69,7 @@ class Day18SolverSpec extends Specification {
     }
 
     @Unroll
-    def 'should split number '() {
+    def 'should split number'() {
         expect:
         splitNumber(number) == expected
 
@@ -122,12 +121,15 @@ class Day18SolverSpec extends Specification {
     }
 
     @Unroll
-    def 'should explode list'() {
+    def 'should explode list: #list'() {
+        setup:
+        def node = Day18.Node.fromList(list)
+
         expect:
-        explode(list)
+        node.explode()
 
         and:
-        list == expected
+        node.toList() == expected
 
         where:
         list                                           || expected
@@ -140,12 +142,15 @@ class Day18SolverSpec extends Specification {
     }
 
     @Unroll
-    def 'should not explode list'() {
+    def 'should not explode list: #list'() {
+        setup:
+        def node = Day18.Node.fromList(list)
+
         expect:
-        !explode(list)
+        !node.explode()
 
         and:
-        list == expected
+        node.toList() == expected
 
         where:
         list                  || expected

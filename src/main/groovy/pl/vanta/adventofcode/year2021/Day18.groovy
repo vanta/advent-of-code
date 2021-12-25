@@ -128,6 +128,51 @@ class Day18 {
             3 * left.getMagnitude() + 2 * right.getMagnitude()
         }
 
+        boolean explode(int level = 0) {
+            if (level < 3) {
+                return left.explode(level + 1) || right.explode(level + 1)
+            }
+
+            def exploded = null
+            if (left.canExplode()) {
+                exploded = left
+                left = new NodeValue(0, this)
+
+                parent.addToLeft(exploded.left.value)
+                addToRight(exploded.right.value)
+            }
+
+            if (!exploded && right.canExplode()) {
+                exploded = right
+                right = new NodeValue(0, this)
+
+                addToLeft(exploded.left.value)
+                parent.addToRight(exploded.right.value)
+            }
+
+            return exploded
+        }
+
+        boolean addToLeft(int value) {
+            if (!left.addToLeft(value) && parent != null) {
+                parent.addToLeft(value)
+            }
+
+            false
+        }
+
+        boolean addToRight(int value) {
+            if (!right.addToRight(value) && parent != null) {
+                parent.addToRight(value)
+            }
+
+            false
+        }
+
+        boolean canExplode() {
+            left instanceof NodeValue && right instanceof NodeValue
+        }
+
         boolean split() {
             splitLeft() || splitRight()
         }
@@ -177,6 +222,12 @@ class Day18 {
             this.value = value
         }
 
+        NodeValue(int value, Node parent) {
+            super(null, null, parent)
+
+            this.value = value
+        }
+
         @Override
         String toString() {
             String.valueOf(value)
@@ -197,9 +248,25 @@ class Day18 {
             false
         }
 
+        boolean explode(int number) {
+            false
+        }
+
         @Override
         def toList() {
             value
+        }
+
+        @Override
+        boolean addToLeft(int value) {
+            this.value += value
+            true
+        }
+
+        @Override
+        boolean addToRight(int value) {
+            this.value += value
+            true
         }
 
         @Override
