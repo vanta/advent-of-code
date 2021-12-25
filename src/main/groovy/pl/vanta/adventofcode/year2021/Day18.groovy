@@ -96,6 +96,12 @@ class Day18 {
             this.right = right
         }
 
+        Node(left, right, parent) {
+            this.left = left
+            this.right = right
+            this.parent = parent
+        }
+
         void attachParentsToChildren() {
             this.left.parent = this
             this.right.parent = this
@@ -130,32 +136,26 @@ class Day18 {
             if (left instanceof NodeValue) {
                 def values = left.getSplitValues()
                 if (!values.isEmpty()) {
-                    left = new Node(new NodeValue(values[LEFT]), new NodeValue(values[RIGHT]))
-                    left.parent = this
-
-                    return true
-                } else {
-                    return false
+                    left = new Node(new NodeValue(values[LEFT]), new NodeValue(values[RIGHT]), this)
                 }
-            } else {
-                return left.split()
+
+                return !values.isEmpty()
             }
+
+            return left.split()
         }
 
         boolean splitRight() {
             if (right instanceof NodeValue) {
                 def values = right.getSplitValues()
                 if (!values.isEmpty()) {
-                    right = new Node(new NodeValue(values[LEFT]), new NodeValue(values[RIGHT]))
-                    right.parent = this
-
-                    return true
-                } else {
-                    return false
+                    right = new Node(new NodeValue(values[LEFT]), new NodeValue(values[RIGHT]), this)
                 }
-            } else {
-                return right.split()
+
+                return !values.isEmpty()
             }
+
+            return right.split()
         }
 
         def toList() {
