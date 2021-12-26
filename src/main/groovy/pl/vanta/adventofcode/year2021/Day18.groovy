@@ -133,24 +133,36 @@ class Day18 {
                 return left.explode(level + 1) || right.explode(level + 1)
             }
 
-            def exploded = null
+            checkExplode()
+        }
+
+        boolean checkExplode() {
+            return checkExplodeLeft() || checkExplodeRight()
+        }
+
+        private boolean checkExplodeLeft() {
             if (left.canExplode()) {
-                exploded = left
+                exploded(left)
                 left = new NodeValue(0, this)
-
-                parent.addToLeft(exploded.left.value)
-                addToRight(exploded.right.value)
+                return true
+            } else {
+                return left.checkExplode()
             }
+        }
 
-            if (!exploded && right.canExplode()) {
-                exploded = right
+        private boolean checkExplodeRight() {
+            if (right.canExplode()) {
+                exploded(right)
                 right = new NodeValue(0, this)
 
-                addToLeft(exploded.left.value)
-                parent.addToRight(exploded.right.value)
+                return true
+            } else {
+                return right.checkExplode()
             }
+        }
 
-            return exploded
+        def exploded(NodeValue value) {
+
         }
 
         boolean addToLeft(int value) {
@@ -248,7 +260,11 @@ class Day18 {
             false
         }
 
-        boolean explode(int number) {
+        boolean checkExplode() {
+            false
+        }
+
+        boolean explode(int i) {
             false
         }
 

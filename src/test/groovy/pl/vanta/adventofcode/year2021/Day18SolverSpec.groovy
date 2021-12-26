@@ -12,18 +12,21 @@ import static pl.vanta.adventofcode.year2021.Day18.splitNumber
 
 class Day18SolverSpec extends Specification {
     @Unroll
-    def 'should solve example data - part 1, step 2 (#example)'() {
+    def 'should solve example data - magnitude (#list)'() {
+        setup:
+        def node = Day18.Node.fromList(list)
+
         expect:
-        magnitude(example) == expected
+        node.getMagnitude() == expected
 
         where:
-        example                                                 || expected
-        '[[1,2],[[3,4],5]]'                                     || 143
-        '[[[[0,7],4],[[7,8],[6,0]]],[8,1]]'                     || 1384
-        '[[[[1,1],[2,2]],[3,3]],[4,4]]'                         || 445
-        '[[[[3,0],[5,3]],[4,4]],[5,5]]'                         || 791
-        '[[[[5,0],[7,4]],[5,5]],[6,6]]'                         || 1137
-        '[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]' || 3488
+        list                                                               || expected
+        [[1, 2], [[3, 4], 5]]                                              || 143
+        [[[[0, 7], 4], [[7, 8], [6, 0]]], [8, 1]]                          || 1384
+        [[[[1, 1], [2, 2]], [3, 3]], [4, 4]]                               || 445
+        [[[[3, 0], [5, 3]], [4, 4]], [5, 5]]                               || 791
+        [[[[5, 0], [7, 4]], [5, 5]], [6, 6]]                               || 1137
+        [[[[8, 7], [7, 7]], [[8, 6], [7, 7]]], [[[0, 7], [6, 6]], [8, 7]]] || 3488
     }
 
     def 'should solve example data - part 1'() {
@@ -44,7 +47,7 @@ class Day18SolverSpec extends Specification {
     }
 
     @Unroll
-    def 'should solve example data - part 1, step 1 (#input)'() {
+    def 'should solve example data - add & reduce (#input)'() {
         expect:
         add(parse(Day18.getResource("/2021/$input").text)).toString() == expected
 
