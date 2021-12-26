@@ -142,7 +142,7 @@ class Day18 {
 
         private boolean checkExplodeLeft() {
             if (left.canExplode()) {
-                exploded(left.left, left.right, left)
+                exploded(left.left.value, left.right.value, left)
                 left = new NodeValue(0, this)
                 return true
             } else {
@@ -152,7 +152,7 @@ class Day18 {
 
         private boolean checkExplodeRight() {
             if (right.canExplode()) {
-                exploded(right.left, right.right, right)
+                exploded(right.left.value, right.right.value, right)
                 right = new NodeValue(0, this)
 
                 return true
@@ -164,11 +164,25 @@ class Day18 {
         def exploded(int leftValue, int rightValue, Node prev) {
             if (left instanceof NodeValue) {
                 left.add(leftValue)
-            }
-            if (right instanceof NodeValue) {
-                right.add(rightValue)
+            } else {
+                if (left != prev) {
+                    left.exploded(leftValue, rightValue, left)
+                } else {
+                    if (parent) {
+                        parent.exploded(leftValue, rightValue, this)
+                    }
+                }
             }
 
+            if (right instanceof NodeValue) {
+                right.add(rightValue)
+            } else {
+                if (right != prev) {
+                    right.exploded(leftValue, rightValue, right)
+                } else {
+                    parent.exploded(leftValue, rightValue, this)
+                }
+            }
         }
 
         boolean canExplode() {
