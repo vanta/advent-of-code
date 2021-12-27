@@ -29,23 +29,6 @@ class Day18SolverSpec extends Specification {
         [[[[8, 7], [7, 7]], [[8, 6], [7, 7]]], [[[0, 7], [6, 6]], [8, 7]]] || 3488
     }
 
-    def 'should solve example data - part 1'() {
-        given:
-        def input = parse(Day18.getResource("/2021/example-day18.txt").text)
-
-        when:
-        def step1 = add(input)
-
-        then:
-        step1.toString() == '[[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]'
-
-        when:
-        def step2 = step1.getMagnitude()
-
-        then:
-        step2 == 4140
-    }
-
     @Unroll
     def 'should solve example data - add & reduce (#input)'() {
         expect:
@@ -58,17 +41,6 @@ class Day18SolverSpec extends Specification {
         'example-day18-5.txt' || '[[[[5,0],[7,4]],[5,5]],[6,6]]'
         'example-day18-6.txt' || '[[[[0,7],4],[[7,8],[6,0]]],[8,1]]'
         'example-day18-2.txt' || '[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]'
-    }
-
-    def 'should solve real data - part 1'() {
-        expect:
-        solve(parse(Day18.getResource("/2021/day18.txt").text)) == 4417
-    }
-
-    @Ignore
-    def 'should solve real data - part 2'() {
-        expect:
-        solve2(parse(Day18.getResource("/2021/day18.txt").text)) == 0
     }
 
     @Unroll
@@ -180,4 +152,37 @@ class Day18SolverSpec extends Specification {
         n1.parent == result
         n2.parent == result
     }
+
+    def 'should solve example data - part 1'() {
+        given:
+        def input = parse(Day18.getResource("/2021/example-day18.txt").text)
+
+        when:
+        def step1 = add(input)
+
+        then:
+        step1.toString() == '[[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]'
+
+        when:
+        def step2 = step1.getMagnitude()
+
+        then:
+        step2 == 4140
+    }
+
+    def 'should solve real data - part 1'() {
+        expect:
+        solve(parse(Day18.getResource("/2021/day18.txt").text)) == 4417
+    }
+
+    def 'should solve example data - part 2'() {
+        expect:
+        solve2(parse(Day18.getResource("/2021/example-day18.txt").text)) == 3993
+    }
+
+    def 'should solve real data - part 2'() {
+        expect:
+        solve2(parse(Day18.getResource("/2021/day18.txt").text)) == 0
+    }
+
 }
