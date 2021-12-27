@@ -6,22 +6,33 @@ class Day18 {
     private static int LEFT = 0
     private static int RIGHT = 1
 
-    static List parse(String input) {
-        input.split('\n').collect { parseNumber(it) }
+    static List<String> parse(String input) {
+        input.split('\n')
     }
 
-    static long solve(List input) {
-        def result = add(input)
+    static long solve(List<String> input) {
+        Node result = addAndReduceAll(input)
 
         result.getMagnitude()
     }
 
-    static long solve2(List input) {
-        -1
+    static Node addAndReduceAll(List<String> input) {
+        input
+                .collect { parseNumber(it) }
+                .inject { a, b -> addAndReduce(a, b) }
     }
 
-    static Node add(List<Node> input) {
-        input.inject { a, b -> addAndReduce(a, b) }
+    static long solve2(List<String> input) {
+        def pairs = input
+                .subsequences().findAll { it.size() == 2 }
+                .collectMany { [[it[0], it[1]], [it[1], it[0]]] }
+
+        pairs
+                .collect { [parseNumber(it[0]), parseNumber(it[1])] }
+                .collect { addAndReduce(it[0], it[1]) }
+                .collectEntries() { Node it -> [it.toString(), it.getMagnitude()] }
+                .sort { it.value }
+                .last()
     }
 
     static Node parseNumber(String input) {
@@ -34,7 +45,6 @@ class Day18 {
         def result = Node.add(n1, n2)
 
         def reduced = result.reduce()
-        println("Reduced: $reduced")
 
         result
     }
