@@ -53,16 +53,16 @@ class Day18SolverSpec extends Specification {
 
         where:
         input                 || expected
-        'example-day18-2.txt' || '[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]'
-        'example-day18-3.txt' || '[[[[1,1],[2,2]],[3,3]],[4,4]]'
+//        'example-day18-3.txt' || '[[[[1,1],[2,2]],[3,3]],[4,4]]'
         'example-day18-4.txt' || '[[[[3,0],[5,3]],[4,4]],[5,5]]'
         'example-day18-5.txt' || '[[[[5,0],[7,4]],[5,5]],[6,6]]'
         'example-day18-6.txt' || '[[[[0,7],4],[[7,8],[6,0]]],[8,1]]'
+        'example-day18-2.txt' || '[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]'
     }
 
     def 'should solve real data - part 1'() {
         expect:
-        solve(parse(Day18.getResource("/2021/day18.txt").text)) == 0
+        solve(parse(Day18.getResource("/2021/day18.txt").text)) == 4417
     }
 
     @Ignore
@@ -162,5 +162,22 @@ class Day18SolverSpec extends Specification {
         [[[1, 1], 1], 1]      || [[[1, 1], 1], 1]
         [[[[1, 1], 1], 1], 1] || [[[[1, 1], 1], 1], 1]
         [[[[9, 8], 1], 2], 3] || [[[[9, 8], 1], 2], 3]
+    }
+
+    def 'should add nodes'(){
+        given:
+        def n1 = new Day18.NodeValue(1)
+        def n2 = new Day18.NodeValue(2)
+
+        when:
+        def result = Day18.Node.add(n1, n2)
+
+        then:
+        result.left == n1
+        result.right == n2
+
+        and:
+        n1.parent == result
+        n2.parent == result
     }
 }

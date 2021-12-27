@@ -33,7 +33,8 @@ class Day18 {
     static Node addAndReduce(Node n1, Node n2) {
         def result = Node.add(n1, n2)
 
-        result.reduce()
+        def reduced = result.reduce()
+        println("Reduced: $reduced")
 
         result
     }
@@ -117,11 +118,20 @@ class Day18 {
         }
 
         static add(Node n1, Node n2) {
-            new Node(n1, n2)
+            def node = new Node(n1, n2)
+
+            n1.parent = node
+            n2.parent = node
+
+            node
         }
 
-        def reduce() {
-
+        boolean reduce() {
+            def reduced = true
+            while (reduced) {
+                reduced = explode() || split()
+            }
+            reduced
         }
 
         int getMagnitude() {
@@ -142,7 +152,8 @@ class Day18 {
 
         private boolean checkExplodeLeft() {
             if (left.canExplode()) {
-                exploded(left.left.value, left.right.value, left)
+                addExplodedToLeft(left.left.value, left)
+                addExplodedToRight(left.right.value, left)
                 left = new NodeValue(0, this)
                 return true
             } else {
@@ -152,7 +163,8 @@ class Day18 {
 
         private boolean checkExplodeRight() {
             if (right.canExplode()) {
-                exploded(right.left.value, right.right.value, right)
+                addExplodedToLeft(right.left.value, right)
+                addExplodedToRight(right.right.value, right)
                 right = new NodeValue(0, this)
 
                 return true
@@ -161,28 +173,50 @@ class Day18 {
             }
         }
 
-        def exploded(int leftValue, int rightValue, Node prev) {
-            if (left instanceof NodeValue) {
-                left.add(leftValue)
+        def addExplodedToLeft(int value, Node exploded) {
+            def node = exploded.findLeftNeighbour()
+            if (node) {
+                node.addRight(value)
+            }
+        }
+
+        def addExplodedToRight(int value, Node exploded) {
+            def node = exploded.findRightNeighbour()
+            if (node) {
+                node.addLeft(value)
+            }
+        }
+
+        def addLeft(int value) {
+            if (this instanceof NodeValue) {
+                this.add(value)
             } else {
-                if (left != prev) {
-                    left.exploded(leftValue, rightValue, left)
-                } else {
-                    if (parent) {
-                        parent.exploded(leftValue, rightValue, this)
-                    }
-                }
+                left.addLeft(value)
+            }
+        }
+
+        def addRight(int value) {
+            if (this instanceof NodeValue) {
+                this.add(value)
+            } else {
+                right.addRight(value)
+            }
+        }
+
+        Node findLeftNeighbour() {
+            if (parent && parent.left != this) {
+                return parent.left
             }
 
-            if (right instanceof NodeValue) {
-                right.add(rightValue)
-            } else {
-                if (right != prev) {
-                    right.exploded(leftValue, rightValue, right)
-                } else {
-                    parent.exploded(leftValue, rightValue, this)
-                }
+            return parent?.findLeftNeighbour()
+        }
+
+        Node findRightNeighbour() {
+            if (parent && parent.right != this) {
+                return parent.right
             }
+
+            return parent?.findRightNeighbour()
         }
 
         boolean canExplode() {
