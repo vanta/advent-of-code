@@ -191,10 +191,9 @@ class Day18SolverSpec extends Specification {
         solve2(parse(Day18.getResource("/2021/example-day18.txt").text)) == 3993
     }
 
-    @Ignore
     def 'should solve real data - part 2'() {
         expect:
-        solve2(parse(Day18.getResource("/2021/day18.txt").text)) == 0
+        solve2(parse(Day18.getResource("/2021/day18.txt").text)) == 4796
     }
 
 }

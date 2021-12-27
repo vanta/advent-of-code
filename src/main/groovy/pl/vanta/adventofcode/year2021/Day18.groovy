@@ -23,9 +23,11 @@ class Day18 {
     }
 
     static long solve2(List<String> input) {
-        def pairs = input
-                .subsequences().findAll { it.size() == 2 }
-                .collectMany { [[it[0], it[1]], [it[1], it[0]]] }
+        println("input: ${input.size()}")
+
+        def pairs = generatePairs(input)
+
+        println("Pairs: ${pairs.size()}")
 
         def result = pairs
                 .collect { [parseNumber(it[0]), parseNumber(it[1])] }
@@ -96,6 +98,19 @@ class Day18 {
         def b = number - a
 
         [b as int, a as int]
+    }
+
+    static List<List<String>> generatePairs(List<String> strings) {
+        def result = []
+        for (String s1 : strings) {
+            for (String s2 : strings) {
+                if(s1 != s2) {
+                    result << [s1, s2]
+                    result << [s2, s1]
+                }
+            }
+        }
+        result
     }
 
     static class Node {
