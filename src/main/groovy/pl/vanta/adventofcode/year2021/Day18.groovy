@@ -27,12 +27,13 @@ class Day18 {
                 .subsequences().findAll { it.size() == 2 }
                 .collectMany { [[it[0], it[1]], [it[1], it[0]]] }
 
-        pairs
+        def result = pairs
                 .collect { [parseNumber(it[0]), parseNumber(it[1])] }
                 .collect { addAndReduce(it[0], it[1]) }
                 .collectEntries() { Node it -> [it.toString(), it.getMagnitude()] }
                 .sort { it.value }
-                .last()
+
+        result.values().last()
     }
 
     static Node parseNumber(String input) {
