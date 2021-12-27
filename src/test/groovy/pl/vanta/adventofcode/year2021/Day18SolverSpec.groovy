@@ -1,6 +1,6 @@
 package pl.vanta.adventofcode.year2021
 
-import spock.lang.Ignore
+
 import spock.lang.Specification
 import spock.lang.Unroll
 
