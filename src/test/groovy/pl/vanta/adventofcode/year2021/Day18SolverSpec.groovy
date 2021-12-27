@@ -1,6 +1,6 @@
 package pl.vanta.adventofcode.year2021
 
-import spock.lang.Ignore
+
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -136,7 +136,7 @@ class Day18SolverSpec extends Specification {
         [[[[9, 8], 1], 2], 3] || [[[[9, 8], 1], 2], 3]
     }
 
-    def 'should add nodes'(){
+    def 'should add nodes'() {
         given:
         def n1 = new Day18.NodeValue(1)
         def n2 = new Day18.NodeValue(2)
