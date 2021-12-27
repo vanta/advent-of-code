@@ -53,7 +53,7 @@ class Day18SolverSpec extends Specification {
 
         where:
         input                 || expected
-//        'example-day18-3.txt' || '[[[[1,1],[2,2]],[3,3]],[4,4]]'
+        'example-day18-3.txt' || '[[[[1,1],[2,2]],[3,3]],[4,4]]'
         'example-day18-4.txt' || '[[[[3,0],[5,3]],[4,4]],[5,5]]'
         'example-day18-5.txt' || '[[[[5,0],[7,4]],[5,5]],[6,6]]'
         'example-day18-6.txt' || '[[[[0,7],4],[[7,8],[6,0]]],[8,1]]'
