@@ -4,7 +4,7 @@ import spock.lang.Specification
 
 import static pl.vanta.adventofcode.year2021.Day1Solver.solve
 import static pl.vanta.adventofcode.year2021.Day1Solver.solve2
-import static pl.vanta.adventofcode.year2021.Parser.parse
+import static Day1Parser.parse
 
 class Day1SolverSpec extends Specification {
     def 'should solve example data - part 1'() {
