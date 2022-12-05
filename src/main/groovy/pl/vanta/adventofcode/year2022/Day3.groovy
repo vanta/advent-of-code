@@ -26,7 +26,16 @@ class Day3 implements ParserSolver<List<String>, Integer> {
 
     @Override
     Integer solve2(final List<String> parsedInput) {
+        def result = []
+        for (int i = 0; i < parsedInput.size(); i += 3) {
+            result << [parsedInput[i + 0], parsedInput[i + 1], parsedInput[i + 2]]
+        }
 
+        result
+                .collect { getCommon(it[0].chars as Set, it[1].chars as Set, it[2].chars as Set) }
+                .collect { it.first() }
+                .collect { getValue(it) }
+                .sum() as Integer
     }
 
     static int getValue(Character c) {
@@ -42,4 +51,9 @@ class Day3 implements ParserSolver<List<String>, Integer> {
     static Set<Character> getCommon(Set<Character> s1, Set<Character> s2) {
         s1.intersect(s2)
     }
+
+    static Set<Character> getCommon(Set<Character> s1, Set<Character> s2, Set<Character> s3) {
+        s1.intersect(s2).intersect(s3)
+    }
+
 }
