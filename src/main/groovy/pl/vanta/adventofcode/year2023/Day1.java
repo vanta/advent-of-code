@@ -41,7 +41,7 @@ public class Day1 implements ParserSolver<List<String>, Integer> {
     @Override
     public Integer solve(List<String> parsedInput) {
         return parsedInput.stream()
-                .map(s -> firstDigit(s) + reverse(firstDigit(reverse(s))))
+                .map(s -> firstDigit(s) + lastDigit(s))
                 .map(s -> parseInt(s, 10))
                 .reduce(0, Integer::sum);
     }
@@ -56,6 +56,10 @@ public class Day1 implements ParserSolver<List<String>, Integer> {
 
     private String firstDigit(String s) {
         return String.valueOf(s.replaceFirst("^[a-z]*", "").charAt(0));
+    }
+
+    private String lastDigit(String s) {
+        return reverse(firstDigit(reverse(s)));
     }
 
     private String firstDigit2(final String s) {
