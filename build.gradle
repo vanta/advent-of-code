@@ -12,10 +12,11 @@ dependencies {
     implementation 'org.apache.groovy:groovy:4.0.16'
     implementation 'org.apache.groovy:groovy-json:4.0.16'
 
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+
     testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
     testImplementation 'cglib:cglib-nodep:3.2.5'
     testImplementation 'com.athaydes:spock-reports:2.5.1-groovy-4.0'
-
     testImplementation 'org.slf4j:slf4j-simple:1.7.13'
 }
 

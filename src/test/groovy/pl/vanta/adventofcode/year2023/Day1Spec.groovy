@@ -21,11 +21,11 @@ class Day1Spec extends BaseSpec {
 
     @Override
     Integer getExampleAnswer2() {
-        45000
+        281
     }
 
     @Override
     Integer getRealAnswer2() {
-        200116
+        54649
     }
 }
