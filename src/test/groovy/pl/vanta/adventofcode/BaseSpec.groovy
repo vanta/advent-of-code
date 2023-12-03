@@ -13,21 +13,21 @@ abstract class BaseSpec extends Specification {
 
     def 'should solve example data'() {
         expect:
-        parserSolver.solve(parserSolver.parse(parserSolver.getClass().getResource("/2022/example-day${parserSolver.getDayNumber()}.txt").text)) == this.getExampleAnswer1()
+        parserSolver.solve(parserSolver.parse(parserSolver.getClass().getResource("/2023/example-day${parserSolver.getDayNumber()}.txt").text)) == this.getExampleAnswer1()
     }
 
     def 'should solve real data'() {
         expect:
-        parserSolver.solve(parserSolver.parse(parserSolver.getClass().getResource("/2022/day${parserSolver.getDayNumber()}.txt").text)) == this.getRealAnswer1()
+        parserSolver.solve(parserSolver.parse(parserSolver.getClass().getResource("/2023/day${parserSolver.getDayNumber()}.txt").text)) == this.getRealAnswer1()
     }
 
     def 'should solve example data - part2'() {
         expect:
-        parserSolver.solve2(parserSolver.parse(parserSolver.getClass().getResource("/2022/example-day${parserSolver.getDayNumber()}.txt").text)) == this.getExampleAnswer2()
+        parserSolver.solve2(parserSolver.parse(parserSolver.getClass().getResource("/2023/example-day${parserSolver.getDayNumber()}.txt").text)) == this.getExampleAnswer2()
     }
 
     def 'should solve real data - part2'() {
         expect:
-        parserSolver.solve2(parserSolver.parse(parserSolver.getClass().getResource("/2022/day${parserSolver.getDayNumber()}.txt").text)) == this.getRealAnswer2()
+        parserSolver.solve2(parserSolver.parse(parserSolver.getClass().getResource("/2023/day${parserSolver.getDayNumber()}.txt").text)) == this.getRealAnswer2()
     }
 }
