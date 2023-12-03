@@ -1,6 +1,5 @@
 package pl.vanta.adventofcode.year2023;
 
-import org.apache.commons.lang3.StringUtils;
 import pl.vanta.adventofcode.ParserSolver;
 
 import java.util.List;
@@ -10,6 +9,9 @@ import java.util.stream.Stream;
 
 import static java.lang.Character.isDigit;
 import static java.lang.Integer.parseInt;
+import static java.util.Collections.reverseOrder;
+import static java.util.Optional.of;
+import static java.util.stream.IntStream.range;
 import static org.apache.commons.lang3.StringUtils.reverse;
 
 public class Day1 implements ParserSolver<List<String>, Integer> {
@@ -57,48 +59,30 @@ public class Day1 implements ParserSolver<List<String>, Integer> {
     }
 
     private String firstDigit2(final String s) {
-        for (int i = 0; i < s.length(); i++) {
-            if (isDigit(s.charAt(i))) {
-                return String.valueOf(s.charAt(i));
-            } else {
-                var o = startsWithDigit(s.substring(i));
-                if (o.isPresent()) {
-                    return o.get();
-                }
-            }
-        }
-        throw new IllegalStateException();
+        return findDigit(range(0, s.length()).boxed(), s);
     }
 
-    private String lastDigit2(final String p) {
-        var s = reverse(p);
-
-        for (int i = 0; i < s.length(); i++) {
-            if (isDigit(s.charAt(i))) {
-                return String.valueOf(s.charAt(i));
-            } else {
-                var o = startsWithDigitReversed(s.substring(i));
-                if (o.isPresent()) {
-                    return o.get();
-                }
-            }
-        }
-        throw new IllegalStateException();
+    private String lastDigit2(final String s) {
+        return findDigit(range(0, s.length()).boxed().sorted(reverseOrder()), s);
     }
 
-    private static Optional<String> startsWithDigit(String substring) {
-        return DIGITS.keySet().stream()
-                .filter(substring::startsWith)
+    private static String findDigit(Stream<Integer> range, String s) {
+        return range
+                .map(s::substring)
+                .map(Day1::getDigit)
+                .flatMap(Optional::stream)
                 .findFirst()
-                .map(DIGITS::get);
+                .orElseThrow(IllegalStateException::new);
     }
 
-    private static Optional<String> startsWithDigitReversed(String substring) {
-        return DIGITS.keySet().stream()
-                .map(StringUtils::reverse)
-                .filter(substring::startsWith)
-                .map(StringUtils::reverse)
-                .findFirst()
-                .map(DIGITS::get);
+    private static Optional<String> getDigit(String substring) {
+        if (isDigit(substring.charAt(0))) {
+            return of(String.valueOf(substring.charAt(0)));
+        } else {
+            return DIGITS.keySet().stream()
+                    .filter(substring::startsWith)
+                    .findFirst()
+                    .map(DIGITS::get);
+        }
     }
 }
