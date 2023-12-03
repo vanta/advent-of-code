@@ -2,6 +2,7 @@ package pl.vanta.adventofcode.year2021
 
 import groovy.json.JsonSlurper
 
+
 class Day18 {
     private static int LEFT = 0
     private static int RIGHT = 1
@@ -104,7 +105,7 @@ class Day18 {
         def result = []
         for (String s1 : strings) {
             for (String s2 : strings) {
-                if(s1 != s2) {
+                if (s1 != s2) {
                     result << [s1, s2]
                     result << [s2, s1]
                 }

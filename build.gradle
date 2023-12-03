@@ -5,15 +5,16 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 15
-targetCompatibility = 15
+sourceCompatibility = 17
+targetCompatibility = 17
 
 dependencies {
-    implementation 'org.codehaus.groovy:groovy-all:2.5.15'
-        
-    testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4'
+    implementation 'org.apache.groovy:groovy:4.0.16'
+    implementation 'org.apache.groovy:groovy-json:4.0.16'
+
+    testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
     testImplementation 'cglib:cglib-nodep:3.2.5'
-    testImplementation 'com.athaydes:spock-reports:1.4.0'
+    testImplementation 'com.athaydes:spock-reports:2.5.1-groovy-4.0'
 
     testImplementation 'org.slf4j:slf4j-simple:1.7.13'
 }
