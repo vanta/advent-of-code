@@ -55,11 +55,15 @@ public class Day1 implements ParserSolver<List<String>, Integer> {
     }
 
     private String firstDigit(String s) {
-        return String.valueOf(s.replaceFirst("^[a-z]*", "").charAt(0));
+        return s.chars()
+                .filter(Character::isDigit)
+                .mapToObj(Character::toString)
+                .findFirst()
+                .orElseThrow();
     }
 
     private String lastDigit(String s) {
-        return reverse(firstDigit(reverse(s)));
+        return firstDigit(reverse(s));
     }
 
     private String firstDigit2(final String s) {
