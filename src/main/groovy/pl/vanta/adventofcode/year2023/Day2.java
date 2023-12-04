@@ -32,21 +32,16 @@ public class Day2 implements ParserSolver<List<Day2.Game>, Integer> {
 
     private Game toGame(String line) {
         var s1 = line.split(":");
-        var s2 = s1[1].trim().split(";");
 
         var bags = new ArrayList<Map<String, Integer>>();
-        for (String string : s2) {
+        for (String string : s1[1].trim().split(";")) {
             var bag = string.trim();
 
             var cubes = new HashMap<String, Integer>();
             for (String s : bag.split(",")) {
-                String cube = s.trim();
+                var c = s.trim().split(" ");
 
-                var c = cube.split(" ");
-                var value = parseInt(c[0].trim());
-                var color = c[1].trim();
-
-                cubes.put(color, value);
+                cubes.put(c[1].trim(), parseInt(c[0].trim()));
             }
 
             bags.add(cubes);
@@ -75,7 +70,20 @@ public class Day2 implements ParserSolver<List<Day2.Game>, Integer> {
 
     @Override
     public Integer solve2(List<Game> parsedInput) {
-        return 0;
+        return parsedInput.stream()
+                .map(this::getPower)
+                .reduce(0, Integer::sum);
+    }
+
+    private int getPower(Game game) {
+        return getMax("red", game.bags) * getMax("green", game.bags) * getMax("blue", game.bags);
+    }
+
+    private int getMax(String color, List<Map<String, Integer>> bags) {
+        return bags.stream()
+                .map(bag -> bag.getOrDefault(color, 0))
+                .max(Integer::compareTo)
+                .orElse(0);
     }
 
     public record Game(int id, List<Map<String, Integer>> bags) {
