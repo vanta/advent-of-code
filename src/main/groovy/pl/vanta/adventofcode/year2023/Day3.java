@@ -28,34 +28,7 @@ public class Day3 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve(char[][] parsedInput) {
-        List<Number> numbers = new ArrayList<>();
-
-        var sizeX = parsedInput.length;
-        for (int i = 0; i < sizeX; i++) {
-            var sizeY = parsedInput[i].length;
-
-            int x = -1;
-            int y = -1;
-            StringBuilder buff = new StringBuilder();
-
-            for (int j = 0; j < sizeY; j++) {
-                char c = parsedInput[i][j];
-
-                if (isDigit(c)) {
-                    if (buff.isEmpty()) {
-                        x = i;
-                        y = j;
-                    }
-                    buff.append(c);
-                } else {
-                    if (!buff.isEmpty()) {
-                        numbers.add(new Number(x, y, buff.toString()));
-                        buff = new StringBuilder();
-                    }
-                }
-            }
-
-        }
+        var numbers = getNumbers(parsedInput);
 
         var list = numbers.stream()
                 .filter(n -> !isSymbolAround(parsedInput, n.x(), n.y(), n.value().length()))
@@ -77,10 +50,46 @@ public class Day3 implements ParserSolver<char[][], Integer> {
 
 
         return numbers.stream()
+                .peek(n -> System.out.println(n.value()))
                 .filter(n -> isSymbolAround(parsedInput, n.x(), n.y(), n.value().length()))
                 .map(Number::value)
                 .map(Integer::parseInt)
                 .reduce(0, (a, b) -> Integer.sum(a, b));
+    }
+
+    private static List<Number> getNumbers(char[][] parsedInput) {
+        List<Number> numbers = new ArrayList<>();
+
+        var sizeX = parsedInput.length;
+        for (int i = 0; i < sizeX; i++) {
+            var sizeY = parsedInput[i].length;
+
+            int x = -1;
+            int y = -1;
+            StringBuilder buff = new StringBuilder();
+
+            for (int j = 0; j < sizeY; j++) {
+                char c = parsedInput[i][j];
+
+                if (isDigit(c)) {
+                    if (buff.isEmpty()) {
+                        x = i;
+                        y = j;
+                    }
+                    buff.append(c);
+                    if(j == sizeY - 1) {
+                        numbers.add(new Number(x, y, buff.toString()));
+                    }
+                } else {
+                    if (!buff.isEmpty()) {
+                        numbers.add(new Number(x, y, buff.toString()));
+                        buff = new StringBuilder();
+                    }
+                }
+            }
+
+        }
+        return numbers;
     }
 
     private static boolean isMatch(List<Number> list, int i, int j) {
