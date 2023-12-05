@@ -10,9 +10,9 @@ import static java.lang.Character.isDigit;
 
 public class Day3 implements ParserSolver<char[][], Integer> {
 
-    private static final String ANSI_RESET = "\u001B[0m";
-    private static final String WHITE_BACKGROUND_BRIGHT = "\033[0;107m";
-    private static final String ANSI_RED = "\u001B[31m";
+//    private static final String ANSI_RESET = "\u001B[0m";
+//    private static final String WHITE_BACKGROUND_BRIGHT = "\033[0;107m";
+//    private static final String ANSI_RED = "\u001B[31m";
 
     @Override
     public int getDayNumber() {
@@ -30,24 +30,23 @@ public class Day3 implements ParserSolver<char[][], Integer> {
     public Integer solve(char[][] parsedInput) {
         var numbers = getNumbers(parsedInput);
 
-        var list = numbers.stream()
-                .filter(n -> !isSymbolAround(parsedInput, n.x(), n.y(), n.value().length()))
-                .toList();
-
-        for (int i = 0; i < parsedInput.length; i++) {
-            for (int j = 0; j < parsedInput[i].length; j++) {
-                if (isMatch(list, i, j)) {
-                    System.out.print(WHITE_BACKGROUND_BRIGHT);
-                    System.out.print(ANSI_RED);
-                    System.out.print(parsedInput[i][j]);
-                    System.out.print(ANSI_RESET);
-                } else {
-                    System.out.print(parsedInput[i][j]);
-                }
-            }
-            System.out.println();
-        }
-
+//        var list = numbers.stream()
+//                .filter(n -> !isSymbolAround(parsedInput, n.x(), n.y(), n.value().length()))
+//                .toList();
+//
+//        for (int i = 0; i < parsedInput.length; i++) {
+//            for (int j = 0; j < parsedInput[i].length; j++) {
+//                if (isMatch(list, i, j)) {
+//                    System.out.print(WHITE_BACKGROUND_BRIGHT);
+//                    System.out.print(ANSI_RED);
+//                    System.out.print(parsedInput[i][j]);
+//                    System.out.print(ANSI_RESET);
+//                } else {
+//                    System.out.print(parsedInput[i][j]);
+//                }
+//            }
+//            System.out.println();
+//        }
 
         return numbers.stream()
                 .peek(n -> System.out.println(n.value()))
