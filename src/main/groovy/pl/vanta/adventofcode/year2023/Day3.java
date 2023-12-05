@@ -4,9 +4,14 @@ import pl.vanta.adventofcode.ParserSolver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.lang.Character.isDigit;
+import static java.lang.Integer.parseInt;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static java.util.stream.Collectors.groupingBy;
 
 public class Day3 implements ParserSolver<char[][], Integer> {
 
@@ -49,8 +54,10 @@ public class Day3 implements ParserSolver<char[][], Integer> {
 //        }
 
         return numbers.stream()
-                .peek(n -> System.out.println(n.value()))
-                .filter(n -> isSymbolAround(parsedInput, n.x(), n.y(), n.value().length()))
+//                .peek(n -> System.out.println(n.value()))
+                .map(n -> new NumberWithSymbol(n, getSymbolAround(parsedInput, n.x(), n.y(), n.value().length())))
+                .filter(n -> n.symbol().isPresent())
+                .map(NumberWithSymbol::number)
                 .map(Number::value)
                 .map(Integer::parseInt)
                 .reduce(0, Integer::sum);
@@ -76,7 +83,7 @@ public class Day3 implements ParserSolver<char[][], Integer> {
                         y = j;
                     }
                     buff.append(c);
-                    if(j == sizeY - 1) {
+                    if (j == sizeY - 1) {
                         numbers.add(new Number(x, y, buff.toString()));
                     }
                 } else {
@@ -91,41 +98,63 @@ public class Day3 implements ParserSolver<char[][], Integer> {
         return numbers;
     }
 
-    private static boolean isMatch(List<Number> list, int i, int j) {
-        return list.stream()
-                .anyMatch(n -> (n.x() == i || n.x() - 1 == i || n.x() + 1 == i) && n.y()-1 <= j && n.y() + n.value().length() >= j);
-    }
+//    private static boolean isMatch(List<Number> list, int i, int j) {
+//        return list.stream()
+//                .anyMatch(n -> (n.x() == i || n.x() - 1 == i || n.x() + 1 == i) && n.y()-1 <= j && n.y() + n.value().length() >= j);
+//    }
 
-    private boolean isSymbolAround(char[][] input, int x, int y, int length) {
-        StringBuilder buff = new StringBuilder();
+    private Optional<Symbol> getSymbolAround(char[][] input, int x, int y, int length) {
+        List<Symbol> symbols = new ArrayList<>();
 
         for (int j = -1; j <= length; j++) {
-            buff.append(safeGet(input, x - 1, y + j));
+            safeGet(input, x - 1, y + j).ifPresent(symbols::add);
         }
         for (int j = -1; j <= length; j++) {
-            buff.append(safeGet(input, x + 1, y + j));
+            safeGet(input, x + 1, y + j).ifPresent(symbols::add);
         }
 
-        buff.append(safeGet(input, x, y - 1));
-        buff.append(safeGet(input, x, y + length));
+        safeGet(input, x, y - 1).ifPresent(symbols::add);
+        safeGet(input, x, y + length).ifPresent(symbols::add);
 
-        return !buff.toString().replaceAll("\\.", "").replaceAll("\\d", "").isEmpty();
+        return symbols.stream()
+                .filter(s -> !".".equals(s.value()))
+                .filter(s -> !"0123456789".contains(s.value()))
+                .findFirst();
+//
+//        return buff.toString().replaceAll("\\.", "").replaceAll("\\d", "");
     }
 
-    private String safeGet(char[][] parsedInput, int x, int y) {
+    private Optional<Symbol> safeGet(char[][] parsedInput, int x, int y) {
         if (x < 0 || y < 0 || x >= parsedInput.length || y >= parsedInput[0].length) {
-            return "";
+            return empty();
         }
-
-        return String.valueOf(parsedInput[x][y]);
+        return of(new Symbol(x, y, String.valueOf(parsedInput[x][y])));
     }
 
     @Override
     public Integer solve2(char[][] parsedInput) {
-        return 0;
+        var numbers = getNumbers(parsedInput);
 
+        return numbers.stream()
+                .map(n -> new NumberWithSymbol(n, getSymbolAround(parsedInput, n.x(), n.y(), n.value().length())))
+                .filter(n -> n.symbol().isPresent())
+                .filter(n -> n.symbol().get().value().equals("*"))
+                .collect(groupingBy(n -> n.symbol().get()))
+                .values().stream()
+                .filter(numberWithSymbols -> numberWithSymbols.size() == 2)
+                .map(numberWithSymbols -> numberWithSymbols.get(0).number().getValueInt() * numberWithSymbols.get(1).number().getValueInt())
+                .reduce(0, Integer::sum);
     }
 
     private record Number(int x, int y, String value) {
+        int getValueInt() {
+            return parseInt(value);
+        }
+    }
+
+    private record Symbol(int x, int y, String value) {
+    }
+
+    private record NumberWithSymbol(Number number, Optional<Symbol> symbol) {
     }
 }
