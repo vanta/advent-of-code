@@ -10,9 +10,9 @@ import static java.lang.Character.isDigit;
 
 public class Day3 implements ParserSolver<char[][], Integer> {
 
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String WHITE_BACKGROUND_BRIGHT = "\033[0;107m";
-    public static final String ANSI_RED = "\u001B[31m";
+    private static final String ANSI_RESET = "\u001B[0m";
+    private static final String WHITE_BACKGROUND_BRIGHT = "\033[0;107m";
+    private static final String ANSI_RED = "\u001B[31m";
 
     @Override
     public int getDayNumber() {
@@ -54,7 +54,7 @@ public class Day3 implements ParserSolver<char[][], Integer> {
                 .filter(n -> isSymbolAround(parsedInput, n.x(), n.y(), n.value().length()))
                 .map(Number::value)
                 .map(Integer::parseInt)
-                .reduce(0, (a, b) -> Integer.sum(a, b));
+                .reduce(0, Integer::sum);
     }
 
     private static List<Number> getNumbers(char[][] parsedInput) {
