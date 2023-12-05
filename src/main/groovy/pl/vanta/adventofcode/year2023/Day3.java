@@ -10,6 +10,10 @@ import static java.lang.Character.isDigit;
 
 public class Day3 implements ParserSolver<char[][], Integer> {
 
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String WHITE_BACKGROUND_BRIGHT = "\033[0;107m";
+    public static final String ANSI_RED = "\u001B[31m";
+
     @Override
     public int getDayNumber() {
         return 3;
@@ -53,11 +57,35 @@ public class Day3 implements ParserSolver<char[][], Integer> {
 
         }
 
+        var list = numbers.stream()
+                .filter(n -> !isSymbolAround(parsedInput, n.x(), n.y(), n.value().length()))
+                .toList();
+
+        for (int i = 0; i < parsedInput.length; i++) {
+            for (int j = 0; j < parsedInput[i].length; j++) {
+                if (isMatch(list, i, j)) {
+                    System.out.print(WHITE_BACKGROUND_BRIGHT);
+                    System.out.print(ANSI_RED);
+                    System.out.print(parsedInput[i][j]);
+                    System.out.print(ANSI_RESET);
+                } else {
+                    System.out.print(parsedInput[i][j]);
+                }
+            }
+            System.out.println();
+        }
+
+
         return numbers.stream()
                 .filter(n -> isSymbolAround(parsedInput, n.x(), n.y(), n.value().length()))
                 .map(Number::value)
                 .map(Integer::parseInt)
-                .reduce(0, Integer::sum);
+                .reduce(0, (a, b) -> Integer.sum(a, b));
+    }
+
+    private static boolean isMatch(List<Number> list, int i, int j) {
+        return list.stream()
+                .anyMatch(n -> (n.x() == i || n.x() - 1 == i || n.x() + 1 == i) && n.y()-1 <= j && n.y() + n.value().length() >= j);
     }
 
     private boolean isSymbolAround(char[][] input, int x, int y, int length) {
@@ -90,6 +118,6 @@ public class Day3 implements ParserSolver<char[][], Integer> {
 
     }
 
-    record Number(int x, int y, String value) {
+    private record Number(int x, int y, String value) {
     }
 }
