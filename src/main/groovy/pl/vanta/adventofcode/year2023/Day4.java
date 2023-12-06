@@ -2,6 +2,7 @@ package pl.vanta.adventofcode.year2023;
 
 import pl.vanta.adventofcode.ParserSolver;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +37,7 @@ public class Day4 implements ParserSolver<List<Day4.Card>, Integer> {
     public Integer solve(List<Day4.Card> parsedInput) {
         return parsedInput.stream()
                 .map(c -> count(c.winning, c.numbers))
-                .map(i -> Math.pow(2, i-1))
+                .map(i -> Math.pow(2, i - 1))
                 .mapToInt(Double::intValue)
                 .reduce(0, Integer::sum);
     }
@@ -51,7 +52,22 @@ public class Day4 implements ParserSolver<List<Day4.Card>, Integer> {
 
     @Override
     public Integer solve2(List<Day4.Card> parsedInput) {
-        return -1;
+        var winning = parsedInput.stream()
+                .map(c -> count(c.winning, c.numbers))
+                .toArray(Integer[]::new);
+
+        var instances = new int[winning.length];
+        Arrays.fill(instances, 1);
+
+        for (int i = 0; i < instances.length; i++) {
+            for (int j = 0; j < instances[i]; j++) {
+                for (int k = 0; k < winning[i]; k++) {
+                    instances[i + k + 1]++;
+                }
+            }
+        }
+
+        return Arrays.stream(instances).sum();
     }
 
     record Card(int id, Set<String> winning, Set<String> numbers) {
