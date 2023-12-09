@@ -2,16 +2,18 @@ package pl.vanta.adventofcode.year2023;
 
 import pl.vanta.adventofcode.ParserSolver;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
-public class Day8 implements ParserSolver<Day8.Navigation, Integer> {
+public class Day8 implements ParserSolver<Day8.Navigation, Long> {
     private static final String START = "AAA";
     private static final String STOP = "ZZZ";
     private static final String START_GHOST = "A";
@@ -45,23 +47,14 @@ public class Day8 implements ParserSolver<Day8.Navigation, Integer> {
     }
 
     @Override
-    public Integer solve(Navigation parsedInput) {
+    public Long solve(Navigation parsedInput) {
         var instructionsSupplier = getSupplier(parsedInput);
 
-        var current = START;
-        var steps = 0;
-
-        while (!current.equals(STOP)) {
-            steps++;
-
-            current = getNewCurrentNode(instructionsSupplier.get(), parsedInput.nodes().get(current));
-        }
-
-        return steps;
+        return (long)getSteps(START, instructionsSupplier, parsedInput.nodes(), s -> s.equals(STOP));
     }
 
     @Override
-    public Integer solve2(Navigation parsedInput) {
+    public Long solve2(Navigation parsedInput) {
         var instructionsSupplier = getSupplier(parsedInput);
 
         var startNodes = parsedInput.nodes().values().stream()
@@ -74,16 +67,30 @@ public class Day8 implements ParserSolver<Day8.Navigation, Integer> {
                 .filter(n -> n.endsWith(STOP_GHOST))
                 .collect(toSet());
 
-        var currentNodes = List.copyOf(startNodes);
+        return startNodes.stream()
+                .map(n -> getSteps(n, instructionsSupplier, parsedInput.nodes(), stopNodes::contains))
+                .map(Long::valueOf)
+                .reduce(1L, (x, y) -> x * (y / gcd(x, y)));
+    }
+
+    private static long gcd(long x, long y) {
+        return (y == 0) ? x : gcd(y, x % y);
+    }
+
+    private static long lcm(Collection<Long> numbers) {
+        return numbers.stream().reduce(1L, (x, y) -> x * (y / gcd(x, y)));
+    }
+
+    private static int getSteps(String current,
+                                 Supplier<Character> instructionsSupplier,
+                                 Map<String, Node> nodes,
+                                 Function<String, Boolean> stopCondition) {
         var steps = 0;
 
-        while (!stopNodes.containsAll(currentNodes)) {
+        while (!stopCondition.apply(current)) {
             steps++;
-            var dir = instructionsSupplier.get();
 
-            currentNodes = currentNodes.stream()
-                    .map(currentNode -> getNewCurrentNode(dir, parsedInput.nodes().get(currentNode)))
-                    .toList();
+            current = getNewCurrentNode(instructionsSupplier.get(), nodes.get(current));
         }
 
         return steps;
