@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import static java.lang.Integer.parseInt;
+import static java.lang.Long.parseLong;
 
-public class Day5 implements ParserSolver<Day5.Almanac, Integer> {
+public class Day5 implements ParserSolver<Day5.Almanac, Long> {
 
     @Override
     public int getDayNumber() {
@@ -23,7 +23,7 @@ public class Day5 implements ParserSolver<Day5.Almanac, Integer> {
         var scanner = new Scanner(lines);
 
         var seeds = Arrays.stream(scanner.nextLine().substring(7).split(" "))
-                .map(Integer::parseInt)
+                .map(Long::parseLong)
                 .toList();
 
         var list = new HashMap<String, Mappings>();
@@ -45,14 +45,14 @@ public class Day5 implements ParserSolver<Day5.Almanac, Integer> {
         while (scanner.hasNextLine() && !(line = scanner.nextLine()).isEmpty()) {
             var split = line.split(" ");
 
-            list.add(new Mapping(parseInt(split[0]), parseInt(split[1]), parseInt(split[2])));
+            list.add(new Mapping(parseLong(split[0]), parseLong(split[1]), parseLong(split[2])));
         }
 
         return new Mappings(name, list);
     }
 
     @Override
-    public Integer solve(Almanac parsedInput) {
+    public Long solve(Almanac parsedInput) {
         return parsedInput.seeds.stream()
                 .map(seed -> parsedInput.maps().get("seed-to-soil").getMapping(seed))
                 .map(soil -> parsedInput.maps().get("soil-to-fertilizer").getMapping(soil))
@@ -61,20 +61,20 @@ public class Day5 implements ParserSolver<Day5.Almanac, Integer> {
                 .map(light -> parsedInput.maps().get("light-to-temperature").getMapping(light))
                 .map(temperature -> parsedInput.maps().get("temperature-to-humidity").getMapping(temperature))
                 .map(humidity -> parsedInput.maps().get("humidity-to-location").getMapping(humidity))
-                .min(Integer::compareTo)
-                .orElse(0);
+                .min(Long::compareTo)
+                .orElse(0L);
     }
 
     @Override
-    public Integer solve2(Almanac parsedInput) {
-        return 0;
+    public Long solve2(Almanac parsedInput) {
+        return 0L;
     }
 
-    public record Almanac(List<Integer> seeds, Map<String, Mappings> maps) {
+    public record Almanac(List<Long> seeds, Map<String, Mappings> maps) {
     }
 
     private record Mappings(String name, List<Mapping> mappings) {
-        int getMapping(int number) {
+        long getMapping(long number) {
             return mappings.stream()
                     .filter(e -> e.source < number && number < e.source + e.length)
                     .findFirst()
@@ -83,6 +83,6 @@ public class Day5 implements ParserSolver<Day5.Almanac, Integer> {
         }
     }
 
-    private record Mapping(int dest, int source, int length) {
+    private record Mapping(long dest, long source, long length) {
     }
 }
