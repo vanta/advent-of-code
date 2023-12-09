@@ -45,18 +45,22 @@ public class Day7 implements ParserSolver<List<Day7.Line>, Integer> {
 
     @Override
     public Integer solve(List<Line> parsedInput) {
-        return calculatePoints(parsedInput, comparing(l -> l.hand().getPoints()));
+        Comparator<Line> c1 = comparing(l -> l.hand().getPoints());
+        Comparator<Line> c2 = (l1, l2) -> compareCards(l1.hand(), l2.hand());
+        return calculatePoints(parsedInput, c1, c2);
     }
 
     @Override
     public Integer solve2(List<Line> parsedInput) {
-        return calculatePoints(parsedInput, comparing(l -> l.hand().getPointsWithJoker()));
+        Comparator<Line> c1 = comparing(l -> l.hand().getPointsWithJoker());
+        Comparator<Line> c2 = (l1, l2) -> compareCardsWithJoker(l1.hand(), l2.hand());
+        return calculatePoints(parsedInput, c1, c2);
     }
 
-    private Integer calculatePoints(List<Line> parsedInput, Comparator<Line> mainComparator) {
+    private Integer calculatePoints(List<Line> parsedInput, Comparator<Line> mainComparator, Comparator<Line> seconComparator) {
         var index = new AtomicInteger();
         return parsedInput.stream()
-                .sorted(mainComparator.thenComparing((l1, l2) -> compareCards(l1.hand(), l2.hand())))
+                .sorted(mainComparator.thenComparing(seconComparator))
                 .peek(l -> System.out.println(l.hand()))
                 .map(Line::bid)
                 .reduce(0, (a, b) -> a + (b * index.incrementAndGet()));
@@ -68,6 +72,26 @@ public class Day7 implements ParserSolver<List<Day7.Line>, Integer> {
             var elem2 = h2.cards().get(i);
 
             if (elem1.compareTo(elem2) != 0) {
+                return elem1.compareTo(elem2);
+            }
+        }
+
+        return 0;
+    }
+
+    private int compareCardsWithJoker(Hand h1, Hand h2) {
+        for (int i = 0; i < h1.cards().size(); i++) {
+            var elem1 = h1.cards().get(i);
+            var elem2 = h2.cards().get(i);
+
+            if (elem1 != elem2) {
+                if (elem1 == CJ) {
+                    return -1;
+                }
+                if (elem2 == CJ) {
+                    return 1;
+                }
+
                 return elem1.compareTo(elem2);
             }
         }
@@ -94,18 +118,18 @@ public class Day7 implements ParserSolver<List<Day7.Line>, Integer> {
             var occ = occurrences();
 
             var jokerPoints = occ.getOrDefault(CJ, 0L);
-
-            var max = occ.entrySet().stream()
-                    .max(comparingByValue())
-                    .orElseThrow();
-
             occ.remove(CJ);
-            occ.put(max.getKey(), max.getValue() + jokerPoints);
+
+            var maxEntry = occ.entrySet().stream()
+                    .max(comparingByValue())
+                    .orElse(Map.entry(CJ, 0L));
+
+            occ.put(maxEntry.getKey(), maxEntry.getValue() + jokerPoints);
 
             return calculatePoints(occ);
         }
 
-        private Long calculatePoints(Map<Card, Long> occurrences) {
+        private long calculatePoints(Map<Card, Long> occurrences) {
             return occurrences
                     .values().stream()
                     .reduce(0L, (a, b) -> a + (b * b));
