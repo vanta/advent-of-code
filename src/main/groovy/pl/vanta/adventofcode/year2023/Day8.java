@@ -45,34 +45,31 @@ public class Day8 implements ParserSolver<Day8.Navigation, Integer> {
     public Integer solve(Navigation parsedInput) {
         var instructionsSupplier = new Supplier<Character>() {
             private final String original = parsedInput.instructions();
-            private String current = original;
             private int index = 0;
 
             @Override
             public Character get() {
-                if (index == current.length()) {
-                    current = original;
+                if (index == original.length()) {
                     index = 0;
                 }
 
-                return current.charAt(index++);
+                return original.charAt(index++);
             }
         };
 
-        return goDown(0, instructionsSupplier, START, parsedInput.nodes());
-    }
+        String current = START;
+        int steps = 0;
 
-    private int goDown(int steps, Supplier<Character> instructions, String current, Map<String, Node> nodes) {
-        if (current.equals(STOP)) {
-            return steps;
+        while (!current.equals(STOP)) {
+            steps++;
+
+            var currentNode = parsedInput.nodes().get(current);
+            var dir = instructionsSupplier.get();
+
+            current = dir == 'L' ? currentNode.left() : currentNode.right();
         }
 
-        var currentNode = nodes.get(current);
-
-        var dir = instructions.get();
-        var next = dir == 'L' ? currentNode.left() : currentNode.right();
-
-        return goDown(steps + 1, instructions, next, nodes);
+        return steps;
     }
 
     @Override
