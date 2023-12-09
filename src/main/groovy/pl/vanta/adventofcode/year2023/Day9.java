@@ -35,6 +35,26 @@ public class Day9 implements ParserSolver<List<int[]>, Integer> {
                 .reduce(0, Integer::sum);
     }
 
+    @Override
+    public Integer solve2(List<int[]> parsedInput) {
+        return parsedInput.stream()
+                .map(this::getPreviousNumber)
+                .reduce(0, Integer::sum);
+    }
+
+    private int getPreviousNumber(int[] ints) {
+        if (stream(ints).allMatch(i -> i == 0)) {
+            return 0;
+        }
+
+        var tmp = new int[ints.length - 1];
+        for (int i = 0; i < tmp.length; i++) {
+            tmp[i] = ints[i + 1] - ints[i];
+        }
+
+        return ints[0] - getPreviousNumber(tmp);
+    }
+
     private int getNextNumber(int[] ints) {
         if (stream(ints).allMatch(i -> i == 0)) {
             return 0;
@@ -46,11 +66,6 @@ public class Day9 implements ParserSolver<List<int[]>, Integer> {
         }
 
         return ints[ints.length - 1] + getNextNumber(tmp);
-    }
-
-    @Override
-    public Integer solve2(List<int[]> parsedInput) {
-        return 0;
     }
 
 }
