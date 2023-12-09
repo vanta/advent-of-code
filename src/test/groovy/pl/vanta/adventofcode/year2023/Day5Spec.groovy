@@ -26,6 +26,6 @@ class Day5Spec extends BaseSpec {
 
     @Override
     Integer getRealAnswer2() {
-        -1
+        52510809
     }
 }
