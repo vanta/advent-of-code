@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
+import static java.util.Arrays.stream;
+
 public class Day9 implements ParserSolver<List<int[]>, Integer> {
 
     @Override
@@ -28,9 +30,22 @@ public class Day9 implements ParserSolver<List<int[]>, Integer> {
 
     @Override
     public Integer solve(List<int[]> parsedInput) {
+        return parsedInput.stream()
+                .map(this::getNextNumber)
+                .reduce(0, Integer::sum);
+    }
 
+    private int getNextNumber(int[] ints) {
+        if (stream(ints).allMatch(i -> i == 0)) {
+            return 0;
+        }
 
-        return 0;
+        var tmp = new int[ints.length - 1];
+        for (int i = 0; i < tmp.length; i++) {
+            tmp[i] = ints[i + 1] - ints[i];
+        }
+
+        return ints[ints.length - 1] + getNextNumber(tmp);
     }
 
     @Override
