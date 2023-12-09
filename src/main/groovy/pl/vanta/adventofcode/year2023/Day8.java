@@ -42,20 +42,20 @@ public class Day8 implements ParserSolver<Day8.Navigation, Integer> {
 
     @Override
     public Integer solve(Navigation parsedInput) {
-        var start = parsedInput.nodes.get(START);
-
-        return aaa(0, parsedInput.instructions, start, parsedInput.nodes);
+        return goDown(0, parsedInput.instructions(), START, parsedInput.nodes());
     }
 
-    private int aaa(int steps, String instructions, Node current, Map<String, Node> nodes) {
-        if (current.name().equals(STOP)) {
+    private int goDown(int steps, String instructions, String current, Map<String, Node> nodes) {
+        if (current.equals(STOP)) {
             return steps;
         }
 
-        var dir = instructions.substring(0, 1);
-        var next = dir.equals("L") ? current.left() : current.right();
+        var currentNode = nodes.get(current);
 
-        return aaa(steps + 1, instructions.substring(1), nodes.get(next), nodes);
+        var dir = instructions.substring(0, 1);
+        var next = dir.equals("L") ? currentNode.left() : currentNode.right();
+
+        return goDown(steps + 1, instructions.substring(1), next, nodes);
     }
 
     @Override
