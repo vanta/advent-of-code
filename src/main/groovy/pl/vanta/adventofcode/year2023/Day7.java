@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
-import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
@@ -44,10 +43,30 @@ public class Day7 implements ParserSolver<List<Day7.Line>, Integer> {
         var index = new AtomicInteger();
 
         return parsedInput.stream()
-                .sorted(comparing(Line::hand))
+                .sorted((l1, l2) -> compareHands(l1.hand(), l2.hand()))
                 .peek(l -> System.out.println(l.hand()))
                 .map(Line::bid)
                 .reduce(0, (a, b) -> a + (b * index.incrementAndGet()));
+    }
+
+    private int compareHands(Hand h1, Hand h2) {
+        var p1 = h1.getPoints();
+        var p2 = h2.getPoints();
+
+        if (p1 != p2) {
+            return (int) (p1 - p2);
+        }
+
+        for (int i = 0; i < h1.cards().size(); i++) {
+            var elem1 = h1.cards().get(i);
+            var elem2 = h2.cards().get(i);
+
+            if (elem1.compareTo(elem2) != 0) {
+                return elem1.compareTo(elem2);
+            }
+        }
+
+        return 0;
     }
 
     @Override
@@ -58,40 +77,19 @@ public class Day7 implements ParserSolver<List<Day7.Line>, Integer> {
     record Line(Hand hand, int bid) {
     }
 
-    record Hand(List<Card> cards) implements Comparable<Hand> {
-        @Override
-        public int compareTo(Hand o) {
-            var tmp1 = points(cards);
-            var tmp2 = points(o.cards());
-
-            if (tmp1 != tmp2) {
-                return (int) (tmp1 - tmp2);
-            }
-
-            for (int i = 0; i < cards.size(); i++) {
-                var elem1 = cards.get(i);
-                var elem2 = o.cards().get(i);
-
-                if (elem1.compareTo(elem2) != 0) {
-                    return elem1.compareTo(elem2);
-                }
-            }
-
-            return 0;
-        }
-
-        private long points(List<Card> cards) {
-            return cards.stream()
-                    .collect(groupingBy(identity(), counting()))
-                    .values().stream()
-                    .reduce(0L, (a, b) -> a + (b * b));
-        }
-
+    record Hand(List<Card> cards) {
         @Override
         public String toString() {
             return cards.stream()
                     .map(c -> c.name().substring(1))
                     .collect(joining());
+        }
+
+        private long getPoints() {
+            return cards.stream()
+                    .collect(groupingBy(identity(), counting()))
+                    .values().stream()
+                    .reduce(0L, (a, b) -> a + (b * b));
         }
     }
 
