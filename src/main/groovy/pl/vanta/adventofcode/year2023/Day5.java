@@ -55,31 +55,28 @@ public class Day5 implements ParserSolver<Day5.Almanac, Long> {
 
     @Override
     public Long solve(Almanac parsedInput) {
-        return parsedInput.seeds.stream()
-                .map(seed -> parsedInput.maps().get("seed-to-soil").getMapping(seed))
-                .map(soil -> parsedInput.maps().get("soil-to-fertilizer").getMapping(soil))
-                .map(fertilizer -> parsedInput.maps().get("fertilizer-to-water").getMapping(fertilizer))
-                .map(water -> parsedInput.maps().get("water-to-light").getMapping(water))
-                .map(light -> parsedInput.maps().get("light-to-temperature").getMapping(light))
-                .map(temperature -> parsedInput.maps().get("temperature-to-humidity").getMapping(temperature))
-                .map(humidity -> parsedInput.maps().get("humidity-to-location").getMapping(humidity))
-                .min(Long::compareTo)
-                .orElse(0L);
+        return getMinimalLocation(parsedInput.seeds.stream(), parsedInput.maps());
     }
 
     @Override
     public Long solve2(Almanac parsedInput) {
-        return Stream.iterate(0, i -> i + 2)
+        var stream = Stream.iterate(0, i -> i + 2)
                 .limit(parsedInput.seeds.size() / 2)
                 .map(index -> LongStream.range(parsedInput.seeds.get(index), parsedInput.seeds.get(index) + parsedInput.seeds.get(index + 1)))
-                .flatMap(LongStream::boxed)
-                .map(seed -> parsedInput.maps().get("seed-to-soil").getMapping(seed))
-                .map(soil -> parsedInput.maps().get("soil-to-fertilizer").getMapping(soil))
-                .map(fertilizer -> parsedInput.maps().get("fertilizer-to-water").getMapping(fertilizer))
-                .map(water -> parsedInput.maps().get("water-to-light").getMapping(water))
-                .map(light -> parsedInput.maps().get("light-to-temperature").getMapping(light))
-                .map(temperature -> parsedInput.maps().get("temperature-to-humidity").getMapping(temperature))
-                .map(humidity -> parsedInput.maps().get("humidity-to-location").getMapping(humidity))
+                .flatMap(LongStream::boxed);
+
+        return getMinimalLocation(stream, parsedInput.maps());
+    }
+
+    private static Long getMinimalLocation(Stream<Long> stream, Map<String, Mappings> maps) {
+        return stream
+                .map(seed -> maps.get("seed-to-soil").getMapping(seed))
+                .map(soil -> maps.get("soil-to-fertilizer").getMapping(soil))
+                .map(fertilizer -> maps.get("fertilizer-to-water").getMapping(fertilizer))
+                .map(water -> maps.get("water-to-light").getMapping(water))
+                .map(light -> maps.get("light-to-temperature").getMapping(light))
+                .map(temperature -> maps.get("temperature-to-humidity").getMapping(temperature))
+                .map(humidity -> maps.get("humidity-to-location").getMapping(humidity))
                 .min(Long::compareTo)
                 .orElse(0L);
     }
