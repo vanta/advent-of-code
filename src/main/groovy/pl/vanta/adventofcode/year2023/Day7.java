@@ -4,15 +4,18 @@ import pl.vanta.adventofcode.ParserSolver;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Comparator.comparing;
+import static java.util.Map.Entry.comparingByValue;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.joining;
+import static pl.vanta.adventofcode.year2023.Day7.Card.CJ;
 
 public class Day7 implements ParserSolver<List<Day7.Line>, Integer> {
 
@@ -84,15 +87,33 @@ public class Day7 implements ParserSolver<List<Day7.Line>, Integer> {
         }
 
         private long getPoints() {
-            return cards.stream()
-                    .collect(groupingBy(identity(), counting()))
+            return calculatePoints(occurrences());
+        }
+
+        private long getPointsWithJoker() {
+            var occ = occurrences();
+
+            var jokerPoints = occ.getOrDefault(CJ, 0L);
+
+            var max = occ.entrySet().stream()
+                    .max(comparingByValue())
+                    .orElseThrow();
+
+            occ.remove(CJ);
+            occ.put(max.getKey(), max.getValue() + jokerPoints);
+
+            return calculatePoints(occ);
+        }
+
+        private Long calculatePoints(Map<Card, Long> occurrences) {
+            return occurrences
                     .values().stream()
                     .reduce(0L, (a, b) -> a + (b * b));
         }
 
-        public long getPointsWithJoker() {
-
-            return getPoints();
+        private Map<Card, Long> occurrences() {
+            return cards.stream()
+                    .collect(groupingBy(identity(), counting()));
         }
     }
 
