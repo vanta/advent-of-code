@@ -2,17 +2,20 @@ package pl.vanta.adventofcode.year2023;
 
 import pl.vanta.adventofcode.ParserSolver;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 
 public class Day8 implements ParserSolver<Day8.Navigation, Integer> {
-
     private static final String START = "AAA";
     private static final String STOP = "ZZZ";
+    private static final String START_GHOST = "A";
+    private static final String STOP_GHOST = "Z";
 
     @Override
     public int getDayNumber() {
@@ -43,7 +46,55 @@ public class Day8 implements ParserSolver<Day8.Navigation, Integer> {
 
     @Override
     public Integer solve(Navigation parsedInput) {
-        var instructionsSupplier = new Supplier<Character>() {
+        var instructionsSupplier = getSupplier(parsedInput);
+
+        var current = START;
+        var steps = 0;
+
+        while (!current.equals(STOP)) {
+            steps++;
+
+            current = getNewCurrentNode(instructionsSupplier.get(), parsedInput.nodes().get(current));
+        }
+
+        return steps;
+    }
+
+    @Override
+    public Integer solve2(Navigation parsedInput) {
+        var instructionsSupplier = getSupplier(parsedInput);
+
+        var startNodes = parsedInput.nodes().values().stream()
+                .map(Node::name)
+                .filter(n -> n.endsWith(START_GHOST))
+                .toList();
+
+        var stopNodes = parsedInput.nodes().values().stream()
+                .map(Node::name)
+                .filter(n -> n.endsWith(STOP_GHOST))
+                .collect(toSet());
+
+        var currentNodes = List.copyOf(startNodes);
+        var steps = 0;
+
+        while (!stopNodes.containsAll(currentNodes)) {
+            steps++;
+            var dir = instructionsSupplier.get();
+
+            currentNodes = currentNodes.stream()
+                    .map(currentNode -> getNewCurrentNode(dir, parsedInput.nodes().get(currentNode)))
+                    .toList();
+        }
+
+        return steps;
+    }
+
+    private static String getNewCurrentNode(Character dir, Node currentNode) {
+        return dir == 'L' ? currentNode.left() : currentNode.right();
+    }
+
+    private static Supplier<Character> getSupplier(Navigation parsedInput) {
+        return new Supplier<>() {
             private final String original = parsedInput.instructions();
             private int index = 0;
 
@@ -56,25 +107,6 @@ public class Day8 implements ParserSolver<Day8.Navigation, Integer> {
                 return original.charAt(index++);
             }
         };
-
-        String current = START;
-        int steps = 0;
-
-        while (!current.equals(STOP)) {
-            steps++;
-
-            var currentNode = parsedInput.nodes().get(current);
-            var dir = instructionsSupplier.get();
-
-            current = dir == 'L' ? currentNode.left() : currentNode.right();
-        }
-
-        return steps;
-    }
-
-    @Override
-    public Integer solve2(Navigation parsedInput) {
-        return -100;
     }
 
     record Navigation(String instructions, Map<String, Node> nodes) {
