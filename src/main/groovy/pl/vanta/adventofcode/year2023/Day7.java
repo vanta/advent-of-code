@@ -2,11 +2,13 @@ package pl.vanta.adventofcode.year2023;
 
 import pl.vanta.adventofcode.ParserSolver;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static java.lang.Integer.parseInt;
+import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
@@ -42,21 +44,17 @@ public class Day7 implements ParserSolver<List<Day7.Line>, Integer> {
     public Integer solve(List<Line> parsedInput) {
         var index = new AtomicInteger();
 
+        Comparator<Line> comparator1 = comparing(l -> l.hand().getPoints());
+        Comparator<Line> comparator2 = (l1, l2) -> compareHands(l1.hand(), l2.hand());
+
         return parsedInput.stream()
-                .sorted((l1, l2) -> compareHands(l1.hand(), l2.hand()))
+                .sorted(comparator1.thenComparing(comparator2))
                 .peek(l -> System.out.println(l.hand()))
                 .map(Line::bid)
                 .reduce(0, (a, b) -> a + (b * index.incrementAndGet()));
     }
 
     private int compareHands(Hand h1, Hand h2) {
-        var p1 = h1.getPoints();
-        var p2 = h2.getPoints();
-
-        if (p1 != p2) {
-            return (int) (p1 - p2);
-        }
-
         for (int i = 0; i < h1.cards().size(); i++) {
             var elem1 = h1.cards().get(i);
             var elem2 = h2.cards().get(i);
