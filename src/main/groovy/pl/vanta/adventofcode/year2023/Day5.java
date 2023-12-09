@@ -92,13 +92,8 @@ public class Day5 implements ParserSolver<Day5.Almanac, Long> {
     }
 
     private static boolean contains(long number, List<Range> ranges) {
-        for (var range : ranges) {
-            if (range.start() <= number && number < (range.start() + range.length())) {
-                return true;
-            }
-        }
-
-        return false;
+        return ranges.stream()
+                .anyMatch(range -> range.start() <= number && number < (range.start() + range.length()));
     }
 
     public record Almanac(List<Long> seeds, Map<String, Mappings> maps) {
