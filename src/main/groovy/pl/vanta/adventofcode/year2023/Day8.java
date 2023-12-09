@@ -4,6 +4,7 @@ import pl.vanta.adventofcode.ParserSolver;
 
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
@@ -42,20 +43,36 @@ public class Day8 implements ParserSolver<Day8.Navigation, Integer> {
 
     @Override
     public Integer solve(Navigation parsedInput) {
-        return goDown(0, parsedInput.instructions(), START, parsedInput.nodes());
+        var instructionsSupplier = new Supplier<Character>() {
+            private final String original = parsedInput.instructions();
+            private String current = original;
+            private int index = 0;
+
+            @Override
+            public Character get() {
+                if (index == current.length()) {
+                    current = original;
+                    index = 0;
+                }
+
+                return current.charAt(index++);
+            }
+        };
+
+        return goDown(0, instructionsSupplier, START, parsedInput.nodes());
     }
 
-    private int goDown(int steps, String instructions, String current, Map<String, Node> nodes) {
+    private int goDown(int steps, Supplier<Character> instructions, String current, Map<String, Node> nodes) {
         if (current.equals(STOP)) {
             return steps;
         }
 
         var currentNode = nodes.get(current);
 
-        var dir = instructions.substring(0, 1);
-        var next = dir.equals("L") ? currentNode.left() : currentNode.right();
+        var dir = instructions.get();
+        var next = dir == 'L' ? currentNode.left() : currentNode.right();
 
-        return goDown(steps + 1, instructions.substring(1), next, nodes);
+        return goDown(steps + 1, instructions, next, nodes);
     }
 
     @Override
