@@ -42,19 +42,24 @@ public class Day7 implements ParserSolver<List<Day7.Line>, Integer> {
 
     @Override
     public Integer solve(List<Line> parsedInput) {
+        return calculatePoints(parsedInput, comparing(l -> l.hand().getPoints()));
+    }
+
+    @Override
+    public Integer solve2(List<Line> parsedInput) {
+        return calculatePoints(parsedInput, comparing(l -> l.hand().getPointsWithJoker()));
+    }
+
+    private Integer calculatePoints(List<Line> parsedInput, Comparator<Line> mainComparator) {
         var index = new AtomicInteger();
-
-        Comparator<Line> comparator1 = comparing(l -> l.hand().getPoints());
-        Comparator<Line> comparator2 = (l1, l2) -> compareHands(l1.hand(), l2.hand());
-
         return parsedInput.stream()
-                .sorted(comparator1.thenComparing(comparator2))
+                .sorted(mainComparator.thenComparing((l1, l2) -> compareCards(l1.hand(), l2.hand())))
                 .peek(l -> System.out.println(l.hand()))
                 .map(Line::bid)
                 .reduce(0, (a, b) -> a + (b * index.incrementAndGet()));
     }
 
-    private int compareHands(Hand h1, Hand h2) {
+    private int compareCards(Hand h1, Hand h2) {
         for (int i = 0; i < h1.cards().size(); i++) {
             var elem1 = h1.cards().get(i);
             var elem2 = h2.cards().get(i);
@@ -65,11 +70,6 @@ public class Day7 implements ParserSolver<List<Day7.Line>, Integer> {
         }
 
         return 0;
-    }
-
-    @Override
-    public Integer solve2(List<Line> parsedInput) {
-        return -1;
     }
 
     record Line(Hand hand, int bid) {
@@ -88,6 +88,11 @@ public class Day7 implements ParserSolver<List<Day7.Line>, Integer> {
                     .collect(groupingBy(identity(), counting()))
                     .values().stream()
                     .reduce(0L, (a, b) -> a + (b * b));
+        }
+
+        public long getPointsWithJoker() {
+
+            return getPoints();
         }
     }
 
