@@ -61,14 +61,8 @@ public class Day7 implements ParserSolver<List<Day7.Line>, Integer> {
     record Hand(List<Card> cards) implements Comparable<Hand> {
         @Override
         public int compareTo(Hand o) {
-            var tmp1 = cards.stream()
-                    .collect(groupingBy(identity(), counting()))
-                    .values().stream()
-                    .reduce(0L, (a, b) -> a + (b * b));
-            var tmp2 = o.cards().stream()
-                    .collect(groupingBy(identity(), counting()))
-                    .values().stream()
-                    .reduce(0L, (a, b) -> a + (b * b));
+            var tmp1 = points(cards);
+            var tmp2 = points(o.cards());
 
             if (tmp1 != tmp2) {
                 return (int) (tmp1 - tmp2);
@@ -84,6 +78,13 @@ public class Day7 implements ParserSolver<List<Day7.Line>, Integer> {
             }
 
             return 0;
+        }
+
+        private long points(List<Card> cards) {
+            return cards.stream()
+                    .collect(groupingBy(identity(), counting()))
+                    .values().stream()
+                    .reduce(0L, (a, b) -> a + (b * b));
         }
 
         @Override
