@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 import static java.lang.Long.parseLong;
 
@@ -31,14 +33,14 @@ public class Day5 implements ParserSolver<Day5.Almanac, Long> {
             var line = scanner.nextLine();
 
             if (line.contains("map")) {
-                list.put(line.replaceAll(" map:", ""), readMapping(line, scanner));
+                list.put(line.replaceAll(" map:", ""), readMapping(scanner));
             }
         }
 
         return new Almanac(seeds, list);
     }
 
-    private Mappings readMapping(String name, Scanner scanner) {
+    private Mappings readMapping(Scanner scanner) {
         String line;
 
         var list = new ArrayList<Mapping>();
@@ -48,7 +50,7 @@ public class Day5 implements ParserSolver<Day5.Almanac, Long> {
             list.add(new Mapping(parseLong(split[0]), parseLong(split[1]), parseLong(split[2])));
         }
 
-        return new Mappings(name, list);
+        return new Mappings(list);
     }
 
     @Override
@@ -67,16 +69,28 @@ public class Day5 implements ParserSolver<Day5.Almanac, Long> {
 
     @Override
     public Long solve2(Almanac parsedInput) {
-        return 0L;
+        return Stream.iterate(0, i -> i + 2)
+                .limit(parsedInput.seeds.size() / 2)
+                .map(index -> LongStream.range(parsedInput.seeds.get(index), parsedInput.seeds.get(index) + parsedInput.seeds.get(index + 1)))
+                .flatMap(LongStream::boxed)
+                .map(seed -> parsedInput.maps().get("seed-to-soil").getMapping(seed))
+                .map(soil -> parsedInput.maps().get("soil-to-fertilizer").getMapping(soil))
+                .map(fertilizer -> parsedInput.maps().get("fertilizer-to-water").getMapping(fertilizer))
+                .map(water -> parsedInput.maps().get("water-to-light").getMapping(water))
+                .map(light -> parsedInput.maps().get("light-to-temperature").getMapping(light))
+                .map(temperature -> parsedInput.maps().get("temperature-to-humidity").getMapping(temperature))
+                .map(humidity -> parsedInput.maps().get("humidity-to-location").getMapping(humidity))
+                .min(Long::compareTo)
+                .orElse(0L);
     }
 
     public record Almanac(List<Long> seeds, Map<String, Mappings> maps) {
     }
 
-    private record Mappings(String name, List<Mapping> mappings) {
+    private record Mappings(List<Mapping> mappings) {
         long getMapping(long number) {
             return mappings.stream()
-                    .filter(e -> e.source < number && number < e.source + e.length)
+                    .filter(e -> e.source <= number && number < e.source + e.length)
                     .findFirst()
                     .map(e -> number - e.source + e.dest)
                     .orElse(number);
