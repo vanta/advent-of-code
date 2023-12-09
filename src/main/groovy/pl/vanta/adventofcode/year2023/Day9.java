@@ -47,12 +47,7 @@ public class Day9 implements ParserSolver<List<int[]>, Integer> {
             return 0;
         }
 
-        var tmp = new int[ints.length - 1];
-        for (int i = 0; i < tmp.length; i++) {
-            tmp[i] = ints[i + 1] - ints[i];
-        }
-
-        return ints[0] - getPreviousNumber(tmp);
+        return ints[0] - getPreviousNumber(getDiffArray(ints));
     }
 
     private int getNextNumber(int[] ints) {
@@ -60,12 +55,15 @@ public class Day9 implements ParserSolver<List<int[]>, Integer> {
             return 0;
         }
 
+        return ints[ints.length - 1] + getNextNumber(getDiffArray(ints));
+    }
+
+    private static int[] getDiffArray(int[] ints) {
         var tmp = new int[ints.length - 1];
         for (int i = 0; i < tmp.length; i++) {
             tmp[i] = ints[i + 1] - ints[i];
         }
-
-        return ints[ints.length - 1] + getNextNumber(tmp);
+        return tmp;
     }
 
 }
