@@ -68,16 +68,16 @@ public class Day10 implements ParserSolver<char[][], Integer> {
     }
 
     private static Point afterStart(char[][] map, Point start) {
-        if ("J|L".contains("" + map[start.x + 1][start.y])) {
+        if ("J|L".indexOf(map[start.x + 1][start.y]) >= 0) {
             return new Point(start.x + 1, start.y);
         }
-        if ("7|F".contains("" + map[start.x - 1][start.y])) {
+        if ("7|F".indexOf(map[start.x - 1][start.y]) >= 0) {
             return new Point(start.x - 1, start.y);
         }
-        if ("7-J".contains("" + map[start.x][start.y + 1])) {
+        if ("7-J".indexOf(map[start.x][start.y + 1]) >= 0) {
             return new Point(start.x, start.y + 1);
         }
-        if ("F-L".contains("" + map[start.x][start.y - 1])) {
+        if ("F-L".indexOf(map[start.x][start.y - 1]) >= 0) {
             return new Point(start.x, start.y - 1);
         }
 
