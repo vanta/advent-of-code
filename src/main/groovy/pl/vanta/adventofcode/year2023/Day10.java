@@ -2,7 +2,6 @@ package pl.vanta.adventofcode.year2023;
 
 import pl.vanta.adventofcode.ParserSolver;
 
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -41,7 +40,7 @@ public class Day10 implements ParserSolver<char[][], Integer> {
 
     private int traverse(char[][] map, Point start) {
         var prev = start;
-        var curr = start(map, start);
+        var curr = afterStart(map, start);
 
         var path = 1; //start is there
 
@@ -68,7 +67,7 @@ public class Day10 implements ParserSolver<char[][], Integer> {
         };
     }
 
-    private static Point start(char[][] map, Point start) {
+    private static Point afterStart(char[][] map, Point start) {
         if ("J|L".contains("" + map[start.x + 1][start.y])) {
             return new Point(start.x + 1, start.y);
         }
