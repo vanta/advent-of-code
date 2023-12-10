@@ -22,8 +22,15 @@ abstract class BaseSpec extends Specification {
     }
 
     def 'should solve example data - part2'() {
+        setup:
+        def resource = parserSolver.getClass().getResource("/2023/example-day${parserSolver.getDayNumber()}-part-two.txt")
+
+        if(!resource) {
+            resource = parserSolver.getClass().getResource("/2023/example-day${parserSolver.getDayNumber()}.txt")
+        }
+
         expect:
-        parserSolver.solve2(parserSolver.parse(parserSolver.getClass().getResource("/2023/example-day${parserSolver.getDayNumber()}-part-two.txt").text)) == this.getExampleAnswer2()
+        parserSolver.solve2(parserSolver.parse(resource.text)) == this.getExampleAnswer2()
     }
 
     def 'should solve real data - part2'() {
