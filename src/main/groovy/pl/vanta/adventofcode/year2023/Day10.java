@@ -2,6 +2,7 @@ package pl.vanta.adventofcode.year2023;
 
 import pl.vanta.adventofcode.ParserSolver;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -68,20 +69,23 @@ public class Day10 implements ParserSolver<char[][], Integer> {
     }
 
     private static Point afterStart(char[][] map, Point start) {
-        if ("J|L".indexOf(map[start.x + 1][start.y]) >= 0) {
-            return new Point(start.x + 1, start.y);
-        }
-        if ("7|F".indexOf(map[start.x - 1][start.y]) >= 0) {
-            return new Point(start.x - 1, start.y);
-        }
-        if ("7-J".indexOf(map[start.x][start.y + 1]) >= 0) {
-            return new Point(start.x, start.y + 1);
-        }
-        if ("F-L".indexOf(map[start.x][start.y - 1]) >= 0) {
-            return new Point(start.x, start.y - 1);
-        }
+        var directions = Map.of(
+                "J|L", start.down(),
+                "7|F", start.up(),
+                "7-J", start.right(),
+                "F-L", start.left()
+        );
 
-        return null;
+        return directions.entrySet().stream()
+                .filter(e -> isWithinArray(e.getValue().x, e.getValue().y, map))
+                .filter(e -> e.getKey().indexOf(map[e.getValue().x()][e.getValue().y()]) >= 0)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Unknown char: " + map[start.x()][start.y()]))
+                .getValue();
+    }
+
+    private static boolean isWithinArray(int x, int y, char[][] map) {
+        return x >= 0 && y >= 0 && x < map.length && y < map[0].length;
     }
 
     private Point choose(Point p1, Point p2, Point prev) {
@@ -114,5 +118,24 @@ public class Day10 implements ParserSolver<char[][], Integer> {
     }
 
     private record Point(int x, int y) {
+        Point add(Point p) {
+            return new Point(x + p.x, y + p.y);
+        }
+
+        Point down() {
+            return new Point(x + 1, y);
+        }
+
+        Point up() {
+            return new Point(x - 1, y);
+        }
+
+        Point left() {
+            return new Point(x, y - 1);
+        }
+
+        Point right() {
+            return new Point(x, y + 1);
+        }
     }
 }
