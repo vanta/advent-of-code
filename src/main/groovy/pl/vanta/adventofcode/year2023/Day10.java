@@ -118,10 +118,6 @@ public class Day10 implements ParserSolver<char[][], Integer> {
     }
 
     private record Point(int x, int y) {
-        Point add(Point p) {
-            return new Point(x + p.x, y + p.y);
-        }
-
         Point down() {
             return new Point(x + 1, y);
         }
