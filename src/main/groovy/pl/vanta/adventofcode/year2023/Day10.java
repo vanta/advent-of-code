@@ -43,18 +43,17 @@ public class Day10 implements ParserSolver<char[][], Integer> {
         var prev = start;
         var curr = start(map, start);
 
-        var path = new ArrayList<>();
-        path.add(start);
+        var path = 1; //start is there
 
         while (!Objects.equals(curr, start)) {
-            path.add(curr);
+            path++;
 
             var next = findNext(map, curr, prev);
             prev = curr;
             curr = next;
         }
 
-        return path.size() / 2;
+        return path / 2;
     }
 
     private Point findNext(char[][] map, Point c, Point prev) {
