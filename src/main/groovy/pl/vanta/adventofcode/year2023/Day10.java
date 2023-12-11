@@ -37,8 +37,34 @@ public class Day10 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve2(char[][] parsedInput) {
+        var start = findStart(parsedInput);
+        var path = traverse(parsedInput, start);
 
-        return 1111;
+        int counter = 0;
+        for (int i = 0; i < parsedInput.length; i++) {
+            var tmp = new String(parsedInput[i])
+                    .replaceAll("-", "")
+                    .replaceAll("L7", "|")
+                    .replaceAll("LJ", "")
+                    .replaceAll("FJ", "|")
+                    .replaceAll("F7", "")
+                    ;
+
+            System.out.println(tmp);
+            boolean inLoop = false;
+
+            for (int j = 0; j < tmp.toCharArray().length; j++) {
+                if (path.contains(new Point(i, j))) {
+                    inLoop = !inLoop;
+                } else {
+                    if (inLoop) {
+                        counter++;
+                    }
+                }
+            }
+        }
+
+        return counter;
     }
 
     private List<Point> traverse(char[][] map, Point start) {

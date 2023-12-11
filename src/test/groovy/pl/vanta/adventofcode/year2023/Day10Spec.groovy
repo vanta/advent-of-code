@@ -25,6 +25,7 @@ class Day10Spec extends BaseSpecNew {
                 [result: 4, suffix: '_part2_2'],
                 [result: 8, suffix: '_part2_3'],
                 [result: 10, suffix: '_part2_4'],
+                [result: 5, suffix: '_part2_5'],
         ]
     }
 
@@ -37,6 +38,4 @@ class Day10Spec extends BaseSpecNew {
     Integer getRealAnswer2() {
         -1
     }
-
-
 }
