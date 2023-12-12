@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import static java.lang.Math.*;
+import static pl.vanta.adventofcode.Utils.green;
 import static pl.vanta.adventofcode.Utils.red;
 
 public class Day10 implements ParserSolver<char[][], Integer> {
@@ -50,26 +52,33 @@ public class Day10 implements ParserSolver<char[][], Integer> {
         var start = findStart(parsedInput);
         var path = traverse(parsedInput, start);
 
-        paint(path, parsedInput);
+        parsedInput[start.x()][start.y()] = 'J';
 
+//        paint(path, parsedInput);
+//
         int counter = 0;
         for (int i = 0; i < parsedInput.length; i++) {
-
-
             int borders = 0;
             for (int j = 0; j < parsedInput[i].length; j++) {
-
+                var c = parsedInput[i][j];
                 if (path.contains(new Point(i, j))) {
-                    borders += switch (parsedInput[i][j]) {
+                    System.out.print(red(c));
+                    borders += switch (c) {
                         case '|' -> 2;
                         case 'L', '7' -> 1;
                         case 'F', 'J' -> -1;
                         default -> 0;
                     };
-                } else if (borders % 4 == 2) { //inside
+                } else if (abs(borders % 4) == 2) {
+                    System.out.print(green(c));
                     counter++;
+                } else {
+                    System.out.print('.');
                 }
             }
+
+//            paintLine(path, i, parsedInput[i]);
+            System.out.println(" - " + counter);
         }
 
         return counter;
@@ -86,6 +95,16 @@ public class Day10 implements ParserSolver<char[][], Integer> {
                 }
             }
             System.out.println();
+        }
+    }
+
+    private void paintLine(List<Point> path, int lineNo, char[] line) {
+        for (int j = 0; j < line.length; j++) {
+            if (path.contains(new Point(lineNo, j))) {
+                System.out.print(red(MAPPINGS.get(line[j])));
+            } else {
+                System.out.print('.');
+            }
         }
     }
 
