@@ -20,7 +20,8 @@ public class Day10 implements ParserSolver<char[][], Integer> {
             'F', '┏',
             'L', '┗',
             '|', '┃',
-            '-', '━'
+            '-', '━',
+            'S', 'S'
     );
 
     @Override
@@ -53,32 +54,20 @@ public class Day10 implements ParserSolver<char[][], Integer> {
 
         int counter = 0;
         for (int i = 0; i < parsedInput.length; i++) {
-            var before = new String(parsedInput[i]);
-            var tmp = before
-                    .replaceAll("LJ", "||")
-                    .replaceAll("F7", "||")
-                    .replaceAll("L7", "|.")
-                    .replaceAll("FJ", "|.")
-                    .replaceAll("\\|\\|", "..")
-                    ;
-
-            System.out.println(before);
-            System.out.println(tmp);
 
 
-            if (tmp.isEmpty()) {
-                continue;
-            }
+            int borders = 0;
+            for (int j = 0; j < parsedInput[i].length; j++) {
 
-            boolean inLoop = false;
-
-            for (int j = 0; j < tmp.toCharArray().length; j++) {
                 if (path.contains(new Point(i, j))) {
-                    inLoop = !inLoop;
-                } else {
-                    if (inLoop) {
-                        counter++;
-                    }
+                    borders += switch (parsedInput[i][j]) {
+                        case '|' -> 2;
+                        case 'L', '7' -> 1;
+                        case 'F', 'J' -> -1;
+                        default -> 0;
+                    };
+                } else if (borders % 4 == 2) { //inside
+                    counter++;
                 }
             }
         }
@@ -88,13 +77,14 @@ public class Day10 implements ParserSolver<char[][], Integer> {
 
     private void paint(List<Point> path, char[][] map) {
         for (int i = 0; i < map.length; i++) {
-           for(int j = 0; j < map[0].length; j++) {
-               if (path.contains(new Point(i, j))) {
-                   System.out.print(red(MAPPINGS.getOrDefault(map[i][j], map[i][j])));
-               } else {
-                   System.out.print(".");
-               }
-           }
+            for (int j = 0; j < map[0].length; j++) {
+                if (path.contains(new Point(i, j))) {
+                    System.out.print(red(MAPPINGS.get(map[i][j])));
+                } else {
+                    map[i][j] = '.';
+                    System.out.print(map[i][j]);
+                }
+            }
             System.out.println();
         }
     }
