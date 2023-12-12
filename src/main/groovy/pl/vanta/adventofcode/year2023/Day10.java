@@ -14,6 +14,15 @@ public class Day10 implements ParserSolver<char[][], Integer> {
 
     private static final char START = 'S';
 
+    private static final Map<Character, Character> MAPPINGS = Map.of(
+            'J', '┛',
+            '7', '┓',
+            'F', '┏',
+            'L', '┗',
+            '|', '┃',
+            '-', '━'
+    );
+
     @Override
     public int getDayNumber() {
         return 10;
@@ -40,17 +49,27 @@ public class Day10 implements ParserSolver<char[][], Integer> {
         var start = findStart(parsedInput);
         var path = traverse(parsedInput, start);
 
+        paint(path, parsedInput);
+
         int counter = 0;
         for (int i = 0; i < parsedInput.length; i++) {
-            var tmp = new String(parsedInput[i])
-                    .replaceAll("-", "")
-                    .replaceAll("L7", "|")
-                    .replaceAll("LJ", "")
-                    .replaceAll("FJ", "|")
-                    .replaceAll("F7", "")
+            var before = new String(parsedInput[i]);
+            var tmp = before
+                    .replaceAll("LJ", "||")
+                    .replaceAll("F7", "||")
+                    .replaceAll("L7", "|.")
+                    .replaceAll("FJ", "|.")
+                    .replaceAll("\\|\\|", "..")
                     ;
 
+            System.out.println(before);
             System.out.println(tmp);
+
+
+            if (tmp.isEmpty()) {
+                continue;
+            }
+
             boolean inLoop = false;
 
             for (int j = 0; j < tmp.toCharArray().length; j++) {
@@ -65,6 +84,19 @@ public class Day10 implements ParserSolver<char[][], Integer> {
         }
 
         return counter;
+    }
+
+    private void paint(List<Point> path, char[][] map) {
+        for (int i = 0; i < map.length; i++) {
+           for(int j = 0; j < map[0].length; j++) {
+               if (path.contains(new Point(i, j))) {
+                   System.out.print(red(MAPPINGS.getOrDefault(map[i][j], map[i][j])));
+               } else {
+                   System.out.print(".");
+               }
+           }
+            System.out.println();
+        }
     }
 
     private List<Point> traverse(char[][] map, Point start) {
@@ -147,6 +179,10 @@ public class Day10 implements ParserSolver<char[][], Integer> {
     }
 
     private record Point(int x, int y) {
+        Point minus(Point p) {
+            return new Point(x - p.x, y - p.y);
+        }
+
         Point down() {
             return new Point(x + 1, y);
         }
