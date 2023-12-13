@@ -25,11 +25,9 @@ public class Day11 implements ParserSolver<List<String>, Integer> {
 
     @Override
     public Integer solve(List<String> parsedInput) {
-        var expanded = expand(parsedInput);
+        var expanded = expand(parsedInput, 2);
 
         var galaxies = findGalaxies(expanded);
-
-        galaxies.forEach(System.out::println);
 
         var pairs = generatePairs(galaxies);
 
@@ -61,12 +59,14 @@ public class Day11 implements ParserSolver<List<String>, Integer> {
         return galaxies;
     }
 
-    private char[][] expand(List<String> parsedInput) {
+    private char[][] expand(List<String> parsedInput, int factor) {
         var result = new ArrayList<String>();
         for (String s : parsedInput) {
             result.add(s);
             if (!s.contains("#")) {
-                result.add(s);
+                for (int i = 0; i < factor-1; i++) {
+                    result.add(s);
+                }
             }
         }
 
@@ -84,7 +84,9 @@ public class Day11 implements ParserSolver<List<String>, Integer> {
                 result2.get(j).append(result.get(j).charAt(i));
 
                 if (shouldAdd) {
-                    result2.get(j).append('.');
+                    for (int k = 0; k < factor-1; k++) {
+                        result2.get(j).append('.');
+                    }
                 }
             }
         }
@@ -103,7 +105,16 @@ public class Day11 implements ParserSolver<List<String>, Integer> {
 
     @Override
     public Integer solve2(List<String> parsedInput) {
-        return 0;
+        var expanded = expand(parsedInput, 100);
+
+        var galaxies = findGalaxies(expanded);
+
+        var pairs = generatePairs(galaxies);
+
+        return pairs.stream()
+                .map(Pair::distance)
+                .reduce(0, Integer::sum);
+
     }
 
     private record Galaxy(int x, int y) {
