@@ -95,12 +95,6 @@ public class Day11 implements ParserSolver<List<String>, Integer> {
                 .toArray(char[][]::new);
     }
 
-    private static List<StringBuilder> insertAt(List<StringBuilder> list, int i, char c) {
-        return list.stream()
-                .map(s -> s.insert(i, c))
-                .toList();
-    }
-
     private static boolean hasGalaxy(List<String> result, int i) {
         return result.stream()
                 .map(s -> s.charAt(i))
