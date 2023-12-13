@@ -87,7 +87,6 @@ public class Day11 implements ParserSolver<List<String>, Integer> {
                     result2.get(j).append('.');
                 }
             }
-
         }
 
         return result2.stream()
