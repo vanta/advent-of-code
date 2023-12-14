@@ -30,7 +30,7 @@ class Day11Spec extends BaseSpecNew {
     }
 
     @Override
-    Integer getRealAnswer2() {
-        -1
+    Long getRealAnswer2() {
+        560822911938
     }
 }

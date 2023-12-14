@@ -3,14 +3,17 @@ package pl.vanta.adventofcode.year2023;
 import pl.vanta.adventofcode.ParserSolver;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.lang.Math.abs;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.IntStream.range;
 
-public class Day11 implements ParserSolver<List<String>, Integer> {
+public class Day11 implements ParserSolver<List<String>, Long> {
 
     @Override
     public int getDayNumber() {
@@ -24,26 +27,51 @@ public class Day11 implements ParserSolver<List<String>, Integer> {
     }
 
     @Override
-    public Integer solve(List<String> parsedInput) {
-        var expanded = expand(parsedInput, 2);
+    public Long solve(List<String> parsedInput) {
+        return solveCommon(parsedInput, 2);
+    }
 
-        var galaxies = findGalaxies(expanded);
+    @Override
+    public Long solve2(List<String> parsedInput) {
+        return solveCommon(parsedInput, 1000000);
+    }
+
+    private long solveCommon(List<String> parsedInput, int expandRatio) {
+        var input = parsedInput.stream()
+                .map(String::toCharArray)
+                .toArray(char[][]::new);
+
+        var galaxies = findGalaxies(input);
+        var emptyRows = findEmptyRows(galaxies, input.length);
+        var emptyCols = findEmptyCols(galaxies, input[0].length);
+
+        var shiftY = new HashMap<Galaxy, Integer>();
+        for (int emptyCol : emptyCols) {
+            galaxies.stream()
+                    .filter(g -> g.y() > emptyCol)
+                    .forEach(g ->
+                            shiftY.compute(g, (galaxy, shift) -> expandRatio - 1 + (shift == null ? 0 : shift))
+                    );
+        }
+
+        var shiftX = new HashMap<Galaxy, Integer>();
+        for (int emptyRow : emptyRows) {
+            galaxies.stream()
+                    .filter(g -> g.x() > emptyRow)
+                    .forEach(g ->
+                            shiftX.compute(g, (galaxy, shift) -> expandRatio - 1 + (shift == null ? 0 : shift))
+                    );
+        }
+
+        galaxies = galaxies.stream()
+                .map(g -> g.add(shiftX.getOrDefault(g, 0), shiftY.getOrDefault(g, 0)))
+                .toList();
 
         var pairs = generatePairs(galaxies);
 
         return pairs.stream()
                 .map(Pair::distance)
-                .reduce(0, Integer::sum);
-    }
-
-    private Set<Pair> generatePairs(List<Galaxy> galaxies) {
-        var result = new HashSet<Pair>();
-        for (int i = 0; i < galaxies.size(); i++) {
-            for (int j = i + 1; j < galaxies.size(); j++) {
-                result.add(new Pair(galaxies.get(i), galaxies.get(j)));
-            }
-        }
-        return result;
+                .reduce(0L, Long::sum);
     }
 
     private List<Galaxy> findGalaxies(char[][] expanded) {
@@ -59,69 +87,47 @@ public class Day11 implements ParserSolver<List<String>, Integer> {
         return galaxies;
     }
 
-    private char[][] expand(List<String> parsedInput, int factor) {
-        var result = new ArrayList<String>();
-        for (String s : parsedInput) {
-            result.add(s);
-            if (!s.contains("#")) {
-                for (int i = 0; i < factor-1; i++) {
-                    result.add(s);
-                }
-            }
-        }
+    private List<Integer> findEmptyRows(List<Galaxy> galaxies, int length) {
+        var notEmptyRows = galaxies.stream()
+                .map(Galaxy::x)
+                .collect(toSet());
 
-        var result2 = new ArrayList<StringBuilder>();
-        int len = result.get(0).length();
-
-        for (int i = 0; i < len; i++) {
-            var shouldAdd = !hasGalaxy(result, i);
-
-            for (int j = 0; j < result.size(); j++) {
-                result2.add(new StringBuilder());
-            }
-
-            for (int j = 0; j < result.size(); j++) {
-                result2.get(j).append(result.get(j).charAt(i));
-
-                if (shouldAdd) {
-                    for (int k = 0; k < factor-1; k++) {
-                        result2.get(j).append('.');
-                    }
-                }
-            }
-        }
-
-        return result2.stream()
-                .map(StringBuilder::toString)
-                .map(String::toCharArray)
-                .toArray(char[][]::new);
+        return filter(length, notEmptyRows);
     }
 
-    private static boolean hasGalaxy(List<String> result, int i) {
-        return result.stream()
-                .map(s -> s.charAt(i))
-                .anyMatch(c -> c == '#');
+    private List<Integer> findEmptyCols(List<Galaxy> galaxies, int length) {
+        var notEmptyCols = galaxies.stream()
+                .map(Galaxy::y)
+                .collect(toSet());
+
+        return filter(length, notEmptyCols);
     }
 
-    @Override
-    public Integer solve2(List<String> parsedInput) {
-        var expanded = expand(parsedInput, 100);
+    private static List<Integer> filter(int length, Set<Integer> notEmpty) {
+        return range(0, length)
+                .filter(i -> !notEmpty.contains(i))
+                .boxed()
+                .toList();
+    }
 
-        var galaxies = findGalaxies(expanded);
-
-        var pairs = generatePairs(galaxies);
-
-        return pairs.stream()
-                .map(Pair::distance)
-                .reduce(0, Integer::sum);
-
+    private Set<Pair> generatePairs(List<Galaxy> galaxies) {
+        var result = new HashSet<Pair>();
+        for (int i = 0; i < galaxies.size(); i++) {
+            for (int j = i + 1; j < galaxies.size(); j++) {
+                result.add(new Pair(galaxies.get(i), galaxies.get(j)));
+            }
+        }
+        return result;
     }
 
     private record Galaxy(int x, int y) {
+        Galaxy add(int x, int y) {
+            return new Galaxy(this.x + x, this.y + y);
+        }
     }
 
     private record Pair(Galaxy g1, Galaxy g2) {
-        int distance() {
+        long distance() {
             return abs(g1.x() - g2.x()) + abs(g1.y() - g2.y());
         }
     }
