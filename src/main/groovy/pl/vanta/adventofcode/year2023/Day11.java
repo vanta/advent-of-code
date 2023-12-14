@@ -13,7 +13,7 @@ import static java.lang.Math.abs;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.IntStream.range;
 
-public class Day11 implements ParserSolver<List<String>, Long> {
+public class Day11 implements ParserSolver<char[][], Long> {
 
     @Override
     public int getDayNumber() {
@@ -21,46 +21,39 @@ public class Day11 implements ParserSolver<List<String>, Long> {
     }
 
     @Override
-    public List<String> parse(String lines) {
+    public char[][] parse(String lines) {
         return Stream.of(lines.split("\n"))
-                .toList();
+                .map(String::toCharArray)
+                .toArray(char[][]::new);
     }
 
     @Override
-    public Long solve(List<String> parsedInput) {
+    public Long solve(char[][] parsedInput) {
         return solveCommon(parsedInput, 2);
     }
 
     @Override
-    public Long solve2(List<String> parsedInput) {
+    public Long solve2(char[][] parsedInput) {
         return solveCommon(parsedInput, 1000000);
     }
 
-    private long solveCommon(List<String> parsedInput, int expandRatio) {
-        var input = parsedInput.stream()
-                .map(String::toCharArray)
-                .toArray(char[][]::new);
-
-        var galaxies = findGalaxies(input);
-        var emptyRows = findEmptyRows(galaxies, input.length);
-        var emptyCols = findEmptyCols(galaxies, input[0].length);
+    private long solveCommon(char[][] parsedInput, int expandRatio) {
+        var galaxies = findGalaxies(parsedInput);
+        var emptyRows = findEmptyRows(galaxies, parsedInput.length);
+        var emptyCols = findEmptyCols(galaxies, parsedInput[0].length);
 
         var shiftY = new HashMap<Galaxy, Integer>();
         for (int emptyCol : emptyCols) {
             galaxies.stream()
                     .filter(g -> g.y() > emptyCol)
-                    .forEach(g ->
-                            shiftY.compute(g, (galaxy, shift) -> expandRatio - 1 + (shift == null ? 0 : shift))
-                    );
+                    .forEach(g -> shiftY.compute(g, (galaxy, shift) -> expandRatio - 1 + (shift == null ? 0 : shift)));
         }
 
         var shiftX = new HashMap<Galaxy, Integer>();
         for (int emptyRow : emptyRows) {
             galaxies.stream()
                     .filter(g -> g.x() > emptyRow)
-                    .forEach(g ->
-                            shiftX.compute(g, (galaxy, shift) -> expandRatio - 1 + (shift == null ? 0 : shift))
-                    );
+                    .forEach(g -> shiftX.compute(g, (galaxy, shift) -> expandRatio - 1 + (shift == null ? 0 : shift)));
         }
 
         galaxies = galaxies.stream()
