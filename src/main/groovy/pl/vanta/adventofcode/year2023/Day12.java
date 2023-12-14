@@ -30,6 +30,8 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
 
     @Override
     public Integer solve(List<Row> parsedInput) {
+        parsedInput.forEach(System.out::println);
+
         return 0;
     }
 
