@@ -41,7 +41,7 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
 
     }
 
-    public record Row(String row, List<Integer> numnbers) {
+    public record Row(String row, List<Integer> numbers) {
     }
 
 }
