@@ -5,6 +5,8 @@ import pl.vanta.adventofcode.ParserSolver;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.joining;
+
 public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
 
     @Override
@@ -31,8 +33,23 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
     @Override
     public Integer solve(List<Row> parsedInput) {
         parsedInput.forEach(System.out::println);
+        parsedInput.stream()
+                .map(r -> matches(r.row(), r.numbers()))
+                .forEach(System.out::println);
 
         return 0;
+    }
+
+    private boolean matches(String row, List<Integer> numbers) {
+        var tmp = row.replaceAll("\\.+", ".")
+                .replaceAll("^\\.?", "")
+                .replaceAll("\\.?$", "");
+
+        var c = numbers.stream()
+                .map("#"::repeat)
+                .collect(joining("."));
+
+        return c.equals(tmp);
     }
 
     @Override

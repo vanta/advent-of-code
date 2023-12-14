@@ -14,6 +14,7 @@ class Day12Spec extends BaseSpecNew {
     List<Map> getTestData1() {
         [
                 [result: 21],
+                [result: 21, suffix: '_full'],
         ]
     }
 
