@@ -48,20 +48,18 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
                 .count();
     }
 
-    private List<String> generate(String row, int noHashes) {
+    private List<String> generate(String row, int hashesCount) {
         if (row.indexOf('?') == -1) {
             return List.of(row);
         }
 
-        if (row.chars().filter(c -> c == '#').count() == noHashes) {
+        if (row.chars().filter(c -> c == '#').count() == hashesCount) {
             return List.of(row.replaceAll("\\?", "."));
         }
 
         var result = new ArrayList<String>();
-
-        result.addAll(generate(row.replaceFirst("\\?", "."), noHashes));
-        result.addAll(generate(row.replaceFirst("\\?", "#"), noHashes));
-
+        result.addAll(generate(row.replaceFirst("\\?", "."), hashesCount));
+        result.addAll(generate(row.replaceFirst("\\?", "#"), hashesCount));
         return result;
     }
 
