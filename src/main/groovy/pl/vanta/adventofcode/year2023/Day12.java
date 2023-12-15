@@ -4,6 +4,8 @@ import pl.vanta.adventofcode.ParserSolver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
@@ -43,9 +45,12 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
     private int getCount(Row r) {
         var generate = generate(r.row(), r.getSum());
         var miniPattern = miniPattern(r.numbers());
+//        var pattern = pattern(r.numbers());
         System.out.println("%s - %d".formatted(r, generate.size()));
         return (int) generate.stream()
                 .filter(s -> matches(s, miniPattern))
+//                .map(pattern::matcher)
+//                .filter(Matcher::matches)
                 .count();
     }
 
@@ -76,6 +81,12 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
         return numbers.stream()
                 .map("#"::repeat)
                 .collect(joining("."));
+    }
+
+    private static Pattern pattern(List<Integer> numbers) {
+        return Pattern.compile(".*" + numbers.stream()
+                .map("#"::repeat)
+                .collect(joining(".+")) + ".*");
     }
 
     @Override
