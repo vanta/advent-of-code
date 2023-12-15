@@ -41,19 +41,25 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
     }
 
     private int getCount(Row r) {
-        return (int) generate(r.row()).stream()
+        return (int) generate(r.row(), r.getSum()).stream()
                 .filter(s -> matches(s, r.numbers()))
                 .count();
     }
 
-    private List<String> generate(String row) {
+    private List<String> generate(String row, int noHashes) {
         if (row.indexOf('?') == -1) {
             return List.of(row);
         }
 
+        if (row.chars().filter(c -> c == '#').count() == noHashes) {
+            return List.of(row.replaceAll("\\?", "."));
+        }
+
         var result = new ArrayList<String>();
-        result.addAll(generate(row.replaceFirst("\\?", ".")));
-        result.addAll(generate(row.replaceFirst("\\?", "#")));
+
+        result.addAll(generate(row.replaceFirst("\\?", "."), noHashes));
+        result.addAll(generate(row.replaceFirst("\\?", "#"), noHashes));
+
         return result;
     }
 
@@ -76,6 +82,10 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
     }
 
     public record Row(String row, List<Integer> numbers) {
+        int getSum() {
+            return numbers.stream()
+                    .reduce(0, Integer::sum);
+        }
     }
 
 }
