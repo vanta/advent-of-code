@@ -14,7 +14,6 @@ class Day12Spec extends BaseSpecNew {
     List<Map> getTestData1() {
         [
                 [result: 21],
-                [result: 21, suffix: '_full'],
         ]
     }
 
@@ -27,7 +26,7 @@ class Day12Spec extends BaseSpecNew {
 
     @Override
     Integer getRealAnswer1() {
-        10033566
+        7032
     }
 
     @Override
