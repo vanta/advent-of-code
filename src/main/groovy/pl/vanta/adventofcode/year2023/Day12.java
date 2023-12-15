@@ -45,26 +45,28 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
         var generate = generate(r.row(), r.getSum());
         var miniPattern = miniPattern(r.numbers());
 //        var pattern = pattern(r.numbers());
+
         System.out.println("%s - %d".formatted(r, generate.size()));
+
         return (int) generate.stream()
-                .filter(s -> matches(s, miniPattern))
+//                .filter(s -> matches(s, miniPattern))
 //                .map(pattern::matcher)
 //                .filter(Matcher::matches)
                 .count();
     }
 
-    private List<String> generate(String row, int hashesCount) {
+    private List<String> generate(String row, int expectedHashesCount) {
         if (row.indexOf('?') == -1) {
             return List.of(row);
         }
 
-        if (row.chars().filter(c -> c == '#').count() == hashesCount) {
+        if (row.chars().filter(c -> c == '#').count() == expectedHashesCount) {
             return List.of(row.replaceAll("\\?", "."));
         }
 
         var result = new ArrayList<String>();
-        result.addAll(generate(row.replaceFirst("\\?", "."), hashesCount));
-        result.addAll(generate(row.replaceFirst("\\?", "#"), hashesCount));
+        result.addAll(generate(row.replaceFirst("\\?", "."), expectedHashesCount));
+        result.addAll(generate(row.replaceFirst("\\?", "#"), expectedHashesCount));
         return result;
     }
 
