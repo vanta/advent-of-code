@@ -41,33 +41,52 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
                 .reduce(0, Integer::sum);
     }
 
+    @Override
+    public Integer solve2(List<Row> parsedInput) {
+        var newRows = parsedInput.stream()
+                .map(r -> r.multiply(5))
+                .toList();
+
+
+        return 0;
+    }
+
     private int getCount(Row r) {
-        var generate = generate(r.row(), r.getSum());
+        var generate = generate(r.row(), r.getSum() - countInString(r.row(), '#'));
         var miniPattern = miniPattern(r.numbers());
 //        var pattern = pattern(r.numbers());
 
         System.out.println("%s - %d".formatted(r, generate.size()));
 
         return (int) generate.stream()
-//                .filter(s -> matches(s, miniPattern))
+                .filter(s -> matches(s, miniPattern))
 //                .map(pattern::matcher)
 //                .filter(Matcher::matches)
                 .count();
     }
 
-    private List<String> generate(String row, int expectedHashesCount) {
-        if (row.indexOf('?') == -1) {
+    private List<String> generate(String row, int hashesToAdd) {
+        var currentPlaceholdersCount = countInString(row, '?');
+        if (currentPlaceholdersCount == 0) {
             return List.of(row);
         }
 
-        if (row.chars().filter(c -> c == '#').count() == expectedHashesCount) {
+        if (hashesToAdd == 0) {
             return List.of(row.replaceAll("\\?", "."));
         }
 
+        if (currentPlaceholdersCount < hashesToAdd) {
+            return List.of();
+        }
+
         var result = new ArrayList<String>();
-        result.addAll(generate(row.replaceFirst("\\?", "."), expectedHashesCount));
-        result.addAll(generate(row.replaceFirst("\\?", "#"), expectedHashesCount));
+        result.addAll(generate(row.replaceFirst("\\?", "."), hashesToAdd));
+        result.addAll(generate(row.replaceFirst("\\?", "#"), hashesToAdd - 1));
         return result;
+    }
+
+    private static int countInString(String row, char charToCount) {
+        return (int) row.chars().filter(c -> c == charToCount).count();
     }
 
     private boolean matches(String row, String miniPattern) {
@@ -90,16 +109,31 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
                 .collect(joining(".+")) + ".*");
     }
 
-    @Override
-    public Integer solve2(List<Row> parsedInput) {
-        return 0;
-
-    }
-
     public record Row(String row, List<Integer> numbers) {
         int getSum() {
             return numbers.stream()
                     .reduce(0, Integer::sum);
+        }
+
+        Row multiply(int i) {
+            var newRow = Stream.generate(() -> row)
+                    .limit(i)
+                    .collect(joining("?"));
+
+            var newNumbers = Stream.generate(() -> numbers)
+                    .limit(i)
+                    .flatMap(List::stream)
+                    .toList();
+
+            return new Row(newRow, newNumbers);
+        }
+
+        boolean startsWith(Row r) {
+            return row.startsWith(r.row()) && numbers.subList(0, r.numbers().size()).equals(r.numbers());
+        }
+
+        boolean endsWith(Row r) {
+            return row.endsWith(r.row()) && numbers.subList(numbers.size() - r.numbers().size(), numbers.size()).equals(r.numbers());
         }
     }
 
