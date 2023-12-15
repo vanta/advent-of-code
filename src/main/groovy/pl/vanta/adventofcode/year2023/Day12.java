@@ -46,20 +46,14 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
                 .count();
     }
 
-    List<String> generate(String row) {
+    private List<String> generate(String row) {
         if (row.indexOf('?') == -1) {
             return List.of(row);
         }
 
-        var tmp1 = row.replaceFirst("\\?", ".");
-        var tmp2 = row.replaceFirst("\\?", "#");
-
-        var l1 = generate(tmp1);
-        var l2 = generate(tmp2);
-
         var result = new ArrayList<String>();
-        result.addAll(l1);
-        result.addAll(l2);
+        result.addAll(generate(row.replaceFirst("\\?", ".")));
+        result.addAll(generate(row.replaceFirst("\\?", "#")));
         return result;
     }
 
