@@ -33,7 +33,7 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
 
     @Override
     public Integer solve(List<Row> parsedInput) {
-        parsedInput.forEach(System.out::println);
+//        parsedInput.forEach(System.out::println);
 
         return parsedInput.stream()
                 .map(this::getCount)
@@ -41,7 +41,9 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
     }
 
     private int getCount(Row r) {
-        return (int) generate(r.row(), r.getSum()).stream()
+        var generate = generate(r.row(), r.getSum());
+        System.out.println("%s - %d".formatted(r, generate.size()));
+        return (int) generate.stream()
                 .filter(s -> matches(s, r.numbers()))
                 .count();
     }
