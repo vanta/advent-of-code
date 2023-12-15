@@ -42,9 +42,10 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
 
     private int getCount(Row r) {
         var generate = generate(r.row(), r.getSum());
+        var miniPattern = miniPattern(r.numbers());
         System.out.println("%s - %d".formatted(r, generate.size()));
         return (int) generate.stream()
-                .filter(s -> matches(s, r.numbers()))
+                .filter(s -> matches(s, miniPattern))
                 .count();
     }
 
@@ -63,16 +64,18 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
         return result;
     }
 
-    private boolean matches(String row, List<Integer> numbers) {
+    private boolean matches(String row, String miniPattern) {
         var tmp = row.replaceAll("\\.+", ".")
                 .replaceAll("^\\.?", "")
                 .replaceAll("\\.?$", "");
 
-        var c = numbers.stream()
+        return miniPattern.equals(tmp);
+    }
+
+    private static String miniPattern(List<Integer> numbers) {
+        return numbers.stream()
                 .map("#"::repeat)
                 .collect(joining("."));
-
-        return c.equals(tmp);
     }
 
     @Override
