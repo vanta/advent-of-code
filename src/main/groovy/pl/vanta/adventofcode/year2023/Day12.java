@@ -2,7 +2,6 @@ package pl.vanta.adventofcode.year2023;
 
 import pl.vanta.adventofcode.ParserSolver;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -68,39 +67,27 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Long> {
 
     private int getCount(Row r) {
         var pattern = pattern(r.numbers());
-        var generate = generate(r.row(), pattern, countInString(r.row(), '?'), r.getSum() - countInString(r.row(), '#'));
         var miniPattern = miniPattern(r.numbers());
 
-        System.out.println("%s - %d".formatted(r, generate.size()));
-
-        return (int) generate.stream()
-                .filter(s -> matches(s, miniPattern))
-//                .map(pattern::matcher)
-//                .filter(Matcher::matches)
-                .count();
+        return generate(r.row(), pattern, miniPattern, countInString(r.row(), '?'), r.getSum() - countInString(r.row(), '#'));
     }
 
-    private List<String> generate(String row, Pattern pattern, int currentPlaceholdersCount, int hashesToAdd) {
+    private int generate(String row, Pattern pattern, String miniPattern, int currentPlaceholdersCount, int hashesToAdd) {
         if (currentPlaceholdersCount == 0) {
-            return List.of(row);
+            return matches(row, miniPattern) ? 1 : 0;
         }
 
         if (currentPlaceholdersCount < hashesToAdd) {
-            return List.of();
+            return 0;
         }
 
-        if (hashesToAdd == 0) {
-            return List.of(row.replaceAll("\\?", "."));
+        if (!pattern.matcher(row).matches()) {
+            return 0;
         }
 
-        if(!pattern.matcher(row).matches()) {
-            return List.of();
-        }
-
-        var result = new ArrayList<String>();
-        result.addAll(generate(row.replaceFirst("\\?", "."), pattern, currentPlaceholdersCount - 1, hashesToAdd));
-        result.addAll(generate(row.replaceFirst("\\?", "#"), pattern, currentPlaceholdersCount - 1, hashesToAdd - 1));
-        return result;
+        var a = generate(row.replaceFirst("\\?", "."), pattern, miniPattern, currentPlaceholdersCount - 1, hashesToAdd);
+        var b = generate(row.replaceFirst("\\?", "#"), pattern, miniPattern, currentPlaceholdersCount - 1, hashesToAdd - 1);
+        return a + b;
     }
 
     private static int countInString(String row, char charToCount) {
