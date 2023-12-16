@@ -52,7 +52,7 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
     }
 
     private int getCount(Row r) {
-        var generate = generate(r.row(), r.getSum() - countInString(r.row(), '#'));
+        var generate = generate(r.row(), countInString(r.row(), '?'), r.getSum() - countInString(r.row(), '#'));
         var miniPattern = miniPattern(r.numbers());
 //        var pattern = pattern(r.numbers());
 
@@ -65,23 +65,22 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
                 .count();
     }
 
-    private List<String> generate(String row, int hashesToAdd) {
-        var currentPlaceholdersCount = countInString(row, '?');
+    private List<String> generate(String row, int currentPlaceholdersCount, int hashesToAdd) {
         if (currentPlaceholdersCount == 0) {
             return List.of(row);
-        }
-
-        if (hashesToAdd == 0) {
-            return List.of(row.replaceAll("\\?", "."));
         }
 
         if (currentPlaceholdersCount < hashesToAdd) {
             return List.of();
         }
 
+        if (hashesToAdd == 0) {
+            return List.of(row.replaceAll("\\?", "."));
+        }
+
         var result = new ArrayList<String>();
-        result.addAll(generate(row.replaceFirst("\\?", "."), hashesToAdd));
-        result.addAll(generate(row.replaceFirst("\\?", "#"), hashesToAdd - 1));
+        result.addAll(generate(row.replaceFirst("\\?", "."), currentPlaceholdersCount - 1, hashesToAdd));
+        result.addAll(generate(row.replaceFirst("\\?", "#"), currentPlaceholdersCount - 1, hashesToAdd - 1));
         return result;
     }
 
