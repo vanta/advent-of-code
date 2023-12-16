@@ -33,10 +33,9 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Long> {
 
     @Override
     public Long solve(List<Row> parsedInput) {
-//        parsedInput.forEach(System.out::println);
-
         return (long) parsedInput.stream()
                 .map(this::getCount)
+                .peek(c -> System.out.println("Count:" + c))
                 .reduce(0, Integer::sum);
     }
 
@@ -45,6 +44,7 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Long> {
         return parsedInput.stream()
                 .map(r -> r.multiply(5))
                 .map(this::getCount)
+                .peek(c -> System.out.println("Count:" + c))
                 .map(i -> (long) i)
                 .reduce(0L, Long::sum);
     }
@@ -66,13 +66,21 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Long> {
     }
 
     private int getCount(Row r) {
-        var pattern = pattern(r.numbers());
         var miniPattern = miniPattern(r.numbers());
+        var placeholdersCount = countInString(r.row(), '?');
+        var hashesCount = countInString(r.row(), '#');
+        var hashesToAdd = r.getSum() - hashesCount;
 
-        return generate(r.row(), pattern, miniPattern, countInString(r.row(), '?'), r.getSum() - countInString(r.row(), '#'));
+        System.out.println("MiniPattern: " + miniPattern);
+        System.out.println("PlaceholdersCount: " + placeholdersCount);
+        System.out.println("HashesCount: " + hashesCount);
+        System.out.println("HashesToAdd: " + hashesToAdd);
+        System.out.printf("Generating possible arrangements for row=%s%n", r);
+
+        return generate(r.row(), miniPattern, placeholdersCount, hashesToAdd);
     }
 
-    private int generate(String row, Pattern pattern, String miniPattern, int currentPlaceholdersCount, int hashesToAdd) {
+    private int generate(String row, String miniPattern, int currentPlaceholdersCount, int hashesToAdd) {
         if (currentPlaceholdersCount == 0) {
             return matches(row, miniPattern) ? 1 : 0;
         }
@@ -81,12 +89,8 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Long> {
             return 0;
         }
 
-        if (!pattern.matcher(row).matches()) {
-            return 0;
-        }
-
-        var a = generate(row.replaceFirst("\\?", "."), pattern, miniPattern, currentPlaceholdersCount - 1, hashesToAdd);
-        var b = generate(row.replaceFirst("\\?", "#"), pattern, miniPattern, currentPlaceholdersCount - 1, hashesToAdd - 1);
+        var a = generate(row.replaceFirst("\\?", "."), miniPattern, currentPlaceholdersCount - 1, hashesToAdd);
+        var b = generate(row.replaceFirst("\\?", "#"), miniPattern, currentPlaceholdersCount - 1, hashesToAdd - 1);
         return a + b;
     }
 
