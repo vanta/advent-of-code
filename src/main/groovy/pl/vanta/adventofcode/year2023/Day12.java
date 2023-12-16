@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 
-public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
+public class Day12 implements ParserSolver<List<Day12.Row>, Long> {
 
     @Override
     public int getDayNumber() {
@@ -33,28 +33,43 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
     }
 
     @Override
-    public Integer solve(List<Row> parsedInput) {
+    public Long solve(List<Row> parsedInput) {
 //        parsedInput.forEach(System.out::println);
 
-        return parsedInput.stream()
+        return (long) parsedInput.stream()
                 .map(this::getCount)
                 .reduce(0, Integer::sum);
     }
 
     @Override
-    public Integer solve2(List<Row> parsedInput) {
-        var newRows = parsedInput.stream()
+    public Long solve2(List<Row> parsedInput) {
+        return parsedInput.stream()
                 .map(r -> r.multiply(5))
-                .toList();
+                .map(this::getCount)
+                .map(i -> (long) i)
+                .reduce(0L, Long::sum);
+    }
 
+    private long getCount2(String row, List<Integer> numbers) {
+        long[][] sol = new long[row.length() + 1][numbers.size() + 1];
 
-        return 0;
+        for (int i = 0; i <= row.length(); i++) {
+            for (int j = 0; j <= numbers.size(); j++) {
+                sol[i][j] = switch (row.charAt(i)) {
+                    case '#' -> 0;
+                    case '?' -> j == 0 ? 1 : sol[i - 1][j - 1] + sol[i - 1][j];
+                    default -> throw new IllegalStateException();
+                };
+            }
+        }
+
+        return sol[row.length()][numbers.size()];
     }
 
     private int getCount(Row r) {
-        var generate = generate(r.row(), countInString(r.row(), '?'), r.getSum() - countInString(r.row(), '#'));
+        var pattern = pattern(r.numbers());
+        var generate = generate(r.row(), pattern, countInString(r.row(), '?'), r.getSum() - countInString(r.row(), '#'));
         var miniPattern = miniPattern(r.numbers());
-//        var pattern = pattern(r.numbers());
 
         System.out.println("%s - %d".formatted(r, generate.size()));
 
@@ -65,7 +80,7 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
                 .count();
     }
 
-    private List<String> generate(String row, int currentPlaceholdersCount, int hashesToAdd) {
+    private List<String> generate(String row, Pattern pattern, int currentPlaceholdersCount, int hashesToAdd) {
         if (currentPlaceholdersCount == 0) {
             return List.of(row);
         }
@@ -78,9 +93,13 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
             return List.of(row.replaceAll("\\?", "."));
         }
 
+        if(!pattern.matcher(row).matches()) {
+            return List.of();
+        }
+
         var result = new ArrayList<String>();
-        result.addAll(generate(row.replaceFirst("\\?", "."), currentPlaceholdersCount - 1, hashesToAdd));
-        result.addAll(generate(row.replaceFirst("\\?", "#"), currentPlaceholdersCount - 1, hashesToAdd - 1));
+        result.addAll(generate(row.replaceFirst("\\?", "."), pattern, currentPlaceholdersCount - 1, hashesToAdd));
+        result.addAll(generate(row.replaceFirst("\\?", "#"), pattern, currentPlaceholdersCount - 1, hashesToAdd - 1));
         return result;
     }
 
@@ -104,7 +123,7 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Integer> {
 
     private static Pattern pattern(List<Integer> numbers) {
         return Pattern.compile(".*" + numbers.stream()
-                .map("#"::repeat)
+                .map("(#|\\?){%d}"::formatted)
                 .collect(joining(".+")) + ".*");
     }
 
