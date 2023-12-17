@@ -36,7 +36,7 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Long> {
     public Long solve(List<Row> parsedInput) {
         return (long) parsedInput.stream()
                 .map(this::getCount)
-                .reduce(0, Integer::sum);
+                .reduce(0L, Long::sum);
     }
 
     @Override
@@ -45,17 +45,16 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Long> {
                 .map(r -> r.multiply(5))
                 .map(this::getCount)
                 .peek(c -> System.out.println("Count:" + c))
-                .map(i -> (long) i)
                 .reduce(0L, Long::sum);
     }
 
-    private int getCount(Row r) {
-        var cache = new HashMap<Row, Integer>();
+    private long getCount(Row r) {
+        var cache = new HashMap<Row, Long>();
 
         return count(r.row(), r.numbers(), cache);
     }
 
-    private int count(String row, List<Integer> numbers, Map<Row, Integer> cache) {
+    private long count(String row, List<Integer> numbers, Map<Row, Long> cache) {
         Row r = new Row(row, numbers);
         if (cache.containsKey(r)) {
             return cache.get(r);
@@ -77,7 +76,7 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Long> {
         return value;
     }
 
-    private int countWhenHash(String row, List<Integer> numbers, Map<Row, Integer> cache) {
+    private long countWhenHash(String row, List<Integer> numbers, Map<Row, Long> cache) {
         if (numbers.isEmpty()) {
             return 0;
         }
