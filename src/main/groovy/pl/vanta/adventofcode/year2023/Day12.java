@@ -2,7 +2,9 @@ package pl.vanta.adventofcode.year2023;
 
 import pl.vanta.adventofcode.ParserSolver;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
@@ -48,47 +50,54 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Long> {
     }
 
     private int getCount(Row r) {
-        return count(r.row(), r.numbers());
+        var cache = new HashMap<Row, Integer>();
+
+        return count(r.row(), r.numbers(), cache);
     }
 
-    private int count(String row, List<Integer> numbers) {
+    private int count(String row, List<Integer> numbers, Map<Row, Integer> cache) {
+        Row r = new Row(row, numbers);
+        if (cache.containsKey(r)) {
+            return cache.get(r);
+        }
+
         if (row.isEmpty()) {
             return numbers.isEmpty() ? 1 : 0;
         }
 
-        var c = row.charAt(0);
-
-        return switch (c) {
-            case '.' -> count(row.substring(1), numbers);
-            case '?' -> count("." + row.substring(1), numbers) + count("#" + row.substring(1), numbers);
-            case '#' -> countWhenHash(row, numbers);
+        var value = switch (row.charAt(0)) {
+            case '.' -> count(row.substring(1), numbers, cache);
+            case '?' -> count("." + row.substring(1), numbers, cache) + count("#" + row.substring(1), numbers, cache);
+            case '#' -> countWhenHash(row, numbers, cache);
             default -> throw new IllegalStateException();
         };
+
+        cache.put(r, value);
+
+        return value;
     }
 
-    private int countWhenHash(String row, List<Integer> numbers) {
+    private int countWhenHash(String row, List<Integer> numbers, Map<Row, Integer> cache) {
         if (numbers.isEmpty()) {
             return 0;
         }
 
-        var n = numbers.get(0);
+        var groupLen = numbers.get(0);
 
-        if (row.length() < n || !row.chars().limit(n).allMatch(c -> c == '?' || c == '#')) {
-            return 0;
-        }
+        if (row.length() >= groupLen && row.chars().limit(groupLen).allMatch(c -> c == '?' || c == '#')) {
+            var newNumbers = numbers.subList(1, numbers.size());
 
-        var newNumbers = numbers.subList(1, numbers.size());
+            if (row.length() == groupLen) {
+                return newNumbers.isEmpty() ? 1 : 0;
+            }
 
-        if (row.length() == n) {
-            return newNumbers.isEmpty() ? 1 : 0;
-        }
+            if (row.charAt(groupLen) == '.') {
+                return count(row.substring(groupLen + 1), newNumbers, cache);
+            }
 
-        if (row.charAt(n) == '.') {
-            return count(row.substring(n + 1), newNumbers);
-        }
-
-        if (row.charAt(n) == '?') {
-            return count("." + row.substring(n + 1), newNumbers);
+            if (row.charAt(groupLen) == '?') {
+                return count("." + row.substring(groupLen + 1), newNumbers, cache);
+            }
         }
 
         return 0;
