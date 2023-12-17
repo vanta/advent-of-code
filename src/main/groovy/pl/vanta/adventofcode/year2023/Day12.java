@@ -2,7 +2,9 @@ package pl.vanta.adventofcode.year2023;
 
 import pl.vanta.adventofcode.ParserSolver;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -35,7 +37,7 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Long> {
     public Long solve(List<Row> parsedInput) {
         return (long) parsedInput.stream()
                 .map(this::getCount)
-                .peek(c -> System.out.println("Count:" + c))
+//                .peek(c -> System.out.println("Count:" + c))
                 .reduce(0, Integer::sum);
     }
 
@@ -43,55 +45,91 @@ public class Day12 implements ParserSolver<List<Day12.Row>, Long> {
     public Long solve2(List<Row> parsedInput) {
         return parsedInput.stream()
                 .map(r -> r.multiply(5))
-                .map(this::getCount)
+                .map(this::getCount2)
                 .peek(c -> System.out.println("Count:" + c))
-                .map(i -> (long) i)
                 .reduce(0L, Long::sum);
     }
 
-    private long getCount2(String row, List<Integer> numbers) {
-        long[][] sol = new long[row.length() + 1][numbers.size() + 1];
+    private long getCount2(Row row) {
+        var cache = new HashMap<Row, Integer>();
+
+        return aaaa(row.row(), row.numbers(), cache);
+    }
+
+    private static long aaaa(String row, List<Integer> numbers, Map<Row, Integer> cache) {
+        var r = new Row(row, numbers);
+        if (cache.containsKey(r)) {
+            return cache.get(r);
+        }
+
+        var result = 0L;
 
         for (int i = 0; i <= row.length(); i++) {
             for (int j = 0; j <= numbers.size(); j++) {
-                sol[i][j] = switch (row.charAt(i)) {
-                    case '#' -> 0;
-                    case '?' -> j == 0 ? 1 : sol[i - 1][j - 1] + sol[i - 1][j];
-                    default -> throw new IllegalStateException();
-                };
+
             }
         }
 
-        return sol[row.length()][numbers.size()];
+        return result;
     }
 
     private int getCount(Row r) {
-        var miniPattern = miniPattern(r.numbers());
-        var placeholdersCount = countInString(r.row(), '?');
-        var hashesCount = countInString(r.row(), '#');
-        var hashesToAdd = r.getSum() - hashesCount;
+//        var miniPattern = miniPattern(r.numbers());
+//        var placeholdersCount = countInString(r.row(), '?');
+//        var hashesCount = countInString(r.row(), '#');
+//        var hashesToAdd = r.getSum() - hashesCount;
 
-        System.out.println("MiniPattern: " + miniPattern);
-        System.out.println("PlaceholdersCount: " + placeholdersCount);
-        System.out.println("HashesCount: " + hashesCount);
-        System.out.println("HashesToAdd: " + hashesToAdd);
-        System.out.printf("Generating possible arrangements for row=%s%n", r);
-
-        return generate(r.row(), miniPattern, placeholdersCount, hashesToAdd);
+//        System.out.println("MiniPattern: " + miniPattern);
+//        System.out.println("PlaceholdersCount: " + placeholdersCount);
+//        System.out.println("HashesCount: " + hashesCount);
+//        System.out.println("HashesToAdd: " + hashesToAdd);
+        System.out.printf("Generating possible arrangements for row=%s", r);
+        var count = count(r.row(), r.numbers());
+        System.out.println(" - " + count);
+        return count;
     }
 
-    private int generate(String row, String miniPattern, int currentPlaceholdersCount, int hashesToAdd) {
-        if (currentPlaceholdersCount == 0) {
-            return matches(row, miniPattern) ? 1 : 0;
+    private int count(String row, List<Integer> numbers) {
+        if (row.isEmpty()) {
+            return numbers.isEmpty() ? 1 : 0;
         }
 
-        if (currentPlaceholdersCount < hashesToAdd) {
+        var c = row.charAt(0);
+
+        return switch (c) {
+            case '.' -> count(row.substring(1), numbers);
+            case '?' -> count("." + row.substring(1), numbers) + count("#" + row.substring(1), numbers);
+            case '#' -> countWhenHash(row, numbers);
+            default -> throw new IllegalStateException();
+        };
+    }
+
+    private int countWhenHash(String row, List<Integer> numbers) {
+        if (numbers.isEmpty()) {
             return 0;
         }
 
-        var a = generate(row.replaceFirst("\\?", "."), miniPattern, currentPlaceholdersCount - 1, hashesToAdd);
-        var b = generate(row.replaceFirst("\\?", "#"), miniPattern, currentPlaceholdersCount - 1, hashesToAdd - 1);
-        return a + b;
+        var n = numbers.get(0);
+
+        if (row.length() < n || !row.chars().limit(n).allMatch(c -> c == '?' || c == '#')) {
+            return 0;
+        }
+
+        var newNumbers = numbers.subList(1, numbers.size());
+
+        if (row.length() == n) {
+            return newNumbers.isEmpty() ? 1 : 0;
+        }
+
+        if (row.charAt(n) == '.') {
+            return count(row.substring(n + 1), newNumbers);
+        }
+
+        if (row.charAt(n) == '?') {
+            return count("." + row.substring(n + 1), newNumbers);
+        }
+
+        return 0;
     }
 
     private static int countInString(String row, char charToCount) {
