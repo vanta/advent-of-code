@@ -43,7 +43,17 @@ public class Day13 implements ParserSolver<List<List<String>>, Integer> {
         for (int i = 0; i < strings.size(); i++) {
             String s = strings.get(i);
             if (s.equals(prev)) {
-                return check(strings, i);
+                int elementsToCheck = Math.min(i - 1, strings.size() - i - 1);
+
+                for (int j = 0; j < elementsToCheck; j++) {
+                    String first =strings.get(i - j - 2);
+                    String second = strings.get(i + j + 1);
+                    if (!first.equals(second)) {
+                        return 0;
+                    }
+                }
+
+                return i;
             }
 
             prev = s;
