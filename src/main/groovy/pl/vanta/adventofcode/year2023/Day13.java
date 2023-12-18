@@ -45,9 +45,7 @@ public class Day13 implements ParserSolver<List<List<String>>, Integer> {
             String curr = strings.get(i);
             if (curr.equals(prev)) {
                 for (int j = 0; j < min(i - 1, strings.size() - i - 1); j++) {
-                    String first = strings.get(i - j - 2);
-                    String second = strings.get(i + j + 1);
-                    if (!first.equals(second)) {
+                    if (!strings.get(i - j - 2).equals(strings.get(i + j + 1))) {
                         return 0;
                     }
                 }
@@ -75,26 +73,6 @@ public class Day13 implements ParserSolver<List<List<String>>, Integer> {
             }
         }
         return result.stream().map(StringBuilder::toString).toList();
-    }
-
-    private int check(List<String> strings, int i) {
-        var l1 = new ArrayList<>(strings.subList(0, i));
-        reverse(l1);
-        var l2 = strings.subList(i, strings.size());
-
-        if (l1.size() > l2.size()) {
-            var tmp = l1.subList(0, l2.size());
-            if (tmp.equals(l2)) {
-                return l1.size();
-            }
-        } else {
-            var tmp = l2.subList(0, l1.size());
-            if (tmp.equals(l1)) {
-                return l1.size();
-            }
-        }
-
-        return 0;
     }
 
     @Override
