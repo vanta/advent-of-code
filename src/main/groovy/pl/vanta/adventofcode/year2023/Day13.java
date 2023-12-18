@@ -35,20 +35,7 @@ public class Day13 implements ParserSolver<List<List<String>>, Integer> {
     }
 
     private int getCols(List<String> strings) {
-        var len = strings.get(0).length();
-        var result = new ArrayList<StringBuilder>();
-
-        for (int i = 0; i < len; i++) {
-            result.add(new StringBuilder());
-        }
-
-        for (int i = 0; i < len; i++) {
-            for (String string : strings) {
-                result.get(i).append(string.charAt(i));
-            }
-        }
-
-        return getRows(result.stream().map(StringBuilder::toString).toList());
+        return getRows(transpose(strings));
     }
 
     private int getRows(List<String> strings) {
@@ -63,6 +50,22 @@ public class Day13 implements ParserSolver<List<List<String>>, Integer> {
         }
 
         return 0;
+    }
+
+    private static List<String> transpose(List<String> strings) {
+        var len = strings.get(0).length();
+        var result = new ArrayList<StringBuilder>();
+
+        for (int i = 0; i < len; i++) {
+            result.add(new StringBuilder());
+        }
+
+        for (int i = 0; i < len; i++) {
+            for (String string : strings) {
+                result.get(i).append(string.charAt(i));
+            }
+        }
+        return result.stream().map(StringBuilder::toString).toList();
     }
 
     private int check(List<String> strings, int i) {
