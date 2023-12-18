@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static java.lang.Math.min;
-import static java.util.Collections.reverse;
 
 public class Day13 implements ParserSolver<List<List<String>>, Integer> {
 
@@ -31,7 +30,17 @@ public class Day13 implements ParserSolver<List<List<String>>, Integer> {
     @Override
     public Integer solve(List<List<String>> parsedInput) {
         return parsedInput.stream()
-                .mapToInt(s -> 100 * getRows(s) + getCols(s))
+                .mapToInt(s -> {
+                    var rows = getRows(s);
+                    var cols = getCols(s);
+                    var i = 100 * rows + cols;
+
+                    if(i == 0) {
+                        s.forEach(System.out::println);
+                        System.out.println("----------------");
+                    }
+                    return i;
+                })
                 .sum();
     }
 
