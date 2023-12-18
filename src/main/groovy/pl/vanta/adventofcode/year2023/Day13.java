@@ -41,8 +41,8 @@ public class Day13 implements ParserSolver<List<List<String>>, Integer> {
     private int getRows(List<String> strings) {
         String prev = null;
         for (int i = 0; i < strings.size(); i++) {
-            String s = strings.get(i);
-            if (s.equals(prev)) {
+            String curr = strings.get(i);
+            if (curr.equals(prev)) {
                 int elementsToCheck = Math.min(i - 1, strings.size() - i - 1);
 
                 for (int j = 0; j < elementsToCheck; j++) {
@@ -56,7 +56,7 @@ public class Day13 implements ParserSolver<List<List<String>>, Integer> {
                 return i;
             }
 
-            prev = s;
+            prev = curr;
         }
 
         return 0;
