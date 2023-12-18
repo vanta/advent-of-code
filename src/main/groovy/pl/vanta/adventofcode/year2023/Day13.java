@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static java.lang.Math.min;
 import static java.util.Collections.reverse;
 
 public class Day13 implements ParserSolver<List<List<String>>, Integer> {
@@ -43,10 +44,8 @@ public class Day13 implements ParserSolver<List<List<String>>, Integer> {
         for (int i = 0; i < strings.size(); i++) {
             String curr = strings.get(i);
             if (curr.equals(prev)) {
-                int elementsToCheck = Math.min(i - 1, strings.size() - i - 1);
-
-                for (int j = 0; j < elementsToCheck; j++) {
-                    String first =strings.get(i - j - 2);
+                for (int j = 0; j < min(i - 1, strings.size() - i - 1); j++) {
+                    String first = strings.get(i - j - 2);
                     String second = strings.get(i + j + 1);
                     if (!first.equals(second)) {
                         return 0;
@@ -83,7 +82,7 @@ public class Day13 implements ParserSolver<List<List<String>>, Integer> {
         reverse(l1);
         var l2 = strings.subList(i, strings.size());
 
-        if(l1.size() > l2.size()) {
+        if (l1.size() > l2.size()) {
             var tmp = l1.subList(0, l2.size());
             if (tmp.equals(l2)) {
                 return l1.size();
