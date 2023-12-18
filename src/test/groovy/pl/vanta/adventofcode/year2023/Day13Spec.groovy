@@ -14,6 +14,13 @@ class Day13Spec extends BaseSpecNew {
     List<Map> getTestData1() {
         [
                 [result: 405],
+                [result: 709, suffix: '_2'],
+                [result: 1, suffix: '_3'],
+                [result: 2, suffix: '_4'],
+                [result: 1, suffix: '_5_1'],
+                [result: 8, suffix: '_5_2'],
+                [result: 100, suffix: '_5_3'],
+                [result: 600, suffix: '_5_4'],
         ]
     }
 

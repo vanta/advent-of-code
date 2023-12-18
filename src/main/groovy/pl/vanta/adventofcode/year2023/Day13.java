@@ -29,15 +29,9 @@ public class Day13 implements ParserSolver<List<List<String>>, Integer> {
 
     @Override
     public Integer solve(List<List<String>> parsedInput) {
-//        parsedInput.forEach(strings -> strings.forEach(System.out::println));
-
-        var rows = parsedInput.stream()
-                .map(this::getRows)
-                .reduce(0, Integer::sum);
-        var cols = parsedInput.stream()
-                .map(this::getCols)
-                .reduce(0, Integer::sum);
-        return rows * 100 + cols;
+        return parsedInput.stream()
+                .mapToInt(s -> 100 * getRows(s) + getCols(s))
+                .sum();
     }
 
     private int getCols(List<String> strings) {
@@ -76,12 +70,16 @@ public class Day13 implements ParserSolver<List<List<String>>, Integer> {
         reverse(l1);
         var l2 = strings.subList(i, strings.size());
 
-        var bigger = l1.size() > l2.size() ? l1 : l2;
-        var smaller = l1.size() > l2.size() ? l2 : l1;
-
-        var tmp = bigger.subList(0, smaller.size());
-        if (tmp.equals(smaller)) {
-            return bigger.size();
+        if(l1.size() > l2.size()) {
+            var tmp = l1.subList(0, l2.size());
+            if (tmp.equals(l2)) {
+                return l1.size();
+            }
+        } else {
+            var tmp = l2.subList(0, l1.size());
+            if (tmp.equals(l1)) {
+                return l1.size();
+            }
         }
 
         return 0;
