@@ -5,6 +5,7 @@ import pl.vanta.adventofcode.ParserSolver;
 import java.util.stream.Stream;
 
 public class Day14 implements ParserSolver<char[][], Integer> {
+    public static final int CYCLES = 1_000_000_000;
 
     @Override
     public int getDayNumber() {
@@ -20,35 +21,136 @@ public class Day14 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve(char[][] parsedInput) {
-        return count(load(parsedInput));
+        return count(tiltNorth(parsedInput));
     }
 
-    private char[][] load(char[][] parsedInput) {
-        for(int i = 1; i < parsedInput.length; i++) {
-            for(int j = 0; j < parsedInput[i].length; j++) {
-                if (parsedInput[i][j] == 'O') {
-                    int row = findRowToLoad(parsedInput, i, j);
+    @Override
+    public Integer solve2(char[][] parsedInput) {
+        return count(tilt(parsedInput, CYCLES));
+    }
 
-                    var tmp = parsedInput[row][j];
-                    parsedInput[row][j] = 'O';
-                    parsedInput[i][j] = tmp;
-                }
+    private char[][] tilt(char[][] parsedInput, int tilts) {
+        for (int i = 0; i < tilts; i++) {
+            var north = tiltNorth(parsedInput);
+            var west = tiltWest(north);
+            var south = tiltSouth(west);
+            var east = tiltEast(south);
+
+            parsedInput = east;
+
+            if(i % 1_000_000 == 0) {
+                System.out.println(i);
             }
-        }
 
-        print(parsedInput);
+//            print(north, west, south, east);
+        }
 
         return parsedInput;
     }
 
-    private int findRowToLoad(char[][] parsedInput, int i, int j) {
+    private char[][] tiltNorth(char[][] parsedInput) {
+//        var parsedInput = Arrays.stream(tmp).map(char[]::clone).toArray(char[][]::new);
+
+        for (int i = 1; i < parsedInput.length; i++) {
+            for (int j = 0; j < parsedInput[i].length; j++) {
+                if (parsedInput[i][j] == 'O') {
+                    swap(parsedInput, findTiltLimitNorth(parsedInput, i, j), j, i, j);
+                }
+            }
+        }
+
+        return parsedInput;
+    }
+
+    private char[][] tiltSouth(char[][] parsedInput) {
+//        var parsedInput = Arrays.stream(tmp).map(char[]::clone).toArray(char[][]::new);
+
+        for (int i = parsedInput.length - 2; i >= 0; i--) {
+            for (int j = 0; j < parsedInput[i].length; j++) {
+                if (parsedInput[i][j] == 'O') {
+                    swap(parsedInput, findTiltLimitSouth(parsedInput, i, j), j, i, j);
+                }
+            }
+        }
+
+        return parsedInput;
+    }
+
+    private char[][] tiltWest(char[][] parsedInput) {
+//        var parsedInput = Arrays.stream(tmp).map(char[]::clone).toArray(char[][]::new);
+
+        for (int i = 0; i < parsedInput.length; i++) {
+            for (int j = 1; j < parsedInput[i].length; j++) {
+                if (parsedInput[i][j] == 'O') {
+                    swap(parsedInput, i, findTiltLimitWest(parsedInput, i, j), i, j);
+                }
+            }
+        }
+
+        return parsedInput;
+    }
+
+    private char[][] tiltEast(char[][] parsedInput) {
+//        var parsedInput = Arrays.stream(tmp).map(char[]::clone).toArray(char[][]::new);
+
+        for (int i = 0; i < parsedInput.length; i++) {
+            for (int j = parsedInput[i].length - 2; j >= 0; j--) {
+                if (parsedInput[i][j] == 'O') {
+                    swap(parsedInput, i, findTiltLimitEast(parsedInput, i, j), i, j);
+                }
+            }
+        }
+
+        return parsedInput;
+    }
+
+    private int findTiltLimitNorth(char[][] parsedInput, int i, int j) {
         for (int k = i - 1; k >= 0; k--) {
-            if(parsedInput[k][j] != '.') {
+            if (parsedInput[k][j] != '.') {
                 return k + 1;
             }
         }
 
         return 0;
+    }
+
+    private int findTiltLimitSouth(char[][] parsedInput, int i, int j) {
+        for (int k = i + 1; k < parsedInput.length; k++) {
+            if (parsedInput[k][j] != '.') {
+                return k - 1;
+            }
+        }
+
+        return parsedInput.length - 1;
+    }
+
+    private int findTiltLimitWest(char[][] parsedInput, int i, int j) {
+        for (int k = j - 1; k >= 0; k--) {
+            if (parsedInput[i][k] != '.') {
+                return k + 1;
+            }
+        }
+
+        return 0;
+    }
+
+    private int findTiltLimitEast(char[][] parsedInput, int i, int j) {
+        for (int k = j + 1; k < parsedInput[0].length; k++) {
+            if (parsedInput[i][k] != '.') {
+                return k - 1;
+            }
+        }
+
+        return parsedInput[0].length - 1;
+    }
+
+    private static void swap(char[][] parsedInput, int row1, int col1, int row2, int col2) {
+        if(row1 == row2 && col1 == col2) {
+            return;
+        }
+        var tmp = parsedInput[row1][col1];
+        parsedInput[row1][col1] = parsedInput[row2][col2];
+        parsedInput[row2][col2] = tmp;
     }
 
     private int count(char[][] loaded) {
@@ -64,18 +166,16 @@ public class Day14 implements ParserSolver<char[][], Integer> {
         return counter;
     }
 
-    void print(char[][] parsedInput) {
-        for (char[] chars : parsedInput) {
-            for (char aChar : chars) {
-                System.out.print(aChar);
+    private void print(char[][]... groups) {
+        for (int i = 0; i < groups[0].length; i++) { //rows
+            for (char[][] group : groups) { //groups
+                for (char c : group[i]) { //cols
+                    System.out.print(c);
+                }
+                System.out.print('\t');
             }
             System.out.println();
         }
-    }
-
-    @Override
-    public Integer solve2(char[][] parsedInput) {
-        return -1;
     }
 
 }
