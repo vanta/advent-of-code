@@ -2,6 +2,8 @@ package pl.vanta.adventofcode.year2023;
 
 import pl.vanta.adventofcode.ParserSolver;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class Day14 implements ParserSolver<char[][], Integer> {
@@ -30,27 +32,41 @@ public class Day14 implements ParserSolver<char[][], Integer> {
     }
 
     private char[][] tilt(char[][] parsedInput, int tilts) {
+        Map<String, Integer> cache = new HashMap<>();
+
         for (int i = 0; i < tilts; i++) {
+            String key = toString(parsedInput);
+            if (cache.containsKey(key)) {
+                int cycle = i - cache.get(key);
+                int remaining = tilts - i - 1;
+                int cycles = remaining / cycle;
+                i += (cycles * cycle);
+            } else {
+                cache.put(key, i);
+            }
+
+//            var north = tiltNorth(parsedInput);
+//            var west = tiltNorth(transpose(north));
+//            var south = tiltNorth(transpose(west));
+//            var east = tiltNorth(transpose(south));
             var north = tiltNorth(parsedInput);
             var west = tiltWest(north);
             var south = tiltSouth(west);
             var east = tiltEast(south);
 
             parsedInput = east;
-
-            if(i % 1_000_000 == 0) {
-                System.out.println(i);
-            }
-
-//            print(north, west, south, east);
         }
 
         return parsedInput;
     }
 
-    private char[][] tiltNorth(char[][] parsedInput) {
-//        var parsedInput = Arrays.stream(tmp).map(char[]::clone).toArray(char[][]::new);
+    private String toString(char[][] input) {
+        return Stream.of(input)
+                .map(String::new)
+                .reduce("", (s1, s2) -> s1 + s2);
+    }
 
+    private char[][] tiltNorth(char[][] parsedInput) {
         for (int i = 1; i < parsedInput.length; i++) {
             for (int j = 0; j < parsedInput[i].length; j++) {
                 if (parsedInput[i][j] == 'O') {
@@ -63,8 +79,6 @@ public class Day14 implements ParserSolver<char[][], Integer> {
     }
 
     private char[][] tiltSouth(char[][] parsedInput) {
-//        var parsedInput = Arrays.stream(tmp).map(char[]::clone).toArray(char[][]::new);
-
         for (int i = parsedInput.length - 2; i >= 0; i--) {
             for (int j = 0; j < parsedInput[i].length; j++) {
                 if (parsedInput[i][j] == 'O') {
@@ -77,8 +91,6 @@ public class Day14 implements ParserSolver<char[][], Integer> {
     }
 
     private char[][] tiltWest(char[][] parsedInput) {
-//        var parsedInput = Arrays.stream(tmp).map(char[]::clone).toArray(char[][]::new);
-
         for (int i = 0; i < parsedInput.length; i++) {
             for (int j = 1; j < parsedInput[i].length; j++) {
                 if (parsedInput[i][j] == 'O') {
@@ -91,8 +103,6 @@ public class Day14 implements ParserSolver<char[][], Integer> {
     }
 
     private char[][] tiltEast(char[][] parsedInput) {
-//        var parsedInput = Arrays.stream(tmp).map(char[]::clone).toArray(char[][]::new);
-
         for (int i = 0; i < parsedInput.length; i++) {
             for (int j = parsedInput[i].length - 2; j >= 0; j--) {
                 if (parsedInput[i][j] == 'O') {
@@ -145,7 +155,7 @@ public class Day14 implements ParserSolver<char[][], Integer> {
     }
 
     private static void swap(char[][] parsedInput, int row1, int col1, int row2, int col2) {
-        if(row1 == row2 && col1 == col2) {
+        if (row1 == row2 && col1 == col2) {
             return;
         }
         var tmp = parsedInput[row1][col1];
@@ -178,4 +188,15 @@ public class Day14 implements ParserSolver<char[][], Integer> {
         }
     }
 
+    private char[][] transpose(char[][] input) {
+        var result = new char[input[0].length][input.length];
+
+        for (int i = 0; i < input.length; i++) { //rows
+            for (int j = 0; j < input[i].length; j++) { //cols
+                result[j][i] = input[i][j];
+            }
+        }
+
+        return result;
+    }
 }
