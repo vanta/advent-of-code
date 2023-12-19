@@ -117,15 +117,8 @@ public class Day14 implements ParserSolver<char[][], Integer> {
     private char[][] transpose(char[][] input) {
         var result = new char[input[0].length][input.length];
 
-//        for (int i = 0; i < input.length; i++) { //rows
-//            for (int j = 0; j < input[i].length; j++) { //cols
-//                result[j][i] = input[i][j];
-//            }
-//        }
-
-        //rotate right array
-        for (int i = 0; i < input.length; i++) { //rows
-            for (int j = 0; j < input[i].length; j++) { //cols
+        for (int i = 0; i < input.length; i++) {
+            for (int j = 0; j < input[i].length; j++) {
                 result[j][input.length - i - 1] = input[i][j];
             }
         }
