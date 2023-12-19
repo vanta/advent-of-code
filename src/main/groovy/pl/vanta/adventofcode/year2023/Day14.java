@@ -61,7 +61,7 @@ public class Day14 implements ParserSolver<char[][], Integer> {
         for (int i = 1; i < parsedInput.length; i++) {
             for (int j = 0; j < parsedInput[i].length; j++) {
                 if (parsedInput[i][j] == 'O') {
-                    swap(parsedInput, findTiltLimitNorth(parsedInput, i, j), j, i, j);
+                    swap(parsedInput, findTiltLimitUp(parsedInput, i, j), j, i, j);
                 }
             }
         }
@@ -69,7 +69,7 @@ public class Day14 implements ParserSolver<char[][], Integer> {
         return parsedInput;
     }
 
-    private int findTiltLimitNorth(char[][] parsedInput, int i, int j) {
+    private int findTiltLimitUp(char[][] parsedInput, int i, int j) {
         for (int k = i - 1; k >= 0; k--) {
             if (parsedInput[k][j] != '.') {
                 return k + 1;
