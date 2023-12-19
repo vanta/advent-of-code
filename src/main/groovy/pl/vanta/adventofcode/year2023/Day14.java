@@ -23,7 +23,7 @@ public class Day14 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve(char[][] parsedInput) {
-        return count(tiltNorth(transpose(transpose(transpose(transpose(parsedInput))))));
+        return count(tiltUp(transpose(transpose(transpose(transpose(parsedInput))))));
     }
 
     @Override
@@ -45,11 +45,7 @@ public class Day14 implements ParserSolver<char[][], Integer> {
                 cache.put(key, i);
             }
 
-            var north = tiltNorth(parsedInput);
-            var west = tiltNorth(transpose(north));
-            var south = tiltNorth(transpose(west));
-            var east = tiltNorth(transpose(south));
-            parsedInput = transpose(east);
+            parsedInput = transpose(tiltUp(transpose(tiltUp(transpose(tiltUp(transpose(tiltUp(parsedInput))))))));
         }
 
         return parsedInput;
@@ -61,7 +57,7 @@ public class Day14 implements ParserSolver<char[][], Integer> {
                 .reduce("", (s1, s2) -> s1 + s2);
     }
 
-    private char[][] tiltNorth(char[][] parsedInput) {
+    private char[][] tiltUp(char[][] parsedInput) {
         for (int i = 1; i < parsedInput.length; i++) {
             for (int j = 0; j < parsedInput[i].length; j++) {
                 if (parsedInput[i][j] == 'O') {
