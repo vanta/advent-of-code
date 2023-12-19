@@ -23,7 +23,7 @@ public class Day14 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve(char[][] parsedInput) {
-        return count(tiltNorth(parsedInput));
+        return count(tiltNorth(transpose(transpose(transpose(transpose(parsedInput))))));
     }
 
     @Override
@@ -45,16 +45,11 @@ public class Day14 implements ParserSolver<char[][], Integer> {
                 cache.put(key, i);
             }
 
-//            var north = tiltNorth(parsedInput);
-//            var west = tiltNorth(transpose(north));
-//            var south = tiltNorth(transpose(west));
-//            var east = tiltNorth(transpose(south));
             var north = tiltNorth(parsedInput);
-            var west = tiltWest(north);
-            var south = tiltSouth(west);
-            var east = tiltEast(south);
-
-            parsedInput = east;
+            var west = tiltNorth(transpose(north));
+            var south = tiltNorth(transpose(west));
+            var east = tiltNorth(transpose(south));
+            parsedInput = transpose(east);
         }
 
         return parsedInput;
@@ -78,42 +73,6 @@ public class Day14 implements ParserSolver<char[][], Integer> {
         return parsedInput;
     }
 
-    private char[][] tiltSouth(char[][] parsedInput) {
-        for (int i = parsedInput.length - 2; i >= 0; i--) {
-            for (int j = 0; j < parsedInput[i].length; j++) {
-                if (parsedInput[i][j] == 'O') {
-                    swap(parsedInput, findTiltLimitSouth(parsedInput, i, j), j, i, j);
-                }
-            }
-        }
-
-        return parsedInput;
-    }
-
-    private char[][] tiltWest(char[][] parsedInput) {
-        for (int i = 0; i < parsedInput.length; i++) {
-            for (int j = 1; j < parsedInput[i].length; j++) {
-                if (parsedInput[i][j] == 'O') {
-                    swap(parsedInput, i, findTiltLimitWest(parsedInput, i, j), i, j);
-                }
-            }
-        }
-
-        return parsedInput;
-    }
-
-    private char[][] tiltEast(char[][] parsedInput) {
-        for (int i = 0; i < parsedInput.length; i++) {
-            for (int j = parsedInput[i].length - 2; j >= 0; j--) {
-                if (parsedInput[i][j] == 'O') {
-                    swap(parsedInput, i, findTiltLimitEast(parsedInput, i, j), i, j);
-                }
-            }
-        }
-
-        return parsedInput;
-    }
-
     private int findTiltLimitNorth(char[][] parsedInput, int i, int j) {
         for (int k = i - 1; k >= 0; k--) {
             if (parsedInput[k][j] != '.') {
@@ -122,36 +81,6 @@ public class Day14 implements ParserSolver<char[][], Integer> {
         }
 
         return 0;
-    }
-
-    private int findTiltLimitSouth(char[][] parsedInput, int i, int j) {
-        for (int k = i + 1; k < parsedInput.length; k++) {
-            if (parsedInput[k][j] != '.') {
-                return k - 1;
-            }
-        }
-
-        return parsedInput.length - 1;
-    }
-
-    private int findTiltLimitWest(char[][] parsedInput, int i, int j) {
-        for (int k = j - 1; k >= 0; k--) {
-            if (parsedInput[i][k] != '.') {
-                return k + 1;
-            }
-        }
-
-        return 0;
-    }
-
-    private int findTiltLimitEast(char[][] parsedInput, int i, int j) {
-        for (int k = j + 1; k < parsedInput[0].length; k++) {
-            if (parsedInput[i][k] != '.') {
-                return k - 1;
-            }
-        }
-
-        return parsedInput[0].length - 1;
     }
 
     private static void swap(char[][] parsedInput, int row1, int col1, int row2, int col2) {
@@ -186,14 +115,22 @@ public class Day14 implements ParserSolver<char[][], Integer> {
             }
             System.out.println();
         }
+        System.out.println("=======================");
     }
 
     private char[][] transpose(char[][] input) {
         var result = new char[input[0].length][input.length];
 
+//        for (int i = 0; i < input.length; i++) { //rows
+//            for (int j = 0; j < input[i].length; j++) { //cols
+//                result[j][i] = input[i][j];
+//            }
+//        }
+
+        //rotate right array
         for (int i = 0; i < input.length; i++) { //rows
             for (int j = 0; j < input[i].length; j++) { //cols
-                result[j][i] = input[i][j];
+                result[j][input.length - i - 1] = input[i][j];
             }
         }
 
