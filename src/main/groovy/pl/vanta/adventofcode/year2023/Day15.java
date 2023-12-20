@@ -23,9 +23,7 @@ public class Day15 implements ParserSolver<List<String>, Integer> {
     @Override
     public Integer solve(List<String> parsedInput) {
         return parsedInput.stream()
-                .peek(System.out::println)
                 .map(Day15::hash)
-                .peek(System.out::println)
                 .reduce(0, Integer::sum);
     }
 
@@ -35,6 +33,7 @@ public class Day15 implements ParserSolver<List<String>, Integer> {
 
         var steps = parsedInput.stream()
                 .map(this::step)
+                .peek(System.out::println)
                 .toList();
 
         for (Step step : steps) {
@@ -68,12 +67,24 @@ public class Day15 implements ParserSolver<List<String>, Integer> {
 
         return Stream.of(boxes)
                 .filter(Objects::nonNull)
+                .peek(System.out::println)
                 .map(Box::getPower)
+                .peek(System.out::println)
                 .reduce(0, Integer::sum);
     }
 
     private Step step(String s) {
-        return new Step(s.substring(0, 2), s.charAt(2), s.length() > 3 ? s.substring(3) : "");
+        var eq = s.indexOf('=');
+        var da = s.indexOf('-');
+
+        if (eq >= 0) {
+            return new Step(s.substring(0, eq), s.charAt(eq), s.substring(eq + 1));
+        }
+
+        if (da >= 0) {
+            return new Step(s.substring(0, da), s.charAt(da), "");
+        }
+        return null;
     }
 
     private static int hash(String s) {
