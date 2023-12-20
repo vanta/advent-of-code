@@ -3,8 +3,8 @@ package pl.vanta.adventofcode.year2023;
 import pl.vanta.adventofcode.ParserSolver;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 public class Day15 implements ParserSolver<List<String>, Integer> {
@@ -29,29 +29,25 @@ public class Day15 implements ParserSolver<List<String>, Integer> {
 
     @Override
     public Integer solve2(List<String> parsedInput) {
-        Box[] boxes = new Box[256];
+        var boxes = new HashMap<Integer, Box>();
 
         var steps = parsedInput.stream()
                 .map(this::step)
-                .peek(System.out::println)
                 .toList();
 
         for (Step step : steps) {
             var hash = hash(step.label);
 
             if (step.operation == '-') {
-                if (boxes[hash] != null) {
-                    boxes[hash].lenses.removeIf(l -> l.label.equals(step.label));
+                if (boxes.containsKey(hash)) {
+                    boxes.get(hash).lenses.removeIf(l -> l.label.equals(step.label));
                 }
             }
 
             if (step.operation == '=') {
-                if (boxes[hash] == null) {
-                    boxes[hash] = new Box(hash, new ArrayList<>());
-                }
+                boxes.putIfAbsent(hash, new Box(hash, new ArrayList<>()));
 
-                var box = boxes[hash];
-
+                var box = boxes.get(hash);
                 var count = (int) box.lenses.stream()
                         .takeWhile(l -> !l.label.equals(step.label))
                         .count();
@@ -65,11 +61,8 @@ public class Day15 implements ParserSolver<List<String>, Integer> {
             }
         }
 
-        return Stream.of(boxes)
-                .filter(Objects::nonNull)
-                .peek(System.out::println)
+        return boxes.values().stream()
                 .map(Box::getPower)
-                .peek(System.out::println)
                 .reduce(0, Integer::sum);
     }
 
