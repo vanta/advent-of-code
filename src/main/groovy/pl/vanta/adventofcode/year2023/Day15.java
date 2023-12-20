@@ -47,16 +47,16 @@ public class Day15 implements ParserSolver<List<String>, Integer> {
             if (step.operation == '=') {
                 boxes.putIfAbsent(hash, new Box(hash, new ArrayList<>()));
 
-                var box = boxes.get(hash);
-                var index = (int) box.lenses.stream()
+                var lenses = boxes.get(hash).lenses;
+                var index = (int) lenses.stream()
                         .takeWhile(l -> !l.label.equals(step.label))
                         .count();
 
                 var lens = new Lens(step.label, Integer.parseInt(step.value));
-                if (index < box.lenses.size()) {
-                    box.lenses.set(index, lens);
+                if (index < lenses.size()) {
+                    lenses.set(index, lens);
                 } else {
-                    box.lenses.add(lens);
+                    lenses.add(lens);
                 }
             }
         }
