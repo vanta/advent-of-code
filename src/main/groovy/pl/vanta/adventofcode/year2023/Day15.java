@@ -48,13 +48,13 @@ public class Day15 implements ParserSolver<List<String>, Integer> {
                 boxes.putIfAbsent(hash, new Box(hash, new ArrayList<>()));
 
                 var box = boxes.get(hash);
-                var count = (int) box.lenses.stream()
+                var index = (int) box.lenses.stream()
                         .takeWhile(l -> !l.label.equals(step.label))
                         .count();
 
                 var lens = new Lens(step.label, Integer.parseInt(step.value));
-                if (count < box.lenses.size()) {
-                    box.lenses.set(count, lens);
+                if (index < box.lenses.size()) {
+                    box.lenses.set(index, lens);
                 } else {
                     box.lenses.add(lens);
                 }
