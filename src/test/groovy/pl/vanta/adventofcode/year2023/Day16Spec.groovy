@@ -1,6 +1,5 @@
 package pl.vanta.adventofcode.year2023
 
-
 import pl.vanta.adventofcode.BaseSpecNew
 import pl.vanta.adventofcode.ParserSolver
 
@@ -13,7 +12,7 @@ class Day16Spec extends BaseSpecNew {
     @Override
     List<Map> getTestData1() {
         [
-                [result: 1320],
+                [result: 46],
         ]
     }
 
@@ -26,7 +25,7 @@ class Day16Spec extends BaseSpecNew {
 
     @Override
     Integer getRealAnswer1() {
-        516804
+        8901
     }
 
     @Override
