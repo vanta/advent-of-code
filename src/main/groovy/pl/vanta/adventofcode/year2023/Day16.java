@@ -22,9 +22,7 @@ public class Day16 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve(char[][] parsedInput) {
-        var visited = new HashSet<Move>();
-
-        traverse(parsedInput, visited, new Move(0, 0, 0, 1));
+        var visited = traverse(parsedInput, new HashSet<>(), new Move(0, 0, 0, 1));
 
         return (int) visited.stream()
                 .map(Move::resetToPoint)
@@ -32,9 +30,9 @@ public class Day16 implements ParserSolver<char[][], Integer> {
                 .count();
     }
 
-    private void traverse(char[][] parsedInput, Set<Move> visited, Move start) {
+    private Set<Move> traverse(char[][] parsedInput, Set<Move> visited, Move start) {
         if (!insideOfArray(parsedInput, start.x, start.y)) {
-            return;
+            return visited;
         }
 
         System.out.println("Traversing: " + start.x + " " + start.y + " " + start.dx + " " + start.dy);
@@ -43,7 +41,7 @@ public class Day16 implements ParserSolver<char[][], Integer> {
 
         while (insideOfArray(parsedInput, move.x, move.y)) {
             if (visited.contains(move)) {
-                return;
+                return visited;
             }
 
             visited.add(move);
@@ -60,9 +58,9 @@ public class Day16 implements ParserSolver<char[][], Integer> {
                 } else {
                     System.out.println("Horizontal split in: " + move);
                     var split = move.splitHorizontally();
-                    traverse(parsedInput, visited, split[0]);
-                    traverse(parsedInput, visited, split[1]);
-                    return;
+                    visited.addAll(traverse(parsedInput, visited, split[0]));
+                    visited.addAll(traverse(parsedInput, visited, split[1]));
+                    return visited;
                 }
             } else if (c == '|') {
                 if (move.dy == 0) {
@@ -70,9 +68,9 @@ public class Day16 implements ParserSolver<char[][], Integer> {
                 } else {
                     System.out.println("Vertical split in: " + move);
                     var split = move.splitVertically();
-                    traverse(parsedInput, visited, split[0]);
-                    traverse(parsedInput, visited, split[1]);
-                    return;
+                    visited.addAll(traverse(parsedInput, visited, split[0]));
+                    visited.addAll(traverse(parsedInput, visited, split[1]));
+                    return visited;
                 }
             } else if (c == '/') {
                 if (move.dx == 0) {
@@ -88,6 +86,8 @@ public class Day16 implements ParserSolver<char[][], Integer> {
                 }
             }
         }
+
+        return visited;
     }
 
     private static boolean insideOfArray(char[][] parsedInput, int startX, int startY) {

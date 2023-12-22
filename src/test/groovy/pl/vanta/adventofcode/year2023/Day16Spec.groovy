@@ -19,7 +19,7 @@ class Day16Spec extends BaseSpecNew {
     @Override
     List<Map> getTestData2() {
         [
-                [result: 145],
+                [result: 51],
         ]
     }
 
