@@ -2,7 +2,9 @@ package pl.vanta.adventofcode.year2023;
 
 import pl.vanta.adventofcode.ParserSolver;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -22,8 +24,37 @@ public class Day16 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve(char[][] parsedInput) {
-        var visited = traverse(parsedInput, new HashSet<>(), new Move(0, 0, 0, 1));
+        return findBestStartingMove(parsedInput, List.of(new Move(0, 0, 0, 1)));
+    }
 
+    @Override
+    public Integer solve2(char[][] parsedInput) {
+        List<Move> moves = new ArrayList<>();
+
+        for (int i = 0; i < parsedInput.length; i++) {
+            moves.add(new Move(i, 0, 0, 1));
+            moves.add(new Move(i, parsedInput.length - 1, 0, -1));
+        }
+
+        for (int j = 0; j < parsedInput[0].length; j++) {
+            moves.add(new Move(0, j, 1, 0));
+            moves.add(new Move(parsedInput[0].length - 1, j, -1, 0));
+        }
+
+        return findBestStartingMove(parsedInput, moves);
+    }
+
+    private int findBestStartingMove(char[][] parsedInput, List<Move> moves) {
+        System.out.println("Moves: " + moves.size());
+
+        return moves.stream()
+                .map(m -> traverse(parsedInput, new HashSet<>(), m))
+                .map(Day16::count)
+                .max(Integer::compareTo)
+                .orElse(0);
+    }
+
+    private static int count(Set<Move> visited) {
         return (int) visited.stream()
                 .map(Move::resetToPoint)
                 .distinct()
@@ -35,7 +66,7 @@ public class Day16 implements ParserSolver<char[][], Integer> {
             return visited;
         }
 
-        System.out.println("Traversing: " + start.x + " " + start.y + " " + start.dx + " " + start.dy);
+//        System.out.println("Traversing: " + start.x + " " + start.y + " " + start.dx + " " + start.dy);
 
         Move move = start;
 
@@ -48,7 +79,7 @@ public class Day16 implements ParserSolver<char[][], Integer> {
 
             var c = parsedInput[move.x][move.y];
 
-            System.out.println("(" + move.x + "," + move.y + ") " + c);
+//            System.out.println("(" + move.x + "," + move.y + ") " + c);
 
             if (c == '.') {
                 move = move.move();
@@ -56,7 +87,7 @@ public class Day16 implements ParserSolver<char[][], Integer> {
                 if (move.dx == 0) {
                     move = move.move();
                 } else {
-                    System.out.println("Horizontal split in: " + move);
+//                    System.out.println("Horizontal split in: " + move);
                     var split = move.splitHorizontally();
                     visited.addAll(traverse(parsedInput, visited, split[0]));
                     visited.addAll(traverse(parsedInput, visited, split[1]));
@@ -66,7 +97,7 @@ public class Day16 implements ParserSolver<char[][], Integer> {
                 if (move.dy == 0) {
                     move = move.move();
                 } else {
-                    System.out.println("Vertical split in: " + move);
+//                    System.out.println("Vertical split in: " + move);
                     var split = move.splitVertically();
                     visited.addAll(traverse(parsedInput, visited, split[0]));
                     visited.addAll(traverse(parsedInput, visited, split[1]));
@@ -92,11 +123,6 @@ public class Day16 implements ParserSolver<char[][], Integer> {
 
     private static boolean insideOfArray(char[][] parsedInput, int startX, int startY) {
         return startX >= 0 && startX < parsedInput.length && startY >= 0 && startY < parsedInput[0].length;
-    }
-
-    @Override
-    public Integer solve2(char[][] parsedInput) {
-        return -1;
     }
 
     record Move(int x, int y, int dx, int dy) {
