@@ -26,13 +26,6 @@ public class Day17 implements ParserSolver<int[][], Integer> {
 
     @Override
     public Integer solve(int[][] parsedInput) {
-        //print every cell from parsedInput array
-        for (int[] row : parsedInput) {
-            for (int cell : row) {
-                System.out.print(cell);
-            }
-            System.out.println();
-        }
 
 
         return 0;
