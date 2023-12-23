@@ -2,6 +2,7 @@ package pl.vanta.adventofcode.year2023;
 
 import pl.vanta.adventofcode.ParserSolver;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
@@ -27,23 +28,49 @@ public class Day18 implements ParserSolver<List<Day18.Dig>, Integer> {
 
     @Override
     public Integer solve(List<Day18.Dig> parsedInput) {
-        parsedInput.forEach(System.out::println);
+        var points = getPoints(parsedInput);
 
-        int w = max(parsedInput.stream().filter(d -> d.dir == 'R' || d.dir == 'L'), 'R');
-        int h = max(parsedInput.stream().filter(d -> d.dir == 'U' || d.dir == 'D'), 'D');
+        var b = getLength(points);
+        var A = insideArea(points);
 
-
-        return 0;
+        return A + b/2 + 1;
     }
 
-    private static int max(Stream<Dig> parsedInput, char c) {
-        int max = 0;
-        int curr = 0;
-        for (Dig dig : parsedInput.toList()) {
-            curr += dig.dir == c ? dig.meters : -dig.meters;
-            max = Math.max(max, curr);
+    private int insideArea(List<Point> points) {
+        int area = 0;
+
+        for (int i = 1; i < points.size(); i++) {
+            area += (points.get(i - 1).x * points.get(i).y - points.get(i).x * points.get(i - 1).y);
         }
-        return max + 1;
+
+        return Math.abs(area / 2);
+    }
+
+    private int getLength(List<Point> points) {
+        int len = 0;
+        for (int i = 1; i < points.size(); i++) {
+            len += Math.abs(points.get(i).x - points.get(i - 1).x)
+                    + Math.abs(points.get(i).y - points.get(i - 1).y);
+        }
+        return len;
+    }
+
+    private List<Point> getPoints(List<Dig> parsedInput) {
+        var points = new LinkedList<Point>();
+        points.add(new Point(0, 0));
+        for (Dig dig : parsedInput) {
+            if (dig.dir == 'U') {
+                points.add(new Point(points.getLast().x - dig.meters, points.getLast().y));
+            } else if (dig.dir == 'D') {
+                points.add(new Point(points.getLast().x + dig.meters, points.getLast().y));
+            } else if (dig.dir == 'L') {
+                points.add(new Point(points.getLast().x, points.getLast().y - dig.meters));
+            } else if (dig.dir == 'R') {
+                points.add(new Point(points.getLast().x, points.getLast().y + dig.meters));
+            }
+        }
+
+        return points;
     }
 
     @Override
@@ -54,4 +81,6 @@ public class Day18 implements ParserSolver<List<Day18.Dig>, Integer> {
     public record Dig(char dir, int meters) {
     }
 
+    record Point(int x, int y) {
+    }
 }
