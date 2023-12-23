@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
-public class Day18 implements ParserSolver<List<Day18.Dig>, Integer> {
+public class Day18 implements ParserSolver<List<Day18.Dig>, Long> {
 
     @Override
     public int getDayNumber() {
@@ -27,13 +27,13 @@ public class Day18 implements ParserSolver<List<Day18.Dig>, Integer> {
     }
 
     @Override
-    public Integer solve(List<Day18.Dig> parsedInput) {
+    public Long solve(List<Day18.Dig> parsedInput) {
         var points = getPoints(parsedInput);
 
         var b = getLength(points);
         var A = insideArea(points);
 
-        return A + b/2 + 1;
+        return A + b/2 + 1L;
     }
 
     private int insideArea(List<Point> points) {
@@ -74,8 +74,8 @@ public class Day18 implements ParserSolver<List<Day18.Dig>, Integer> {
     }
 
     @Override
-    public Integer solve2(List<Day18.Dig> parsedInput) {
-        return 0;
+    public Long solve2(List<Day18.Dig> parsedInput) {
+        return 0L;
     }
 
     public record Dig(char dir, int meters) {
