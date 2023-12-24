@@ -33,7 +33,7 @@ abstract class BaseSpecNew extends Specification {
         def resourceName = "/2023/example-day${parserSolver.getDayNumber()}${data.suffix ?: ''}.txt"
 
         expect:
-        parserSolver.solve2(parserSolver.parse(parserSolver.getClass().getResource(resourceName).text)) == data.result
+        parserSolver.solve2(parserSolver.parse2(parserSolver.getClass().getResource(resourceName).text)) == data.result
 
         where:
         data << getTestData2()
@@ -41,6 +41,6 @@ abstract class BaseSpecNew extends Specification {
 
     def 'should solve real data - part2'() {
         expect:
-        parserSolver.solve2(parserSolver.parse(parserSolver.getClass().getResource("/2023/day${parserSolver.getDayNumber()}.txt").text)) == this.getRealAnswer2()
+        parserSolver.solve2(parserSolver.parse2(parserSolver.getClass().getResource("/2023/day${parserSolver.getDayNumber()}.txt").text)) == this.getRealAnswer2()
     }
 }

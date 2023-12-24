@@ -30,11 +30,11 @@ abstract class BaseSpec extends Specification {
         }
 
         expect:
-        parserSolver.solve2(parserSolver.parse(resource.text)) == this.getExampleAnswer2()
+        parserSolver.solve2(parserSolver.parse2(resource.text)) == this.getExampleAnswer2()
     }
 
     def 'should solve real data - part2'() {
         expect:
-        parserSolver.solve2(parserSolver.parse(parserSolver.getClass().getResource("/2023/day${parserSolver.getDayNumber()}.txt").text)) == this.getRealAnswer2()
+        parserSolver.solve2(parserSolver.parse2(parserSolver.getClass().getResource("/2023/day${parserSolver.getDayNumber()}.txt").text)) == this.getRealAnswer2()
     }
 }
