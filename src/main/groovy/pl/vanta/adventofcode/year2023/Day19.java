@@ -67,6 +67,12 @@ public class Day19 implements ParserSolver<Day19.Input, Long> {
                 .reduce(0, Integer::sum);
     }
 
+    @Override
+    public Long solve2(Input parsedInput) {
+
+        return 0L;
+    }
+
     private List<Map<String, Integer>> process(Map<String, List<Rule>> workflows, List<Map<String, Integer>> parts) {
         return parts.stream()
                 .filter(p -> getResult(p, workflows).isAccepted())
@@ -89,12 +95,6 @@ public class Day19 implements ParserSolver<Day19.Input, Long> {
                 .filter(r -> r.matches(part))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No rule found for: " + part));
-    }
-
-    @Override
-    public Long solve2(Input parsedInput) {
-
-        return 0L;
     }
 
     public record Input(Map<String, List<Rule>> rules, List<Map<String, Integer>> parts) {
