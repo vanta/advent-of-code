@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import static java.lang.Integer.parseInt;
 import static java.util.stream.Collectors.toMap;
 
-public class Day19 implements ParserSolver<Day19.Input, Integer> {
+public class Day19 implements ParserSolver<Day19.Input, Long> {
     private static final String FIRST = "in";
 
     @Override
@@ -56,13 +56,13 @@ public class Day19 implements ParserSolver<Day19.Input, Integer> {
     }
 
     @Override
-    public Integer solve(Input parsedInput) {
+    public Long solve(Input parsedInput) {
         parsedInput.parts.forEach(System.out::println);
         parsedInput.rules.forEach((k, v) -> System.out.println(k + " -> " + v));
 
         var accepted = process(parsedInput.rules, parsedInput.parts);
 
-        return accepted.stream()
+        return (long)accepted.stream()
                 .map(p -> p.values().stream().reduce(0, Integer::sum))
                 .reduce(0, Integer::sum);
     }
@@ -92,8 +92,9 @@ public class Day19 implements ParserSolver<Day19.Input, Integer> {
     }
 
     @Override
-    public Integer solve2(Input parsedInput) {
-        return 0;
+    public Long solve2(Input parsedInput) {
+
+        return 0L;
     }
 
     public record Input(Map<String, List<Rule>> rules, List<Map<String, Integer>> parts) {
