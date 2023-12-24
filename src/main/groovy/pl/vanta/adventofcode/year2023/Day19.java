@@ -36,7 +36,7 @@ public class Day19 implements ParserSolver<Day19.Input, Integer> {
     }
 
     private static Map<String, Integer> getPart(String s) {
-        return Stream.of(s.substring(1, s.length()-1).split(","))
+        return Stream.of(s.substring(1, s.length() - 1).split(","))
                 .map(p -> p.split("="))
                 .collect(toMap(
                         p -> p[0],
@@ -45,7 +45,8 @@ public class Day19 implements ParserSolver<Day19.Input, Integer> {
     }
 
     private static List<Rule> getRules(String s) {
-        return Stream.of(s.substring(s.indexOf("{")).split(","))
+        var substring = s.substring(s.indexOf("{") + 1, s.indexOf("}"));
+        return Stream.of(substring.split(","))
                 .map(Rule::parseRule)
                 .toList();
     }
@@ -68,14 +69,26 @@ public class Day19 implements ParserSolver<Day19.Input, Integer> {
 
     private List<Map<String, Integer>> process(Map<String, List<Rule>> workflows, List<Map<String, Integer>> parts) {
         return parts.stream()
-                .filter(p -> isAccepted(p, workflows))
+                .filter(p -> getResult(p, workflows).isAccepted())
                 .toList();
     }
 
-    private boolean isAccepted(Map<String, Integer> part, Map<String, List<Rule>> rules) {
-        var first = rules.get(FIRST);
+    private Rule getResult(Map<String, Integer> part, Map<String, List<Rule>> rules) {
+        var currentRules = rules.get(FIRST);
+        Rule rule;
 
-        return false;
+        while (!(rule = getMatchingRule(part, currentRules)).isFinal()) {
+            currentRules = rules.get(rule.result);
+        }
+
+        return rule;
+    }
+
+    private static Rule getMatchingRule(Map<String, Integer> part, List<Rule> rules) {
+        return rules.stream()
+                .filter(r -> r.matches(part))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No rule found for: " + part));
     }
 
     @Override
@@ -111,8 +124,30 @@ public class Day19 implements ParserSolver<Day19.Input, Integer> {
             return Objects.equals(result, "A");
         }
 
-        boolean isRejected() {
-            return Objects.equals(result, "R");
+        boolean isFinal() {
+            return result.length() == 1;
+        }
+
+        boolean matches(Map<String, Integer> part) {
+            if (field == null) {
+                return true;
+            }
+
+            var value = part.get(field);
+
+            if (value == null) {
+                throw new RuntimeException("Unknown field: " + field);
+            }
+
+            if (condition == '>') {
+                return value > this.value;
+            }
+
+            if (condition == '<') {
+                return value < this.value;
+            }
+
+            throw new RuntimeException("Unknown condition: " + condition);
         }
     }
 }
