@@ -2,6 +2,7 @@ package pl.vanta.adventofcode.year2023;
 
 import pl.vanta.adventofcode.ParserSolver;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -57,20 +58,65 @@ public class Day19 implements ParserSolver<Day19.Input, Long> {
 
     @Override
     public Long solve(Input parsedInput) {
-        parsedInput.parts.forEach(System.out::println);
-        parsedInput.rules.forEach((k, v) -> System.out.println(k + " -> " + v));
+//        parsedInput.parts.forEach(System.out::println);
+//        parsedInput.rules.forEach((k, v) -> System.out.println(k + " -> " + v));
 
         var accepted = process(parsedInput.rules, parsedInput.parts);
 
-        return (long)accepted.stream()
+        return (long) accepted.stream()
                 .map(p -> p.values().stream().reduce(0, Integer::sum))
                 .reduce(0, Integer::sum);
     }
 
     @Override
     public Long solve2(Input parsedInput) {
+//        parsedInput.parts.forEach(System.out::println);
+//        parsedInput.rules.forEach((k, v) -> System.out.println(k + " -> " + v));
 
-        return 0L;
+        return traverse(parsedInput.rules, FIRST, new HashMap<>(Map.of(
+                "x", new Range(1, 4000),
+                "m", new Range(1, 4000),
+                "a", new Range(1, 4000),
+                "s", new Range(1, 4000)
+        )));
+    }
+
+    private long traverse(Map<String, List<Rule>> allRules, String start, Map<String, Range> ranges) {
+        return allRules.get(start).stream()
+                .mapToLong(r -> applyRule(allRules, ranges, r))
+                .sum();
+    }
+
+    private long applyRule(Map<String, List<Rule>> allRules, Map<String, Range> ranges, Rule rule) {
+        return countAccepted(allRules, reduceRange(ranges, rule), rule);
+    }
+
+    private Map<String, Range> reduceRange(Map<String, Range> ranges, Rule rule) {
+        var newRanges = new HashMap<>(ranges);
+
+        if (rule.hasCondition()) {
+            var range = ranges.get(rule.field);
+
+            if (rule.condition == '<') {
+                newRanges.put(rule.field, range.reduceTo(rule.value() - 1));
+                ranges.put(rule.field, range.reduceFrom(rule.value()));
+            }
+
+            if (rule.condition == '>') {
+                newRanges.put(rule.field, range.reduceFrom(rule.value() + 1));
+                ranges.put(rule.field, range.reduceTo(rule.value()));
+            }
+        }
+
+        return newRanges;
+    }
+
+    private long countAccepted(Map<String, List<Rule>> allRules, Map<String, Range> ranges, Rule rule) {
+        return switch (rule.result) {
+            case "R" -> 0L;
+            case "A" -> ranges.values().stream().map(Range::length).reduce(1L, (a, b) -> a * b);
+            default -> traverse(allRules, rule.result, ranges);
+        };
     }
 
     private List<Map<String, Integer>> process(Map<String, List<Rule>> workflows, List<Map<String, Integer>> parts) {
@@ -97,7 +143,23 @@ public class Day19 implements ParserSolver<Day19.Input, Long> {
                 .orElseThrow(() -> new RuntimeException("No rule found for: " + part));
     }
 
-    public record Input(Map<String, List<Rule>> rules, List<Map<String, Integer>> parts) {
+    public record Input(Map<String, List<Day19.Rule>> rules, List<Map<String, Integer>> parts) {
+    }
+
+    private record Range(int from, int to) {
+        long length() {
+            return from > to
+                    ? 0
+                    : to - from + 1;
+        }
+
+        Range reduceFrom(int val) {
+            return new Range(Math.max(from, val), to);
+        }
+
+        Range reduceTo(int val) {
+            return new Range(from, Math.min(to, val));
+        }
     }
 
     private record Rule(String field, char condition, int value, String result) {
@@ -119,6 +181,10 @@ public class Day19 implements ParserSolver<Day19.Input, Long> {
 
                 throw new RuntimeException("Unknown rule: " + p);
             }
+        }
+
+        boolean hasCondition() {
+            return condition != 0;
         }
 
         boolean isAccepted() {
