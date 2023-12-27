@@ -83,12 +83,8 @@ public class Day19 implements ParserSolver<Day19.Input, Long> {
 
     private long traverse(Map<String, List<Rule>> allRules, String start, Map<String, Range> ranges) {
         return allRules.get(start).stream()
-                .mapToLong(r -> applyRule(allRules, ranges, r))
+                .mapToLong(r -> countAccepted(allRules, reduceRange(ranges, r), r))
                 .sum();
-    }
-
-    private long applyRule(Map<String, List<Rule>> allRules, Map<String, Range> ranges, Rule rule) {
-        return countAccepted(allRules, reduceRange(ranges, rule), rule);
     }
 
     private Map<String, Range> reduceRange(Map<String, Range> ranges, Rule rule) {
