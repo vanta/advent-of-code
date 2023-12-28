@@ -69,7 +69,22 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
     public Long solve2(List<Module> parsedInput) {
         var map = preProcess(parsedInput);
 
-        return 0L;
+        long i = 0;
+        var bc = map.get(BROADCASTER);
+        var rx = map.get(RX);
+
+        System.out.println(bc);
+        System.out.println(rx);
+        rx.getInputs().stream()
+                .map(map::get)
+                .forEach(System.out::println);
+
+//        while (!(rx.getHighPulses() == 0 && rx.getLowPulses() == 1)) {
+//            i++;
+//            process(map, List.of(new Pulse(false, null, BROADCASTER)));
+//        }
+
+        return i;
     }
 
     private Map<String, Module> preProcess(List<Module> parsedInput) {
@@ -89,10 +104,7 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
         missingModules.forEach(m -> map.put(m, new Untyped(m)));
 
         //set inputs
-        map.values().stream()
-                .filter(m -> m instanceof Conjunction)
-                .map(Conjunction.class::cast)
-                .forEach(m -> m.setInputs(findInputs(map, m.getName())));
+        map.values().forEach(m -> m.setInputs(findInputs(map, m.getName())));
 
         return map;
     }
@@ -137,12 +149,25 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
         private final String name;
         private final List<String> outputs;
         private final Map<Boolean, Integer> pulses = new HashMap<>();
+        Set<String> inputs;
 
         abstract Boolean processPulse(String from, boolean pulse);
+
+        public String toString() {
+            return "%s (%s), in: %s, out: %s".formatted(name, this.getClass().getSimpleName(), inputs, outputs);
+        }
 
         Module(String name, String... outputs) {
             this.name = name;
             this.outputs = Arrays.asList(outputs);
+        }
+
+        void setInputs(Set<String> inputs) {
+            this.inputs = inputs;
+        }
+
+        public Set<String> getInputs() {
+            return inputs;
         }
 
         public Boolean pulse(String from, boolean pulse) {
@@ -205,15 +230,11 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
             super(name, outputs);
         }
 
-        void setInputs(Set<String> inputs) {
-            inputs.forEach(s -> pulses.put(s, false));
-        }
-
         @Override
         Boolean processPulse(String from, boolean pulse) {
             pulses.put(from, pulse);
 
-            return pulses.containsValue(false);
+            return !pulses.keySet().containsAll(inputs) || pulses.containsValue(false);
         }
     }
 
