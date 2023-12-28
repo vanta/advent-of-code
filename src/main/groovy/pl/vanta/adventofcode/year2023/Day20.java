@@ -65,7 +65,7 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
         missingModules.forEach(m -> map.put(m, new Untyped(m)));
 
         //set inputs
-        parsedInput.stream()
+        map.values().stream()
                 .filter(m -> m instanceof Conjunction)
                 .map(Conjunction.class::cast)
                 .forEach(m -> m.setInputs(findInputs(map, m.getName())));
@@ -76,7 +76,7 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
         }
 
         //count
-        var pair = parsedInput.stream()
+        var pair = map.values().stream()
                 .map(m -> new ImmutablePair<>(m.getLowPulses(), m.getHighPulses()))
                 .reduce(new ImmutablePair<>(0, 0), (p1, p2) -> new ImmutablePair<>(p1.getLeft() + p2.getLeft(), p1.getRight() + p2.getRight()));
 
