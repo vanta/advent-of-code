@@ -5,11 +5,15 @@ import pl.vanta.adventofcode.ParserSolver;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
@@ -69,22 +73,75 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
     public Long solve2(List<Module> parsedInput) {
         var map = preProcess(parsedInput);
 
-        long i = 0;
         var bc = map.get(BROADCASTER);
         var rx = map.get(RX);
 
-        System.out.println(bc);
-        System.out.println(rx);
-        rx.getInputs().stream()
+        var rxInputs = rx.getInputs().stream()
                 .map(map::get)
-                .forEach(System.out::println);
+                .map(Module::getInputs)
+                .flatMap(Set::stream)
+                .map(map::get)
+                .map(Module::getInputs)
+                .flatMap(Set::stream)
+                .map(map::get)
+                .collect(toSet());
 
-//        while (!(rx.getHighPulses() == 0 && rx.getLowPulses() == 1)) {
-//            i++;
-//            process(map, List.of(new Pulse(false, null, BROADCASTER)));
-//        }
+        for (int i = 0; i < 100_000_000; i++) {
+            process(map, List.of(new Pulse(false, null, "cr")));
 
-        return i;
+            var module = map.get("jn");
+            var module2 = map.get("km");
+
+            if (module.getResult() == FALSE) {
+                System.out.printf("%s - %d%n", module.name, i);
+            }
+        }
+
+//        long i = 0;
+//
+//        System.out.println(bc);
+//        System.out.println(rx);
+//
+//        var rxInputs = rx.getInputs().stream()
+//                .map(map::get)
+//                .map(Module::getInputs)
+//                .flatMap(Set::stream)
+//                .map(map::get)
+//                .collect(toSet());
+//
+//        System.out.println(rxInputs);
+//
+//        var result = new HashMap<String, Integer>();
+//
+//        aaaaa(BROADCASTER, map, rxInputs, result);
+//
+//        System.out.println(result);
+
+        return 0L;
+    }
+
+    private static void aaa(Set<Module> rxInputs, int i) {
+        rxInputs.forEach(module -> {
+            if (module.getResult() == FALSE) {
+                System.out.printf("%s - %d%n", module.name, i);
+            }
+        });
+    }
+
+    private void aaaaa(String start, Map<String, Module> map, Set<Module> rxInputs, Map<String, Integer> result) {
+        var i = new AtomicInteger(0);
+
+        do {
+            i.incrementAndGet();
+            process(map, List.of(new Pulse(false, null, start)));
+
+            rxInputs.forEach(module -> {
+                if (module.getResult() == TRUE) {
+                    System.out.printf("Found TRUE result for %s after %d iterations%n", module.name, i.intValue());
+                    result.put(module.getName(), i.intValue());
+                }
+            });
+        } while (result.size() != 4);
     }
 
     private Map<String, Module> preProcess(List<Module> parsedInput) {
@@ -95,13 +152,11 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
                 ));
 
         //add untyped modules
-        var missingModules = parsedInput.stream()
+        parsedInput.stream()
                 .map(Module::getOutputs)
                 .flatMap(List::stream)
                 .filter(s -> !map.containsKey(s))
-                .collect(toSet());
-
-        missingModules.forEach(m -> map.put(m, new Untyped(m)));
+                .forEach(m -> map.put(m, new Untyped(m)));
 
         //set inputs
         map.values().forEach(m -> m.setInputs(findInputs(map, m.getName())));
@@ -149,6 +204,7 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
         private final String name;
         private final List<String> outputs;
         private final Map<Boolean, Integer> pulses = new HashMap<>();
+        private Boolean result;
         Set<String> inputs;
 
         abstract Boolean processPulse(String from, boolean pulse);
@@ -170,10 +226,14 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
             return inputs;
         }
 
+        public Boolean getResult() {
+            return result;
+        }
+
         public Boolean pulse(String from, boolean pulse) {
             pulses.merge(pulse, 1, Integer::sum);
-
-            return processPulse(from, pulse);
+            result = processPulse(from, pulse);
+            return result;
         }
 
         public String getName() {
@@ -224,7 +284,7 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
     }
 
     static class Conjunction extends Module {
-        private final Map<String, Boolean> pulses = new HashMap<>();
+        private final Map<String, Boolean> pulses = new LinkedHashMap<>();
 
         Conjunction(String name, String... outputs) {
             super(name, outputs);
