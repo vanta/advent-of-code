@@ -17,6 +17,7 @@ import static java.util.stream.Collectors.toSet;
 public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
 
     private static final String BROADCASTER = "broadcaster";
+    private static final String RX = "rx";
 
     @Override
     public int getDayNumber() {
@@ -49,6 +50,29 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
 
     @Override
     public Long solve(List<Module> parsedInput) {
+        var map = preProcess(parsedInput);
+
+        //push button 1000 times
+        for (int i = 0; i < 1000; i++) {
+            process(map, List.of(new Pulse(false, null, BROADCASTER)));
+        }
+
+        //count
+        var pair = map.values().stream()
+                .map(m -> new ImmutablePair<>(m.getLowPulses(), m.getHighPulses()))
+                .reduce(new ImmutablePair<>(0, 0), (p1, p2) -> new ImmutablePair<>(p1.getLeft() + p2.getLeft(), p1.getRight() + p2.getRight()));
+
+        return (long) pair.left * pair.right;
+    }
+
+    @Override
+    public Long solve2(List<Module> parsedInput) {
+        var map = preProcess(parsedInput);
+
+        return 0L;
+    }
+
+    private Map<String, Module> preProcess(List<Module> parsedInput) {
         var map = parsedInput.stream()
                 .collect(toMap(
                         Module::getName,
@@ -70,17 +94,7 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
                 .map(Conjunction.class::cast)
                 .forEach(m -> m.setInputs(findInputs(map, m.getName())));
 
-        //push button 1000 times
-        for (int i = 0; i < 1000; i++) {
-            process(map, List.of(new Pulse(false, null, BROADCASTER)));
-        }
-
-        //count
-        var pair = map.values().stream()
-                .map(m -> new ImmutablePair<>(m.getLowPulses(), m.getHighPulses()))
-                .reduce(new ImmutablePair<>(0, 0), (p1, p2) -> new ImmutablePair<>(p1.getLeft() + p2.getLeft(), p1.getRight() + p2.getRight()));
-
-        return (long) pair.left * pair.right;
+        return map;
     }
 
     private Set<String> findInputs(Map<String, Module> map, String moduleName) {
@@ -114,11 +128,6 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
                     .map(o -> new Pulse(result, module.name, o))
                     .toList();
         }
-    }
-
-    @Override
-    public Long solve2(List<Module> parsedInput) {
-        return 0L;
     }
 
     private record Pulse(boolean value, String from, String to) {
