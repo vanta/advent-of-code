@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
@@ -48,24 +49,33 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
 
     @Override
     public Long solve(List<Module> parsedInput) {
-        parsedInput.forEach(System.out::println);
-
         var map = parsedInput.stream()
                 .collect(toMap(
                         Module::getName,
-                        m -> m
+                        identity()
                 ));
 
+        //add untyped modules
+        var missingModules = parsedInput.stream()
+                .map(Module::getOutputs)
+                .flatMap(List::stream)
+                .filter(s -> !map.containsKey(s))
+                .collect(toSet());
+
+        missingModules.forEach(m -> map.put(m, new Untyped(m)));
+
+        //set inputs
         parsedInput.stream()
                 .filter(m -> m instanceof Conjunction)
                 .map(Conjunction.class::cast)
                 .forEach(m -> m.setInputs(findInputs(map, m.getName())));
 
-
+        //push button 1000 times
         for (int i = 0; i < 1000; i++) {
             process(map, List.of(new Pulse(false, null, BROADCASTER)));
         }
 
+        //count
         var pair = parsedInput.stream()
                 .map(m -> new ImmutablePair<>(m.getLowPulses(), m.getHighPulses()))
                 .reduce(new ImmutablePair<>(0, 0), (p1, p2) -> new ImmutablePair<>(p1.getLeft() + p2.getLeft(), p1.getRight() + p2.getRight()));
@@ -149,7 +159,7 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
         }
     }
 
-    class Broadcaster extends Module {
+    static class Broadcaster extends Module {
         Broadcaster(String... outputs) {
             super(BROADCASTER, outputs);
         }
@@ -160,7 +170,7 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
         }
     }
 
-    class FlipFlop extends Module {
+    static class FlipFlop extends Module {
         boolean enabled = false;
 
         FlipFlop(String name, String... outputs) {
@@ -179,7 +189,7 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
         }
     }
 
-    class Conjunction extends Module {
+    static class Conjunction extends Module {
         private final Map<String, Boolean> pulses = new HashMap<>();
 
         Conjunction(String name, String... outputs) {
@@ -195,6 +205,17 @@ public class Day20 implements ParserSolver<List<Day20.Module>, Long> {
             pulses.put(from, pulse);
 
             return pulses.containsValue(false);
+        }
+    }
+
+    static class Untyped extends Module {
+        Untyped(String name) {
+            super(name);
+        }
+
+        @Override
+        Boolean processPulse(String from, boolean pulse) {
+            return null;
         }
     }
 }
