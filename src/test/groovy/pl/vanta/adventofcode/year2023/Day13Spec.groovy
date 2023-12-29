@@ -20,6 +20,7 @@ class Day13Spec extends BaseSpecNew {
                 [result: 8, suffix: '_5_2'],
                 [result: 100, suffix: '_5_3'],
                 [result: 600, suffix: '_5_4'],
+                [result: 8, suffix: '_qba'],
         ]
     }
 
@@ -32,7 +33,7 @@ class Day13Spec extends BaseSpecNew {
 
     @Override
     Integer getRealAnswer1() {
-        1
+        29846
     }
 
     @Override

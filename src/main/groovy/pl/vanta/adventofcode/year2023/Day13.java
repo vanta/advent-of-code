@@ -37,10 +37,8 @@ public class Day13 implements ParserSolver<List<char[][]>, Integer> {
                     var cols = getCols(s);
                     var i = 100 * rows + cols;
 
-                    if (i == 0) {
-//                        s.forEach(System.out::println);
-                        System.out.println("----------------");
-                    }
+                    System.out.println("sum=" + i);
+
                     return i;
                 })
                 .sum();
@@ -53,12 +51,13 @@ public class Day13 implements ParserSolver<List<char[][]>, Integer> {
     private int getRows(char[][] array) {
         print(array);
         char[] prev = null;
+        label:
         for (int i = 0; i < array.length; i++) {
             char[] curr = array[i];
             if (Arrays.equals(curr, prev)) {
                 for (int j = 0; j < min(i - 1, array.length - i - 1); j++) {
                     if (!Arrays.equals(array[i - j - 2], array[i + j + 1])) {
-                        return 0;
+                        continue label;
                     }
                 }
 
