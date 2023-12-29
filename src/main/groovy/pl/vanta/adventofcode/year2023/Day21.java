@@ -2,8 +2,8 @@ package pl.vanta.adventofcode.year2023;
 
 import pl.vanta.adventofcode.ParserSolver;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toSet;
@@ -29,10 +29,10 @@ public class Day21 implements ParserSolver<char[][], Long> {
         var start = findStart(parsedInput);
         parsedInput[start.x][start.y] = '.';
 
-        Set<Point> places = new HashSet<>();
+        Collection<Point> places = new HashSet<>();
         places.add(start);
 
-        var iterations = 5_000;
+        var iterations = 1_000;
         for (int i = 0; i < iterations; i++) {
             places = getNextStepPlaces(places, parsedInput);
 
@@ -42,10 +42,9 @@ public class Day21 implements ParserSolver<char[][], Long> {
         return (long) places.size();
     }
 
-    private Set<Point> getNextStepPlaces(Set<Point> places, char[][] parsedInput) {
+    private Collection<Point> getNextStepPlaces(Collection<Point> places, char[][] parsedInput) {
         return places.stream()
                 .flatMap(point -> getNeighbourPlaces(point, parsedInput))
-
                 .collect(toSet());
     }
 
@@ -56,8 +55,8 @@ public class Day21 implements ParserSolver<char[][], Long> {
                         new Point(point.x, point.y - 1),
                         new Point(point.x, point.y + 1)
                 )
-                .filter(p -> p.x >= 0 && p.y >= 0 && p.x < parsedInput.length && p.y < parsedInput[p.x].length && parsedInput[p.x][p.y] == '.');
-//                .filter(p -> parsedInput[p.x][p.y] == '.');
+                .filter(p -> p.x >= 0 && p.y >= 0 && p.x < parsedInput.length && p.y < parsedInput[p.x].length)
+                .filter(p -> parsedInput[p.x][p.y] == '.');
     }
 
     private Point findStart(char[][] parsedInput) {
