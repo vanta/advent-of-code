@@ -4,6 +4,7 @@ import pl.vanta.adventofcode.ParserSolver;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toSet;
@@ -29,8 +30,7 @@ public class Day21 implements ParserSolver<char[][], Long> {
         var start = findStart(parsedInput);
         parsedInput[start.x][start.y] = '.';
 
-        Collection<Point> places = new HashSet<>();
-        places.add(start);
+        Collection<Point> places = Set.of(start);
 
         var iterations = 64;
         for (int i = 0; i < iterations; i++) {
