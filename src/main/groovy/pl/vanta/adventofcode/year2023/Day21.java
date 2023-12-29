@@ -35,15 +35,13 @@ public class Day21 implements ParserSolver<char[][], Long> {
         var iterations = 1_000;
         for (int i = 0; i < iterations; i++) {
             places = getNextStepPlaces(places, parsedInput);
-
-//            System.out.printf("Step %d, places: %d%n", i, places.size());
         }
 
         return (long) places.size();
     }
 
     private Collection<Point> getNextStepPlaces(Collection<Point> places, char[][] parsedInput) {
-        return places.stream()
+        return places.parallelStream()
                 .flatMap(point -> getNeighbourPlaces(point, parsedInput))
                 .collect(toSet());
     }
