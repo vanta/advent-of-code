@@ -3,7 +3,6 @@ package pl.vanta.adventofcode.year2023;
 import pl.vanta.adventofcode.ParserSolver;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
