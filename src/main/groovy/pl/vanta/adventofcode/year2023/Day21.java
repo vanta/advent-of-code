@@ -32,7 +32,7 @@ public class Day21 implements ParserSolver<char[][], Long> {
         Collection<Point> places = new HashSet<>();
         places.add(start);
 
-        var iterations = 1_000;
+        var iterations = 64;
         for (int i = 0; i < iterations; i++) {
             places = getNextStepPlaces(places, parsedInput);
         }
@@ -41,7 +41,7 @@ public class Day21 implements ParserSolver<char[][], Long> {
     }
 
     private Collection<Point> getNextStepPlaces(Collection<Point> places, char[][] parsedInput) {
-        return places.parallelStream()
+        return places.stream()
                 .flatMap(point -> getNeighbourPlaces(point, parsedInput))
                 .collect(toSet());
     }
