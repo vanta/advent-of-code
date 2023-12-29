@@ -1,6 +1,5 @@
 package pl.vanta.adventofcode.year2023
 
-
 import pl.vanta.adventofcode.BaseSpecNew
 import pl.vanta.adventofcode.ParserSolver
 

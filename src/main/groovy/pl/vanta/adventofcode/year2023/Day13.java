@@ -2,13 +2,13 @@ package pl.vanta.adventofcode.year2023;
 
 import pl.vanta.adventofcode.ParserSolver;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static java.lang.Math.min;
 
-public class Day13 implements ParserSolver<List<List<String>>, Integer> {
+public class Day13 implements ParserSolver<List<char[][]>, Integer> {
 
     @Override
     public int getDayNumber() {
@@ -16,27 +16,29 @@ public class Day13 implements ParserSolver<List<List<String>>, Integer> {
     }
 
     @Override
-    public List<List<String>> parse(String lines) {
+    public List<char[][]> parse(String lines) {
         return Stream.of(lines.split("\n\n"))
                 .map(Day13::parseRow)
                 .toList();
     }
 
-    private static List<String> parseRow(String s) {
+    private static char[][] parseRow(String s) {
         return Stream.of(s.split("\n"))
-                .toList();
+                .map(String::toCharArray)
+                .toArray(char[][]::new);
     }
 
     @Override
-    public Integer solve(List<List<String>> parsedInput) {
+    public Integer solve(List<char[][]> parsedInput) {
         return parsedInput.stream()
+//                .peek(Day13::print)
                 .mapToInt(s -> {
                     var rows = getRows(s);
                     var cols = getCols(s);
                     var i = 100 * rows + cols;
 
-                    if(i == 0) {
-                        s.forEach(System.out::println);
+                    if (i == 0) {
+//                        s.forEach(System.out::println);
                         System.out.println("----------------");
                     }
                     return i;
@@ -44,17 +46,18 @@ public class Day13 implements ParserSolver<List<List<String>>, Integer> {
                 .sum();
     }
 
-    private int getCols(List<String> strings) {
-        return getRows(transpose(strings));
+    private int getCols(char[][] array) {
+        return getRows(transpose(array));
     }
 
-    private int getRows(List<String> strings) {
-        String prev = null;
-        for (int i = 0; i < strings.size(); i++) {
-            String curr = strings.get(i);
-            if (curr.equals(prev)) {
-                for (int j = 0; j < min(i - 1, strings.size() - i - 1); j++) {
-                    if (!strings.get(i - j - 2).equals(strings.get(i + j + 1))) {
+    private int getRows(char[][] array) {
+        print(array);
+        char[] prev = null;
+        for (int i = 0; i < array.length; i++) {
+            char[] curr = array[i];
+            if (Arrays.equals(curr, prev)) {
+                for (int j = 0; j < min(i - 1, array.length - i - 1); j++) {
+                    if (!Arrays.equals(array[i - j - 2], array[i + j + 1])) {
                         return 0;
                     }
                 }
@@ -68,24 +71,26 @@ public class Day13 implements ParserSolver<List<List<String>>, Integer> {
         return 0;
     }
 
-    private static List<String> transpose(List<String> strings) {
-        var len = strings.get(0).length();
-        var result = new ArrayList<StringBuilder>();
+    private static char[][] transpose(char[][] array) {
+        var result = new char[array[0].length][array.length];
 
-        for (int i = 0; i < len; i++) {
-            result.add(new StringBuilder());
-        }
-
-        for (int i = 0; i < len; i++) {
-            for (String string : strings) {
-                result.get(i).append(string.charAt(i));
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                result[j][i] = array[i][j];
             }
         }
-        return result.stream().map(StringBuilder::toString).toList();
+
+        return result;
+    }
+
+    private static void print(char[][] array) {
+        for (char[] chars : array) {
+            System.out.println(Arrays.toString(chars));
+        }
     }
 
     @Override
-    public Integer solve2(List<List<String>> parsedInput) {
+    public Integer solve2(List<char[][]> parsedInput) {
         return -1;
     }
 
