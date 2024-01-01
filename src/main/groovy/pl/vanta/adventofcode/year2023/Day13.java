@@ -32,7 +32,7 @@ public class Day13 implements ParserSolver<List<char[][]>, Integer> {
     public Integer solve(List<char[][]> parsedInput) {
         return parsedInput.stream()
 //                .peek(Day13::print)
-                .mapToInt(this::getNumber)
+                .mapToInt(s -> getNumber(s, 0))
                 .sum();
     }
 
@@ -41,25 +41,25 @@ public class Day13 implements ParserSolver<List<char[][]>, Integer> {
         return -1;
     }
 
-    private int getNumber(char[][] s) {
-        var rows = getRows(s);
+    private int getNumber(char[][] s, int differentBy) {
+        var rows = getRows(s, differentBy);
 
-        if(rows > 0) {
+        if (rows > 0) {
             return 100 * rows;
         } else {
-            return getRows(transpose(s));
+            return getRows(transpose(s), differentBy);
         }
     }
 
-    private int getRows(char[][] array) {
+    private int getRows(char[][] array, int differentBy) {
 //        print(array);
-        char[] prev = null;
+        char[] prev = array[0];
         label:
-        for (int i = 0; i < array.length; i++) {
+        for (int i = 1; i < array.length; i++) {
             char[] curr = array[i];
-            if (Arrays.equals(curr, prev)) {
+            if (countDifferentChars(curr, prev) == differentBy) {
                 for (int j = 0; j < min(i - 1, array.length - i - 1); j++) {
-                    if (!Arrays.equals(array[i - j - 2], array[i + j + 1])) {
+                    if (countDifferentChars(array[i - j - 2], array[i + j + 1]) != differentBy) {
                         continue label;
                     }
                 }
@@ -71,6 +71,17 @@ public class Day13 implements ParserSolver<List<char[][]>, Integer> {
         }
 
         return 0;
+    }
+
+    private static int countDifferentChars(char[] arr1, char[] arr2) {
+        int counter = 0;
+        for (int i = 0; i < arr1.length; i++) {
+            if (arr1[i] != arr2[i]) {
+                counter++;
+            }
+        }
+
+        return counter;
     }
 
     private static char[][] transpose(char[][] array) {
