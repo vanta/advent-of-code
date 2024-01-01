@@ -32,24 +32,27 @@ public class Day13 implements ParserSolver<List<char[][]>, Integer> {
     public Integer solve(List<char[][]> parsedInput) {
         return parsedInput.stream()
 //                .peek(Day13::print)
-                .mapToInt(s -> {
-                    var rows = getRows(s);
-                    var cols = getCols(s);
-                    var i = 100 * rows + cols;
-
-                    System.out.println("sum=" + i);
-
-                    return i;
-                })
+                .mapToInt(this::getNumber)
                 .sum();
     }
 
-    private int getCols(char[][] array) {
-        return getRows(transpose(array));
+    @Override
+    public Integer solve2(List<char[][]> parsedInput) {
+        return -1;
+    }
+
+    private int getNumber(char[][] s) {
+        var rows = getRows(s);
+
+        if(rows > 0) {
+            return 100 * rows;
+        } else {
+            return getRows(transpose(s));
+        }
     }
 
     private int getRows(char[][] array) {
-        print(array);
+//        print(array);
         char[] prev = null;
         label:
         for (int i = 0; i < array.length; i++) {
@@ -86,11 +89,6 @@ public class Day13 implements ParserSolver<List<char[][]>, Integer> {
         for (char[] chars : array) {
             System.out.println(Arrays.toString(chars));
         }
-    }
-
-    @Override
-    public Integer solve2(List<char[][]> parsedInput) {
-        return -1;
     }
 
 }
