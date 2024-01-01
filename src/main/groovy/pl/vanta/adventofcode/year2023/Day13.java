@@ -32,7 +32,7 @@ public class Day13 implements ParserSolver<List<char[][]>, Integer> {
     public Integer solve(List<char[][]> parsedInput) {
         return parsedInput.stream()
 //                .peek(Day13::print)
-                .mapToInt(this::getNumber)
+                .mapToInt(s -> getNumber(s, 0))
                 .sum();
     }
 
@@ -44,15 +44,6 @@ public class Day13 implements ParserSolver<List<char[][]>, Integer> {
                 .sum();
     }
 
-    private int getNumber(char[][] s) {
-        var rows = getRows(s);
-
-        if (rows > 0) {
-            return 100 * rows;
-        } else {
-            return getRows(transpose(s));
-        }
-    }
     private int getNumber(char[][] s, int differentBy) {
         var rows = getRows(s, differentBy);
 
@@ -61,29 +52,6 @@ public class Day13 implements ParserSolver<List<char[][]>, Integer> {
         } else {
             return getRows(transpose(s), differentBy);
         }
-    }
-
-    private int getRows(char[][] array) {
-//        print(array);
-        char[] prev = array[0];
-        label:
-        for (int i = 1; i < array.length; i++) {
-            char[] curr = array[i];
-            if (countDifferentChars(curr, prev) == 0) {
-
-                for (int j = 0; j < min(i - 1, array.length - i - 1); j++) {
-                    if (countDifferentChars(array[i - j - 2], array[i + j + 1]) != 0) {
-                        continue label;
-                    }
-                }
-
-                return i;
-            }
-
-            prev = curr;
-        }
-
-        return 0;
     }
 
     private int getRows(char[][] array, int differentBy) {
