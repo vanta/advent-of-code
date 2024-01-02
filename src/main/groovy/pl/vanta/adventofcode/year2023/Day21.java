@@ -28,15 +28,14 @@ public class Day21 implements ParserSolver<char[][], Long> {
     public Long solve(char[][] parsedInput) {
         var start = findStart(parsedInput);
 
-        var places = findAllPoints(parsedInput, start);
+        var places = findAllPoints(parsedInput, start, 64);
 
         return (long) places.size();
     }
 
-    private Collection<Point> findAllPoints(char[][] parsedInput, Point start) {
+    private Collection<Point> findAllPoints(char[][] parsedInput, Point start, int iterations) {
         Collection<Point> places = Set.of(start);
 
-        var iterations = 64;
         for (int i = 0; i < iterations; i++) {
             places = getNextStepPlaces(places, parsedInput);
         }
