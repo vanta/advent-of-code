@@ -29,14 +29,19 @@ public class Day21 implements ParserSolver<char[][], Long> {
         var start = findStart(parsedInput);
         parsedInput[start.x][start.y] = '.';
 
+        var places = aaaaaa(parsedInput, start);
+
+        return (long) places.size();
+    }
+
+    private Collection<Point> aaaaaa(char[][] parsedInput, Point start) {
         Collection<Point> places = Set.of(start);
 
         var iterations = 64;
         for (int i = 0; i < iterations; i++) {
             places = getNextStepPlaces(places, parsedInput);
         }
-
-        return (long) places.size();
+        return places;
     }
 
     private Collection<Point> getNextStepPlaces(Collection<Point> places, char[][] parsedInput) {
@@ -70,10 +75,39 @@ public class Day21 implements ParserSolver<char[][], Long> {
 
     @Override
     public Long solve2(char[][] parsedInput) {
+        var start = findStart(parsedInput);
+        parsedInput[start.x][start.y] = '.';
 
-        return 0L;
+        int dots = countDots(parsedInput);
+        System.out.println("Dots: " + dots);
+
+        var gridSize = parsedInput.length;
+
+//        var steps = ITERATIONS / gridSize;
+        var steps = 10 / gridSize;
+
+        var result = 0L;
+
+
+
+
+
+        return result;
+    }
+
+    private int countDots(char[][] parsedInput) {
+        int dots = 0;
+        for (int i = 0; i < parsedInput.length; i++) {
+            for (int j = 0; j < parsedInput[i].length; j++) {
+                if (parsedInput[i][j] == '.') {
+                    dots++;
+                }
+            }
+        }
+        return dots;
     }
 
     private record Point(int x, int y) {
     }
+
 }
