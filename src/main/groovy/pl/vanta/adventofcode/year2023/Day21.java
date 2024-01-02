@@ -27,14 +27,13 @@ public class Day21 implements ParserSolver<char[][], Long> {
     @Override
     public Long solve(char[][] parsedInput) {
         var start = findStart(parsedInput);
-//        parsedInput[start.x][start.y] = '.';
 
-        var places = aaaaaa(parsedInput, start);
+        var places = findAllPoints(parsedInput, start);
 
         return (long) places.size();
     }
 
-    private Collection<Point> aaaaaa(char[][] parsedInput, Point start) {
+    private Collection<Point> findAllPoints(char[][] parsedInput, Point start) {
         Collection<Point> places = Set.of(start);
 
         var iterations = 64;
