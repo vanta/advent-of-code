@@ -3,7 +3,8 @@ package pl.vanta.adventofcode.year2023;
 import pl.vanta.adventofcode.ParserSolver;
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toSet;
@@ -34,12 +35,38 @@ public class Day21 implements ParserSolver<char[][], Long> {
     }
 
     private Collection<Point> findAllPoints(char[][] parsedInput, Point start, int iterations) {
-        Collection<Point> places = Set.of(start);
+        var result = new HashSet<Point>();
+        var seen = new HashSet<Point>();
+        var queue = new LinkedList<Step>();
 
-        for (int i = 0; i < iterations; i++) {
-            places = getNextStepPlaces(places, parsedInput);
+        seen.add(start);
+        queue.add(new Step(start, iterations));
+
+        while (!queue.isEmpty()) {
+            var step = queue.poll();
+
+            if (step.s % 2 == 0) {
+                result.add(step.p);
+            }
+            if (step.s == 0) {
+                continue;
+            }
+
+            Stream.of(
+                            new Point(step.p.x - 1, step.p.y),
+                            new Point(step.p.x + 1, step.p.y),
+                            new Point(step.p.x, step.p.y - 1),
+                            new Point(step.p.x, step.p.y + 1))
+                    .filter(p -> p.x >= 0 && p.y >= 0 && p.x < parsedInput.length && p.y < parsedInput[p.x].length)
+                    .filter(p -> parsedInput[p.x][p.y] != '#')
+                    .filter(p -> !seen.contains(p))
+                    .forEach(p -> {
+                        seen.add(p);
+                        queue.add(new Step(p, step.s - 1));
+                    });
         }
-        return places;
+
+        return result;
     }
 
     private Collection<Point> getNextStepPlaces(Collection<Point> places, char[][] parsedInput) {
@@ -87,9 +114,6 @@ public class Day21 implements ParserSolver<char[][], Long> {
         var result = 0L;
 
 
-
-
-
         return result;
     }
 
@@ -106,6 +130,9 @@ public class Day21 implements ParserSolver<char[][], Long> {
     }
 
     private record Point(int x, int y) {
+    }
+
+    private record Step(Point p, int s) {
     }
 
 }
