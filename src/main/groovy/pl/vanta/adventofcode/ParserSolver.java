@@ -12,4 +12,12 @@ public interface ParserSolver<T, U> {
     default T parse2(String lines) {
         return parse(lines);
     }
+
+    default U solveReal(T parsedInput){
+        return solve(parsedInput);
+    }
+
+    default U solve2Real(T parsedInput){
+        return solve2(parsedInput);
+    }
 }
