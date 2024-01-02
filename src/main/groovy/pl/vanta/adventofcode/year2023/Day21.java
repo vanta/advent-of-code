@@ -27,7 +27,7 @@ public class Day21 implements ParserSolver<char[][], Long> {
     @Override
     public Long solve(char[][] parsedInput) {
         var start = findStart(parsedInput);
-        parsedInput[start.x][start.y] = '.';
+//        parsedInput[start.x][start.y] = '.';
 
         var places = aaaaaa(parsedInput, start);
 
@@ -58,7 +58,7 @@ public class Day21 implements ParserSolver<char[][], Long> {
                         new Point(point.x, point.y + 1)
                 )
                 .filter(p -> p.x >= 0 && p.y >= 0 && p.x < parsedInput.length && p.y < parsedInput[p.x].length)
-                .filter(p -> parsedInput[p.x][p.y] == '.');
+                .filter(p -> parsedInput[p.x][p.y] != '#');
     }
 
     private Point findStart(char[][] parsedInput) {
