@@ -1,7 +1,6 @@
 package pl.vanta.adventofcode.year2024;
 
 import java.util.List;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -9,6 +8,9 @@ import pl.vanta.adventofcode.ParserSolver;
 
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.abs;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.IntStream.range;
 
 public class Day1 implements ParserSolver<List<Pair<Integer, Integer>>, Integer> {
     @Override
@@ -36,14 +38,26 @@ public class Day1 implements ParserSolver<List<Pair<Integer, Integer>>, Integer>
                 .sorted()
                 .toList();
 
-        return IntStream.range(0, parsedInput.size())
+        return range(0, parsedInput.size())
                 .map(i -> abs(list1.get(i) - list2.get(i)))
                 .sum();
     }
 
     @Override
     public Integer solve2(List<Pair<Integer, Integer>> parsedInput) {
-        return 0;
+        var list = parsedInput.stream()
+                .map(Pair::getLeft)
+                .sorted()
+                .toList();
+
+        var histogram = parsedInput.stream()
+                .map(Pair::getRight)
+                .collect(groupingBy(i -> i, counting()));
+
+        return (int) list.stream()
+                .map(key -> key * histogram.getOrDefault(key, 0L))
+                .mapToLong(i -> i)
+                .sum();
     }
 
 }
