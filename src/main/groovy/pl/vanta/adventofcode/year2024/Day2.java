@@ -31,7 +31,7 @@ public class Day2 implements ParserSolver<List<List<Integer>>, Integer> {
     }
 
     private boolean isSafe(List<Integer> list) {
-        return isDecreasing(list) || isIncreasing(list);
+        return isMonotonic(list, 1) || isMonotonic(list, -1);
     }
 
     private boolean isSafe2(List<Integer> list) {
@@ -39,24 +39,20 @@ public class Day2 implements ParserSolver<List<List<Integer>>, Integer> {
             return true;
         } else {
             return range(0, list.size())
-                    .mapToObj(i -> {
-                        var copy = new ArrayList<>(list);
-                        copy.remove(i);
-                        return copy;
-                    })
+                    .mapToObj(i -> removeNthElem(list, i))
                     .anyMatch(this::isSafe);
         }
     }
 
-    private boolean isDecreasing(List<Integer> list) {
-        return range(1, list.size())
-                .map(i -> list.get(i - 1) - list.get(i))
-                .allMatch(i -> i > 0 && i < 4);
+    private static List<Integer> removeNthElem(List<Integer> list, int i) {
+        var copy = new ArrayList<>(list);
+        copy.remove(i);
+        return copy;
     }
 
-    private boolean isIncreasing(List<Integer> list) {
+    private boolean isMonotonic(List<Integer> list, int multi) {
         return range(1, list.size())
-                .map(i -> list.get(i) - list.get(i - 1))
+                .map(i -> multi * (list.get(i - 1) - list.get(i)))
                 .allMatch(i -> i > 0 && i < 4);
     }
 
