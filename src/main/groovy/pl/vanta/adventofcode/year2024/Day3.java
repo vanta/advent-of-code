@@ -3,10 +3,9 @@ package pl.vanta.adventofcode.year2024;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
-import org.apache.commons.lang3.tuple.Pair;
 import pl.vanta.adventofcode.ParserSolver;
 
-import static java.lang.Integer.*;
+import static java.lang.Integer.parseInt;
 
 public class Day3 implements ParserSolver<String, Integer> {
     private static final Pattern P = Pattern.compile("(mul\\(\\d{1,3},\\d{1,3}\\))");
