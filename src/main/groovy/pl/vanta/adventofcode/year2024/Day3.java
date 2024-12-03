@@ -24,14 +24,12 @@ public class Day3 implements ParserSolver<String, Integer> {
     public Integer solve(String parsedInput) {
         var matcher = P.matcher(parsedInput);
 
-        var result = IntStream.iterate(0, i -> matcher.find(), i -> i + 1)
+        return IntStream.iterate(0, i -> matcher.find(), i -> i + 1)
                 .mapToObj(i -> matcher.group())
                 .map(s -> s.replace("mul(", "").replace(")", ""))
                 .map(s -> s.split(","))
                 .map(a -> parseInt(a[0]) * parseInt(a[1]))
                 .reduce(0, Integer::sum);
-
-        return result;
     }
 
     @Override
@@ -42,8 +40,7 @@ public class Day3 implements ParserSolver<String, Integer> {
     private String cleanup(String parsedInput) {
         return parsedInput
                 .replaceAll("don't\\(\\).*?do\\(\\)", "")
-                .replaceAll("don't\\(\\).*$", "")
-                ;
+                .replaceAll("don't\\(\\).*$", "");
     }
 
 }
