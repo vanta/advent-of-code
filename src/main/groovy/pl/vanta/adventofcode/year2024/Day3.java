@@ -36,8 +36,14 @@ public class Day3 implements ParserSolver<String, Integer> {
 
     @Override
     public Integer solve2(String parsedInput) {
-        return 0;
+        return solve(cleanup(parsedInput));
+    }
 
+    private String cleanup(String parsedInput) {
+        return parsedInput
+                .replaceAll("don't\\(\\).*?do\\(\\)", "")
+                .replaceAll("don't\\(\\).*$", "")
+                ;
     }
 
 }
