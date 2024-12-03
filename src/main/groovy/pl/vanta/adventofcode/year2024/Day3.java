@@ -6,6 +6,8 @@ import java.util.stream.IntStream;
 import org.apache.commons.lang3.tuple.Pair;
 import pl.vanta.adventofcode.ParserSolver;
 
+import static java.lang.Integer.*;
+
 public class Day3 implements ParserSolver<String, Integer> {
     private static final Pattern P = Pattern.compile("(mul\\(\\d{1,3},\\d{1,3}\\))");
 
@@ -27,8 +29,7 @@ public class Day3 implements ParserSolver<String, Integer> {
                 .mapToObj(i -> matcher.group())
                 .map(s -> s.replace("mul(", "").replace(")", ""))
                 .map(s -> s.split(","))
-                .map(a -> Pair.of(Integer.parseInt(a[0]), Integer.parseInt(a[1])))
-                .map(p -> p.getLeft() * p.getRight())
+                .map(a -> parseInt(a[0]) * parseInt(a[1]))
                 .reduce(0, Integer::sum);
 
         return result;
