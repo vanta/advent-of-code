@@ -25,14 +25,14 @@ public class Day4 implements ParserSolver<char[][], Integer> {
         int count = 0;
         for (int i = 0; i < parsedInput.length; i++) {
             for (int j = 0; j < parsedInput[i].length; j++) {
-                    count += search(i, j, new Direction(1, 0), parsedInput);
-                    count += search(i, j, new Direction(0, 1), parsedInput);
-                    count += search(i, j, new Direction(1, 1), parsedInput);
-                    count += search(i, j, new Direction(1, -1), parsedInput);
-                    count += search(i, j, new Direction(-1, 1), parsedInput);
-                    count += search(i, j, new Direction(-1, -1), parsedInput);
-                    count += search(i, j, new Direction(-1, 0), parsedInput);
-                    count += search(i, j, new Direction(0, -1), parsedInput);
+                count += search(i, j, new Direction(1, 0), parsedInput);
+                count += search(i, j, new Direction(0, 1), parsedInput);
+                count += search(i, j, new Direction(1, 1), parsedInput);
+                count += search(i, j, new Direction(1, -1), parsedInput);
+                count += search(i, j, new Direction(-1, 1), parsedInput);
+                count += search(i, j, new Direction(-1, -1), parsedInput);
+                count += search(i, j, new Direction(-1, 0), parsedInput);
+                count += search(i, j, new Direction(0, -1), parsedInput);
             }
         }
 
@@ -58,7 +58,31 @@ public class Day4 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve2(char[][] parsedInput) {
-        return 0;
+        int count = 0;
+        for (int i = 0; i < parsedInput.length; i++) {
+            for (int j = 0; j < parsedInput[i].length; j++) {
+                if (parsedInput[i][j] == 'A') {
+                    if (checkXmas(i, j, parsedInput)) {
+                        count++;
+                    }
+                }
+            }
+        }
+
+        return count;
+    }
+
+    private boolean checkXmas(int x, int y, char[][] parsedInput) {
+        if (x < 1 || y < 1 || x == parsedInput.length - 1 || y == parsedInput[x].length - 1) {
+            return false;
+        }
+
+        return
+                ((parsedInput[x - 1][y - 1] == 'M' && parsedInput[x + 1][y + 1] == 'S')
+                || (parsedInput[x - 1][y - 1] == 'S' && parsedInput[x + 1][y + 1] == 'M'))
+                &&
+                ((parsedInput[x - 1][y + 1] == 'M' && parsedInput[x + 1][y - 1] == 'S')
+                        || (parsedInput[x - 1][y + 1] == 'S' && parsedInput[x + 1][y - 1] == 'M'));
     }
 
     private record Direction(int x, int y) {
