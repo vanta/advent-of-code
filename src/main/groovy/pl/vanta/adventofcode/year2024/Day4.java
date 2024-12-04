@@ -25,7 +25,6 @@ public class Day4 implements ParserSolver<char[][], Integer> {
         int count = 0;
         for (int i = 0; i < parsedInput.length; i++) {
             for (int j = 0; j < parsedInput[i].length; j++) {
-                if (parsedInput[i][j] == 'X') {
                     count += search(i, j, new Direction(1, 0), parsedInput);
                     count += search(i, j, new Direction(0, 1), parsedInput);
                     count += search(i, j, new Direction(1, 1), parsedInput);
@@ -34,7 +33,6 @@ public class Day4 implements ParserSolver<char[][], Integer> {
                     count += search(i, j, new Direction(-1, -1), parsedInput);
                     count += search(i, j, new Direction(-1, 0), parsedInput);
                     count += search(i, j, new Direction(0, -1), parsedInput);
-                }
             }
         }
 
