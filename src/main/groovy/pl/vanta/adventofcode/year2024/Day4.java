@@ -61,10 +61,8 @@ public class Day4 implements ParserSolver<char[][], Integer> {
         int count = 0;
         for (int i = 0; i < parsedInput.length; i++) {
             for (int j = 0; j < parsedInput[i].length; j++) {
-                if (parsedInput[i][j] == 'A') {
-                    if (checkXmas(i, j, parsedInput)) {
-                        count++;
-                    }
+                if (parsedInput[i][j] == 'A' && checkXmas(i, j, parsedInput)) {
+                    count++;
                 }
             }
         }
