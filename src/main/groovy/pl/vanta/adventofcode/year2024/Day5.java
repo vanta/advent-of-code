@@ -1,5 +1,6 @@
 package pl.vanta.adventofcode.year2024;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -34,7 +35,6 @@ public class Day5 implements ParserSolver<Day5.Input, Integer> {
 
     @Override
     public Integer solve(Input parsedInput) {
-
         return parsedInput.updates.stream()
                 .filter(l -> isCorrect(l, parsedInput.rules))
                 .map(l -> l.get(l.size() / 2))
@@ -54,11 +54,27 @@ public class Day5 implements ParserSolver<Day5.Input, Integer> {
 
     @Override
     public Integer solve2(Input parsedInput) {
-
-
-        return 0;
+        return parsedInput.updates.stream()
+                .filter(l -> !isCorrect(l, parsedInput.rules))
+                .map(l -> fix(l, parsedInput.rules))
+                .peek(System.out::println)
+                .map(l -> l.get(l.size() / 2))
+                .reduce(Integer::sum)
+                .orElse(0);
     }
 
+    private List<Integer> fix(List<Integer> update, Set<Pair<Integer, Integer>> rules) {
+        var result = new ArrayList<>(update);
+        for (int i = 0; i < result.size() - 1; i++) {
+            if (!rules.contains(Pair.of(result.get(i), result.get(i + 1)))) {
+                var tmp = result.get(i);
+                result.set(i, result.get(i + 1));
+                result.set(i + 1, tmp);
+            }
+        }
+
+        return isCorrect(result, rules) ? result : fix(result, rules);
+    }
 
     record Input(Set<Pair<Integer, Integer>> rules, List<List<Integer>> updates) {
     }
