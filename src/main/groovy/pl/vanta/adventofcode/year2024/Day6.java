@@ -24,32 +24,10 @@ public class Day6 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve(char[][] parsedInput) {
-        return path2(findStart(parsedInput), parsedInput).size();
+        return path(findStart(parsedInput), parsedInput).size();
     }
 
-    private Set<Pair<Integer, Integer>> path(Pair<Integer, Integer> start, Direction dir, char[][] array) {
-//        print(start, dir, array);
-//        System.out.println("================================================");
-
-        var maybeNewPos = doStep(start, dir);
-
-        if (maybeNewPos.getLeft() < 0 || maybeNewPos.getLeft() >= array.length || maybeNewPos.getRight() < 0 || maybeNewPos.getRight() >= array[maybeNewPos.getLeft()].length) {
-            return new HashSet<>();
-        }
-
-        var newDir = dir;
-        if (array[maybeNewPos.getLeft()][maybeNewPos.getRight()] == '#') {
-            newDir = dir.next();
-            maybeNewPos = doStep(start, newDir);
-        }
-
-        var path = path(maybeNewPos, newDir, array);
-        path.add(maybeNewPos);
-
-        return path;
-    }
-
-    private Set<Pair<Integer, Integer>> path2(Pair<Integer, Integer> start, char[][] array) {
+    private Set<Pair<Integer, Integer>> path(Pair<Integer, Integer> start, char[][] array) {
         var outside = false;
         var path = new HashSet<Pair<Integer, Integer>>();
         var position = start;
