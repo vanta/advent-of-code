@@ -84,21 +84,15 @@ public class Day6 implements ParserSolver<char[][], Integer> {
         var path = path(findStart(parsedInput), parsedInput);
 
         int loops = 0;
-//        for (Triple<Integer, Integer, Direction> place : path) {
-//
-//        }
+        for (Position pos : path) {
+
+        }
 
         return loops;
     }
 
     enum Direction {
-        UP('^'), DOWN('v'), LEFT('<'), RIGHT('>');
-
-        final char sign;
-
-        Direction(char sign) {
-            this.sign = sign;
-        }
+        UP, DOWN, LEFT, RIGHT;
 
         Direction turn() {
             return switch (this) {
