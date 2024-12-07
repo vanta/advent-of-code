@@ -20,12 +20,12 @@ class Day7Spec extends BaseSpec {
     }
 
     @Override
-    Integer getExampleAnswer2() {
-        6
+    Long getExampleAnswer2() {
+        11387
     }
 
     @Override
-    Integer getRealAnswer2() {
-        0
+    Long getRealAnswer2() {
+        150077710195188
     }
 }
