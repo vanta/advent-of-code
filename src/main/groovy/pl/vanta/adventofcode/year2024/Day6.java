@@ -1,7 +1,8 @@
 package pl.vanta.adventofcode.year2024;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 import pl.vanta.adventofcode.ParserSolver;
@@ -24,25 +25,23 @@ public class Day6 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve(char[][] parsedInput) {
-        return path(findStart(parsedInput), parsedInput).size();
+        var path = path(findStart(parsedInput), parsedInput);
+        return new HashSet<>(path).size();
     }
 
-    private Set<Pair<Integer, Integer>> path(Pair<Integer, Integer> start, char[][] array) {
+    private List<Pair<Integer, Integer>> path(Pair<Integer, Integer> start, char[][] array) {
         var outside = false;
-        var path = new HashSet<Pair<Integer, Integer>>();
+        var path = new ArrayList<Pair<Integer, Integer>>();
         var position = start;
         var dir = Direction.UP;
 
         do {
-//            print(position, dir, array);
-//            System.out.printf("Path size=%d\n", path.size());
-//            System.out.println("------------------------------");
             path.add(position);
 
             var maybeNewPos = doStep(position, dir);
             outside = maybeNewPos.getLeft() < 0 || maybeNewPos.getLeft() >= array.length || maybeNewPos.getRight() < 0 || maybeNewPos.getRight() >= array[maybeNewPos.getLeft()].length;
 
-            if(!outside) {
+            if (!outside) {
                 if (array[maybeNewPos.getLeft()][maybeNewPos.getRight()] == '#') {
                     dir = dir.next();
                     position = doStep(position, dir);
@@ -50,7 +49,7 @@ public class Day6 implements ParserSolver<char[][], Integer> {
                     position = maybeNewPos;
                 }
             }
-        } while(!outside);
+        } while (!outside);
 
         return path;
     }
