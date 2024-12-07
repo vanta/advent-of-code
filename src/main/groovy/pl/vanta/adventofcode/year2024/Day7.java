@@ -7,7 +7,6 @@ import java.util.Set;
 
 import pl.vanta.adventofcode.ParserSolver;
 
-import static java.lang.Long.*;
 import static java.lang.Long.parseLong;
 import static java.util.Arrays.stream;
 import static java.util.Map.Entry;
