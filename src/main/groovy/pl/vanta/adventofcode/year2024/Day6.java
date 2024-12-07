@@ -5,9 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.util.Arrays.stream;
+import static pl.vanta.adventofcode.year2024.Day6.Direction.*;
 
 public class Day6 implements ParserSolver<char[][], Integer> {
 
@@ -25,62 +27,54 @@ public class Day6 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve(char[][] parsedInput) {
-        var path = path(findStart(parsedInput), parsedInput);
-        return new HashSet<>(path).size();
+        return (int)path(findStart(parsedInput), parsedInput)
+                .stream()
+                .map(t -> Pair.of(t.getLeft(), t.getMiddle()))
+                .distinct()
+                .count();
     }
 
-    private List<Pair<Integer, Integer>> path(Pair<Integer, Integer> start, char[][] array) {
-        var outside = false;
-        var path = new ArrayList<Pair<Integer, Integer>>();
+    private List<Triple<Integer, Integer, Direction>> path(Triple<Integer, Integer, Direction> start, char[][] array) {
+        var path = new ArrayList<Triple<Integer, Integer, Direction>>();
         var position = start;
-        var dir = Direction.UP;
 
         do {
             path.add(position);
 
-            var maybeNewPos = doStep(position, dir);
-            outside = maybeNewPos.getLeft() < 0 || maybeNewPos.getLeft() >= array.length || maybeNewPos.getRight() < 0 || maybeNewPos.getRight() >= array[maybeNewPos.getLeft()].length;
-
-            if (!outside) {
-                if (array[maybeNewPos.getLeft()][maybeNewPos.getRight()] == '#') {
-                    dir = dir.turn();
-                    position = doStep(position, dir);
-                } else {
-                    position = maybeNewPos;
-                }
-            }
-        } while (!outside);
+        } while ((position = getNextPos(position, array)) != null);
 
         return path;
     }
 
-    private void print(Pair<Integer, Integer> start, Direction dir, char[][] array) {
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array[i].length; j++) {
-                if (i == start.getLeft() && j == start.getRight()) {
-                    System.out.print(dir.sign);
-                } else {
-                    System.out.print(array[i][j]);
-                }
-            }
-            System.out.println();
+    private Triple<Integer, Integer, Direction> getNextPos(Triple<Integer, Integer, Direction> current, char[][] array) {
+        var nextPos = doStep(current);
+        var outside = nextPos.getLeft() < 0 || nextPos.getLeft() >= array.length || nextPos.getMiddle() < 0 || nextPos.getMiddle() >= array[nextPos.getLeft()].length;
+
+        if(outside) {
+            return null;
+        }
+
+        if(array[nextPos.getLeft()][nextPos.getMiddle()] == '#') {
+            return doStep(Triple.of(current.getLeft(), current.getMiddle(), current.getRight().turn()));
+        } else {
+            return nextPos;
         }
     }
 
-    private Pair<Integer, Integer> doStep(Pair<Integer, Integer> current, Direction dir) {
-        return switch (dir) {
-            case UP -> Pair.of(current.getLeft() - 1, current.getRight());
-            case DOWN -> Pair.of(current.getLeft() + 1, current.getRight());
-            case LEFT -> Pair.of(current.getLeft(), current.getRight() - 1);
-            case RIGHT -> Pair.of(current.getLeft(), current.getRight() + 1);
+    private Triple<Integer, Integer, Direction> doStep(Triple<Integer, Integer, Direction> current) {
+        return switch (current.getRight()) {
+            case UP -> Triple.of(current.getLeft() - 1, current.getMiddle(), current.getRight());
+            case DOWN -> Triple.of(current.getLeft() + 1, current.getMiddle(), current.getRight());
+            case LEFT -> Triple.of(current.getLeft(), current.getMiddle() - 1, current.getRight());
+            case RIGHT -> Triple.of(current.getLeft(), current.getMiddle() + 1, current.getRight());
         };
     }
 
-    private Pair<Integer, Integer> findStart(char[][] input) {
+    private Triple<Integer, Integer, Direction> findStart(char[][] input) {
         for (int i = 0; i < input.length; i++) {
             for (int j = 0; j < input[i].length; j++) {
                 if (input[i][j] == '^') {
-                    return Pair.of(i, j);
+                    return Triple.of(i, j, UP);
                 }
             }
         }
@@ -92,9 +86,12 @@ public class Day6 implements ParserSolver<char[][], Integer> {
     public Integer solve2(char[][] parsedInput) {
         var path = path(findStart(parsedInput), parsedInput);
 
+        int loops = 0;
+        for (Triple<Integer, Integer, Direction> place : path) {
 
+        }
 
-        return 0;
+        return loops;
     }
 
     enum Direction {
