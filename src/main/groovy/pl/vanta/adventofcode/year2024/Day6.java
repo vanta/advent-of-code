@@ -1,6 +1,7 @@
 package pl.vanta.adventofcode.year2024;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -10,6 +11,8 @@ import static java.util.Arrays.stream;
 import static pl.vanta.adventofcode.year2024.Day6.Direction.UP;
 
 public class Day6 implements ParserSolver<char[][], Integer> {
+
+    private static final char OBSTACLE = '#';
 
     @Override
     public int getDayNumber() {
@@ -51,7 +54,7 @@ public class Day6 implements ParserSolver<char[][], Integer> {
             return null;
         }
 
-        if (array[nextPos.x][nextPos.y] == '#') {
+        if (array[nextPos.x][nextPos.y] == OBSTACLE) {
             return doStep(new Position(current.x, current.y, current.direction.turn()));
         } else {
             return nextPos;
@@ -84,11 +87,35 @@ public class Day6 implements ParserSolver<char[][], Integer> {
         var path = path(findStart(parsedInput), parsedInput);
 
         int loops = 0;
-        for (Position pos : path) {
+        for (int i = 0; i < path.size() - 1; i++) {
+            Position pos = path.get(i);
+            Position next = path.get(i + 1);
 
+            parsedInput[next.x][next.y] = OBSTACLE;
+
+            if (hasLoop(pos, parsedInput)) {
+                loops++;
+            }
+
+            parsedInput[next.x][next.y] = '.';
         }
 
         return loops;
+    }
+
+    private boolean hasLoop(Position start, char[][] array) {
+        var path = new HashSet<Position>();
+        var position = start;
+
+        do {
+            var added = path.add(position);
+
+            if (!added) {
+                return true;
+            }
+        } while ((position = getNextPos(position, array)) != null);
+
+        return false;
     }
 
     enum Direction {
