@@ -43,7 +43,7 @@ public class Day6 implements ParserSolver<char[][], Integer> {
 
             if (!outside) {
                 if (array[maybeNewPos.getLeft()][maybeNewPos.getRight()] == '#') {
-                    dir = dir.next();
+                    dir = dir.turn();
                     position = doStep(position, dir);
                 } else {
                     position = maybeNewPos;
@@ -58,7 +58,7 @@ public class Day6 implements ParserSolver<char[][], Integer> {
         for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array[i].length; j++) {
                 if (i == start.getLeft() && j == start.getRight()) {
-                    System.out.print(dir.getSign());
+                    System.out.print(dir.sign);
                 } else {
                     System.out.print(array[i][j]);
                 }
@@ -90,29 +90,29 @@ public class Day6 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve2(char[][] parsedInput) {
+        var path = path(findStart(parsedInput), parsedInput);
+
+
+
         return 0;
     }
 
     enum Direction {
         UP('^'), DOWN('v'), LEFT('<'), RIGHT('>');
 
-        private final char sign;
+        final char sign;
 
         Direction(char sign) {
             this.sign = sign;
         }
 
-        Direction next() {
+        Direction turn() {
             return switch (this) {
                 case UP -> RIGHT;
                 case RIGHT -> DOWN;
                 case DOWN -> LEFT;
                 case LEFT -> UP;
             };
-        }
-
-        public char getSign() {
-            return sign;
         }
     }
 
