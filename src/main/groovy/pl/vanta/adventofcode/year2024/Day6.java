@@ -27,7 +27,7 @@ public class Day6 implements ParserSolver<char[][], Integer> {
     public Integer solve(char[][] parsedInput) {
         return (int) path(findStart(parsedInput), parsedInput)
                 .stream()
-                .map(t -> Pair.of(t.x, t.y))
+                .map(p -> Pair.of(p.x, p.y))
                 .distinct()
                 .count();
     }
@@ -110,7 +110,7 @@ public class Day6 implements ParserSolver<char[][], Integer> {
         }
     }
 
-    record Position(int x, int y, Direction direction) {
+    private record Position(int x, int y, Direction direction) {
     }
 
 }
