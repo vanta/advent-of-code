@@ -1,7 +1,9 @@
 package pl.vanta.adventofcode.year2024;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import pl.vanta.adventofcode.ParserSolver;
 
@@ -40,10 +42,20 @@ public class Day7 implements ParserSolver<Map<Long, List<Integer>>, Long> {
                 .reduce(0L, Long::sum);
     }
 
-    private boolean isValid(long result, List<Integer> values) {
+    private boolean isValid(long expected, List<Integer> values) {
+        Set<Long> results = new HashSet<>();
+        results.add(values.getFirst().longValue());
 
+        for (int i = 1; i < values.size(); i++) {
+            Set<Long> newResults = new HashSet<>();
+            for (Long result : results) {
+                newResults.add(result + values.get(i));
+                newResults.add(result * values.get(i));
+            }
+            results = newResults;
+        }
 
-        return false;
+        return results.contains(expected);
     }
 
     @Override
