@@ -1,7 +1,6 @@
 package pl.vanta.adventofcode.year2024;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -55,7 +54,8 @@ public class Day6 implements ParserSolver<char[][], Integer> {
         }
 
         if (array[nextPos.x][nextPos.y] == OBSTACLE) {
-            return doStep(new Position(current.x, current.y, current.direction.turn()));
+//            return doStep(new Position(current.x, current.y, current.direction.turn()));
+            return getNextPos(new Position(current.x, current.y, current.direction.turn()), array);
         } else {
             return nextPos;
         }
@@ -104,18 +104,30 @@ public class Day6 implements ParserSolver<char[][], Integer> {
     }
 
     private boolean hasLoop(Position start, char[][] array) {
-        var path = new HashSet<Position>();
+        printArray(start, array);
+        System.out.println("-----------------------");
         var position = start;
 
-        do {
-            var added = path.add(position);
-
-            if (!added) {
+        while ((position = getNextPos(position, array)) != null) {
+            if (position.equals(start)) {
                 return true;
             }
-        } while ((position = getNextPos(position, array)) != null);
+        }
 
         return false;
+    }
+
+    private void printArray(Position start, char[][] array) {
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                if (i == start.x && j == start.y) {
+                    System.out.print(start.direction.toChar());
+                } else {
+                    System.out.print(array[i][j]);
+                }
+            }
+            System.out.println();
+        }
     }
 
     enum Direction {
@@ -127,6 +139,15 @@ public class Day6 implements ParserSolver<char[][], Integer> {
                 case RIGHT -> DOWN;
                 case DOWN -> LEFT;
                 case LEFT -> UP;
+            };
+        }
+
+        char toChar() {
+            return switch (this) {
+                case UP -> '^';
+                case DOWN -> 'v';
+                case LEFT -> '<';
+                case RIGHT -> '>';
             };
         }
     }
