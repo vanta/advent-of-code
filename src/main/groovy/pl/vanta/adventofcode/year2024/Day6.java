@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.util.Arrays.stream;
@@ -28,13 +27,13 @@ public class Day6 implements ParserSolver<char[][], Integer> {
     public Integer solve(char[][] parsedInput) {
         return (int) path(findStart(parsedInput), parsedInput)
                 .stream()
-                .map(t -> Pair.of(t.getLeft(), t.getMiddle()))
+                .map(t -> Pair.of(t.x, t.y))
                 .distinct()
                 .count();
     }
 
-    private List<Triple<Integer, Integer, Direction>> path(Triple<Integer, Integer, Direction> start, char[][] array) {
-        var path = new ArrayList<Triple<Integer, Integer, Direction>>();
+    private List<Position> path(Position start, char[][] array) {
+        var path = new ArrayList<Position>();
         var position = start;
 
         do {
@@ -44,35 +43,35 @@ public class Day6 implements ParserSolver<char[][], Integer> {
         return path;
     }
 
-    private Triple<Integer, Integer, Direction> getNextPos(Triple<Integer, Integer, Direction> current, char[][] array) {
+    private Position getNextPos(Position current, char[][] array) {
         var nextPos = doStep(current);
-        var outside = nextPos.getLeft() < 0 || nextPos.getLeft() >= array.length || nextPos.getMiddle() < 0 || nextPos.getMiddle() >= array[nextPos.getLeft()].length;
+        var outside = nextPos.x < 0 || nextPos.x >= array.length || nextPos.y < 0 || nextPos.y >= array[nextPos.x].length;
 
         if (outside) {
             return null;
         }
 
-        if (array[nextPos.getLeft()][nextPos.getMiddle()] == '#') {
-            return doStep(Triple.of(current.getLeft(), current.getMiddle(), current.getRight().turn()));
+        if (array[nextPos.x][nextPos.y] == '#') {
+            return doStep(new Position(current.x, current.y, current.direction.turn()));
         } else {
             return nextPos;
         }
     }
 
-    private Triple<Integer, Integer, Direction> doStep(Triple<Integer, Integer, Direction> current) {
-        return switch (current.getRight()) {
-            case UP -> Triple.of(current.getLeft() - 1, current.getMiddle(), current.getRight());
-            case DOWN -> Triple.of(current.getLeft() + 1, current.getMiddle(), current.getRight());
-            case LEFT -> Triple.of(current.getLeft(), current.getMiddle() - 1, current.getRight());
-            case RIGHT -> Triple.of(current.getLeft(), current.getMiddle() + 1, current.getRight());
+    private Position doStep(Position current) {
+        return switch (current.direction) {
+            case UP -> new Position(current.x - 1, current.y, current.direction);
+            case DOWN -> new Position(current.x + 1, current.y, current.direction);
+            case LEFT -> new Position(current.x, current.y - 1, current.direction);
+            case RIGHT -> new Position(current.x, current.y + 1, current.direction);
         };
     }
 
-    private Triple<Integer, Integer, Direction> findStart(char[][] input) {
+    private Position findStart(char[][] input) {
         for (int i = 0; i < input.length; i++) {
             for (int j = 0; j < input[i].length; j++) {
                 if (input[i][j] == '^') {
-                    return Triple.of(i, j, UP);
+                    return new Position(i, j, UP);
                 }
             }
         }
@@ -85,9 +84,9 @@ public class Day6 implements ParserSolver<char[][], Integer> {
         var path = path(findStart(parsedInput), parsedInput);
 
         int loops = 0;
-        for (Triple<Integer, Integer, Direction> place : path) {
-
-        }
+//        for (Triple<Integer, Integer, Direction> place : path) {
+//
+//        }
 
         return loops;
     }
@@ -109,6 +108,9 @@ public class Day6 implements ParserSolver<char[][], Integer> {
                 case LEFT -> UP;
             };
         }
+    }
+
+    record Position(int x, int y, Direction direction) {
     }
 
 }
