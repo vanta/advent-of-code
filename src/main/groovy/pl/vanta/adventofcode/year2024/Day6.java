@@ -1,7 +1,6 @@
 package pl.vanta.adventofcode.year2024;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -9,7 +8,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.util.Arrays.stream;
-import static pl.vanta.adventofcode.year2024.Day6.Direction.*;
+import static pl.vanta.adventofcode.year2024.Day6.Direction.UP;
 
 public class Day6 implements ParserSolver<char[][], Integer> {
 
@@ -27,7 +26,7 @@ public class Day6 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve(char[][] parsedInput) {
-        return (int)path(findStart(parsedInput), parsedInput)
+        return (int) path(findStart(parsedInput), parsedInput)
                 .stream()
                 .map(t -> Pair.of(t.getLeft(), t.getMiddle()))
                 .distinct()
@@ -40,7 +39,6 @@ public class Day6 implements ParserSolver<char[][], Integer> {
 
         do {
             path.add(position);
-
         } while ((position = getNextPos(position, array)) != null);
 
         return path;
@@ -50,11 +48,11 @@ public class Day6 implements ParserSolver<char[][], Integer> {
         var nextPos = doStep(current);
         var outside = nextPos.getLeft() < 0 || nextPos.getLeft() >= array.length || nextPos.getMiddle() < 0 || nextPos.getMiddle() >= array[nextPos.getLeft()].length;
 
-        if(outside) {
+        if (outside) {
             return null;
         }
 
-        if(array[nextPos.getLeft()][nextPos.getMiddle()] == '#') {
+        if (array[nextPos.getLeft()][nextPos.getMiddle()] == '#') {
             return doStep(Triple.of(current.getLeft(), current.getMiddle(), current.getRight().turn()));
         } else {
             return nextPos;
