@@ -7,15 +7,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
 import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
 import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.IntStream.range;
 import static pl.vanta.adventofcode.Utils.generatePairs;
 import static pl.vanta.adventofcode.Utils.inBounds;
 
@@ -90,11 +92,19 @@ public class Day8 implements ParserSolver<char[][], Integer> {
 
         var dx = l1.x() - l2.x();
         var dy = l1.y() - l2.y();
+        var size = abs(max(sizeX / dx, sizeY / dy));
 
-        var n1 = new Location(l1.x() + dx, l1.y() + dy);
-        var n2 = new Location(l2.x() - dx, l2.y() - dy);
+        var s1 = range(1, size)
+                .boxed()
+                .map(i -> new Location(l1.x() + dx * i, l1.y() + dy * i));
+        var s2 = range(1, size)
+                .boxed()
+                .map(i -> new Location(l2.x() - dx * i, l2.y() - dy * i));
 
-        return Set.of(n1, n2, l1, l2);
+        return Stream.of(Stream.of(l1, l2), s1, s2)
+                .flatMap(Function.identity())
+                .filter(l -> inBounds(l, sizeX, sizeY))
+                .collect(toSet());
     }
 
     @Override
