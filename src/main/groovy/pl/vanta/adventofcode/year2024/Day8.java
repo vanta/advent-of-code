@@ -1,12 +1,15 @@
 package pl.vanta.adventofcode.year2024;
 
 import java.util.HashSet;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+import org.apache.commons.lang3.tuple.Pair;
 import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toSet;
 import static pl.vanta.adventofcode.Utils.generatePairs;
 import static pl.vanta.adventofcode.Utils.inBounds;
 
@@ -39,30 +42,30 @@ public class Day8 implements ParserSolver<char[][], Integer> {
         var antiNodeLocations = new HashSet<Location>();
 
         for (var freq : frequenciesMap.keySet()) {
-            var locationsPairs = generatePairs(frequenciesMap.get(freq));
+            var locations = generatePairs(frequenciesMap.get(freq)).stream()
+                    .map(Day8::extracted)
+                    .flatMap(p -> Stream.of(p.getLeft(), p.getRight()))
+                    .collect(toSet());
 
-            for (var pair : locationsPairs) {
-                var l1 = pair.getLeft();
-                var l2 = pair.getRight();
-
-                var dx = l1.x() - l2.x();
-                var dy = l1.y() - l2.y();
-
-                var antiNode1 = new Location(l1.x() + dx, l1.y() + dy);
-                var antiNode2 = new Location(l2.x() - dx, l2.y() - dy);
-
-                if (inBounds(antiNode1, parsedInput.length, parsedInput[0].length)) {
-                    antiNodeLocations.add(antiNode1);
-                }
-                if (inBounds(antiNode2, parsedInput.length, parsedInput[0].length)) {
-                    antiNodeLocations.add(antiNode2);
-                }
-            }
+            antiNodeLocations.addAll(locations);
         }
 
-//        print(antiNodeLocations, '#', parsedInput);
+        return (int) antiNodeLocations.stream()
+                .filter(l -> inBounds(l, parsedInput.length, parsedInput[0].length))
+                .count();
+    }
 
-        return antiNodeLocations.size();
+    private static Pair<Location, Location> extracted(Pair<Location, Location> pair) {
+        var l1 = pair.getLeft();
+        var l2 = pair.getRight();
+
+        var dx = l1.x() - l2.x();
+        var dy = l1.y() - l2.y();
+
+        var n1 = new Location(l1.x() + dx, l1.y() + dy);
+        var n2 = new Location(l2.x() - dx, l2.y() - dy);
+
+        return Pair.of(n1, n2);
     }
 
     @Override
