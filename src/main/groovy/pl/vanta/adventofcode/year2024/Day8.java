@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -14,6 +15,7 @@ import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.*;
 import static pl.vanta.adventofcode.Utils.generatePairs;
 import static pl.vanta.adventofcode.Utils.inBounds;
 
@@ -33,13 +35,13 @@ public class Day8 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve(char[][] parsedInput) {
-        return solveInternal(parsedInput, Day8::generateAntiNodes);
+        return solveInternal(parsedInput, pair -> generateAntiNodes(pair, parsedInput.length, parsedInput[0].length));
     }
 
-    private static int solveInternal(char[][] parsedInput, Function<Pair<Location, Location>, Set<Location>> generateAntiNodes) {
+    private static int solveInternal(char[][] parsedInput,
+                                     Function<Pair<Location, Location>, Set<Location>> generateAntiNodes) {
         return (int) generateFrequenciesMap(parsedInput).values().stream()
-                .flatMap(value -> generateLocations(value, generateAntiNodes))
-                .filter(l -> inBounds(l, parsedInput.length, parsedInput[0].length))
+                .flatMap(locations -> generateAntiNodesLocations(locations, generateAntiNodes))
                 .distinct()
                 .count();
     }
@@ -60,14 +62,14 @@ public class Day8 implements ParserSolver<char[][], Integer> {
         return frequenciesMap;
     }
 
-    private static Stream<Location> generateLocations(List<Location> value,
-                                                      Function<Pair<Location, Location>, Set<Location>> generateAntiNodes) {
-        return generatePairs(value).stream()
+    private static Stream<Location> generateAntiNodesLocations(List<Location> locations,
+                                                               Function<Pair<Location, Location>, Set<Location>> generateAntiNodes) {
+        return generatePairs(locations).stream()
                 .map(generateAntiNodes)
                 .flatMap(Collection::stream);
     }
 
-    private static Set<Location> generateAntiNodes(Pair<Location, Location> pair) {
+    private static Set<Location> generateAntiNodes(Pair<Location, Location> pair, int sizeX, int sizeY) {
         var l1 = pair.getLeft();
         var l2 = pair.getRight();
 
@@ -77,10 +79,12 @@ public class Day8 implements ParserSolver<char[][], Integer> {
         var n1 = new Location(l1.x() + dx, l1.y() + dy);
         var n2 = new Location(l2.x() - dx, l2.y() - dy);
 
-        return Set.of(n1, n2);
+        return Set.of(n1, n2).stream()
+                .filter(l -> inBounds(l, sizeX, sizeY))
+                .collect(toSet());
     }
 
-    private static Set<Location> generateAntiNodesAll(Pair<Location, Location> pair) {
+    private static Set<Location> generateAntiNodesAll(Pair<Location, Location> pair, int sizeX, int sizeY) {
         var l1 = pair.getLeft();
         var l2 = pair.getRight();
 
@@ -95,7 +99,7 @@ public class Day8 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve2(char[][] parsedInput) {
-        return solveInternal(parsedInput, Day8::generateAntiNodesAll);
+        return solveInternal(parsedInput, pair -> generateAntiNodesAll(pair, parsedInput.length, parsedInput[0].length));
     }
 
 }
