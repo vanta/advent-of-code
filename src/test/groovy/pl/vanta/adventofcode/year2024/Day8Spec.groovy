@@ -18,13 +18,15 @@ class Day8Spec extends BaseSpec2024 {
     @Override
     List<Map> getTestData1() {
         [
-                [result: 14]
+                [result: 14],
+                [result: 2, suffix: '-easy1'],
+                [result: 4, suffix: '-easy2'],
         ]
     }
 
     @Override
     Long getRealAnswer1() {
-        1
+        394
     }
 
     @Override
