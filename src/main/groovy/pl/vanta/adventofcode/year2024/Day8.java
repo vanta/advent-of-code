@@ -1,5 +1,6 @@
 package pl.vanta.adventofcode.year2024;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections4.multimap.AbstractListValuedMap;
@@ -30,8 +31,8 @@ public class Day8 implements ParserSolver<char[][], Integer> {
     public Integer solve(char[][] parsedInput) {
         var frequenciesMap = generateFrequenciesMap(parsedInput);
 
-        return (int) frequenciesMap.keySet().stream()
-                .flatMap(f -> generateLocations(f, frequenciesMap))
+        return (int) frequenciesMap.entries().stream()
+                .flatMap(e -> generateLocations(frequenciesMap.get(e.getKey())))
                 .filter(l -> inBounds(l, parsedInput.length, parsedInput[0].length))
                 .distinct()
                 .count();
@@ -49,8 +50,8 @@ public class Day8 implements ParserSolver<char[][], Integer> {
         return frequenciesMap;
     }
 
-    private static Stream<Location> generateLocations(Character freq, AbstractListValuedMap<Character, Location> frequenciesMap) {
-        return generatePairs(frequenciesMap.get(freq)).stream()
+    private static Stream<Location> generateLocations(List<Location> value) {
+        return generatePairs(value).stream()
                 .map(Day8::generateAntiNodes)
                 .flatMap(p -> Stream.of(p.getLeft(), p.getRight()));
     }
