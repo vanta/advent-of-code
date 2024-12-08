@@ -1,9 +1,11 @@
 package pl.vanta.adventofcode.year2024;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -58,10 +60,10 @@ public class Day8 implements ParserSolver<char[][], Integer> {
     private static Stream<Location> generateLocations(List<Location> value) {
         return generatePairs(value).stream()
                 .map(Day8::generateAntiNodes)
-                .flatMap(p -> Stream.of(p.getLeft(), p.getRight()));
+                .flatMap(Collection::stream);
     }
 
-    private static Pair<Location, Location> generateAntiNodes(Pair<Location, Location> pair) {
+    private static Set<Location> generateAntiNodes(Pair<Location, Location> pair) {
         var l1 = pair.getLeft();
         var l2 = pair.getRight();
 
@@ -71,7 +73,7 @@ public class Day8 implements ParserSolver<char[][], Integer> {
         var n1 = new Location(l1.x() + dx, l1.y() + dy);
         var n2 = new Location(l2.x() - dx, l2.y() - dy);
 
-        return Pair.of(n1, n2);
+        return Set.of(n1, n2);
     }
 
     @Override
