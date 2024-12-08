@@ -1,8 +1,10 @@
 package pl.vanta.adventofcode.year2024;
 
 import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections4.multimap.AbstractListValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.tuple.Pair;
 import pl.vanta.adventofcode.Location;
@@ -29,25 +31,12 @@ public class Day8 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve(char[][] parsedInput) {
-        var frequenciesMap = new ArrayListValuedHashMap<Character, Location>();
-
-        for (int i = 0; i < parsedInput.length; i++) {
-            for (int j = 0; j < parsedInput[i].length; j++) {
-                if (parsedInput[i][j] != '.') {
-                    frequenciesMap.put(parsedInput[i][j], new Location(i, j));
-                }
-            }
-        }
+        var frequenciesMap = generateFrequenciesMap(parsedInput);
 
         var antiNodeLocations = new HashSet<Location>();
 
         for (var freq : frequenciesMap.keySet()) {
-            var locations = generatePairs(frequenciesMap.get(freq)).stream()
-                    .map(Day8::extracted)
-                    .flatMap(p -> Stream.of(p.getLeft(), p.getRight()))
-                    .collect(toSet());
-
-            antiNodeLocations.addAll(locations);
+            antiNodeLocations.addAll(generateLocations(freq, frequenciesMap));
         }
 
         return (int) antiNodeLocations.stream()
@@ -55,7 +44,26 @@ public class Day8 implements ParserSolver<char[][], Integer> {
                 .count();
     }
 
-    private static Pair<Location, Location> extracted(Pair<Location, Location> pair) {
+    private static AbstractListValuedMap<Character, Location> generateFrequenciesMap(char[][] parsedInput) {
+        var frequenciesMap = new ArrayListValuedHashMap<Character, Location>();
+        for (int i = 0; i < parsedInput.length; i++) {
+            for (int j = 0; j < parsedInput[i].length; j++) {
+                if (parsedInput[i][j] != '.') {
+                    frequenciesMap.put(parsedInput[i][j], new Location(i, j));
+                }
+            }
+        }
+        return frequenciesMap;
+    }
+
+    private static Set<Location> generateLocations(Character freq, AbstractListValuedMap<Character, Location> frequenciesMap) {
+        return generatePairs(frequenciesMap.get(freq)).stream()
+                .map(Day8::generateAntiNodes)
+                .flatMap(p -> Stream.of(p.getLeft(), p.getRight()))
+                .collect(toSet());
+    }
+
+    private static Pair<Location, Location> generateAntiNodes(Pair<Location, Location> pair) {
         var l1 = pair.getLeft();
         var l2 = pair.getRight();
 
