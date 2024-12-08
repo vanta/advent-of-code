@@ -1,10 +1,11 @@
 package pl.vanta.adventofcode.year2024;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
-import org.apache.commons.collections4.multimap.AbstractListValuedMap;
-import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.tuple.Pair;
 import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
@@ -31,19 +32,23 @@ public class Day8 implements ParserSolver<char[][], Integer> {
     public Integer solve(char[][] parsedInput) {
         var frequenciesMap = generateFrequenciesMap(parsedInput);
 
-        return (int) frequenciesMap.entries().stream()
-                .flatMap(e -> generateLocations(frequenciesMap.get(e.getKey())))
+        return (int) frequenciesMap.values().stream()
+                .flatMap(Day8::generateLocations)
                 .filter(l -> inBounds(l, parsedInput.length, parsedInput[0].length))
                 .distinct()
                 .count();
     }
 
-    private static AbstractListValuedMap<Character, Location> generateFrequenciesMap(char[][] parsedInput) {
-        var frequenciesMap = new ArrayListValuedHashMap<Character, Location>();
+    private static Map<Character, List<Location>> generateFrequenciesMap(char[][] parsedInput) {
+        var frequenciesMap = new HashMap<Character, List<Location>>();
         for (int i = 0; i < parsedInput.length; i++) {
             for (int j = 0; j < parsedInput[i].length; j++) {
                 if (parsedInput[i][j] != '.') {
-                    frequenciesMap.put(parsedInput[i][j], new Location(i, j));
+                    if (!frequenciesMap.containsKey(parsedInput[i][j])) {
+                        frequenciesMap.put(parsedInput[i][j], new ArrayList<>());
+                    }
+
+                    frequenciesMap.get(parsedInput[i][j]).add(new Location(i, j));
                 }
             }
         }
