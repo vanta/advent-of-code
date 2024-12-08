@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -32,10 +33,12 @@ public class Day8 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve(char[][] parsedInput) {
-        var frequenciesMap = generateFrequenciesMap(parsedInput);
+        return solveInternal(parsedInput, Day8::generateAntiNodes);
+    }
 
-        return (int) frequenciesMap.values().stream()
-                .flatMap(Day8::generateLocations)
+    private static int solveInternal(char[][] parsedInput, Function<Pair<Location, Location>, Set<Location>> generateAntiNodes) {
+        return (int) generateFrequenciesMap(parsedInput).values().stream()
+                .flatMap(value -> generateLocations(value, generateAntiNodes))
                 .filter(l -> inBounds(l, parsedInput.length, parsedInput[0].length))
                 .distinct()
                 .count();
@@ -57,9 +60,10 @@ public class Day8 implements ParserSolver<char[][], Integer> {
         return frequenciesMap;
     }
 
-    private static Stream<Location> generateLocations(List<Location> value) {
+    private static Stream<Location> generateLocations(List<Location> value,
+                                                      Function<Pair<Location, Location>, Set<Location>> generateAntiNodes) {
         return generatePairs(value).stream()
-                .map(Day8::generateAntiNodes)
+                .map(generateAntiNodes)
                 .flatMap(Collection::stream);
     }
 
@@ -76,10 +80,22 @@ public class Day8 implements ParserSolver<char[][], Integer> {
         return Set.of(n1, n2);
     }
 
+    private static Set<Location> generateAntiNodesAll(Pair<Location, Location> pair) {
+        var l1 = pair.getLeft();
+        var l2 = pair.getRight();
+
+        var dx = l1.x() - l2.x();
+        var dy = l1.y() - l2.y();
+
+        var n1 = new Location(l1.x() + dx, l1.y() + dy);
+        var n2 = new Location(l2.x() - dx, l2.y() - dy);
+
+        return Set.of(n1, n2, l1, l2);
+    }
+
     @Override
     public Integer solve2(char[][] parsedInput) {
-        return 0;
-
+        return solveInternal(parsedInput, Day8::generateAntiNodesAll);
     }
 
 }
