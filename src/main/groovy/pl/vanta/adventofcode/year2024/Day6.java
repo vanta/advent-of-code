@@ -1,6 +1,7 @@
 package pl.vanta.adventofcode.year2024;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -86,48 +87,37 @@ public class Day6 implements ParserSolver<char[][], Integer> {
     public Integer solve2(char[][] parsedInput) {
         var path = path(findStart(parsedInput), parsedInput);
 
-        int loops = 0;
+        System.out.println("Path size: " + path.size());
+
+        var loops = new HashSet<Pair<Integer, Integer>>();
+        Position pos = path.getFirst();
         for (int i = 0; i < path.size() - 1; i++) {
-            Position pos = path.get(i);
             Position next = path.get(i + 1);
 
             parsedInput[next.x][next.y] = OBSTACLE;
 
             if (hasLoop(pos, parsedInput)) {
-                loops++;
+                loops.add(Pair.of(next.x, next.y));
             }
 
             parsedInput[next.x][next.y] = '.';
         }
 
-        return loops;
+        return loops.size();
     }
 
     private boolean hasLoop(Position start, char[][] array) {
-        printArray(start, array);
-        System.out.println("-----------------------");
+        var path = new HashSet<Position>();
+        path.add(start);
         var position = start;
 
         while ((position = getNextPos(position, array)) != null) {
-            if (position.equals(start)) {
+            if (!path.add(position)) {
                 return true;
             }
         }
 
         return false;
-    }
-
-    private void printArray(Position start, char[][] array) {
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array[i].length; j++) {
-                if (i == start.x && j == start.y) {
-                    System.out.print(start.direction.toChar());
-                } else {
-                    System.out.print(array[i][j]);
-                }
-            }
-            System.out.println();
-        }
     }
 
     enum Direction {
