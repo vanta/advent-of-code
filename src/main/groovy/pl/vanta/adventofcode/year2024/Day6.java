@@ -91,8 +91,8 @@ public class Day6 implements ParserSolver<char[][], Integer> {
 
         var loops = new HashSet<Pair<Integer, Integer>>();
         Position pos = path.getFirst();
-        for (int i = 0; i < path.size() - 1; i++) {
-            Position next = path.get(i + 1);
+        for (int i = 1; i < path.size(); i++) {
+            Position next = path.get(i);
 
             parsedInput[next.x][next.y] = OBSTACLE;
 
