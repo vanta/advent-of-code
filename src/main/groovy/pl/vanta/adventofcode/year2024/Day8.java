@@ -1,7 +1,5 @@
 package pl.vanta.adventofcode.year2024;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections4.multimap.AbstractListValuedMap;
@@ -11,7 +9,6 @@ import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toSet;
 import static pl.vanta.adventofcode.Utils.generatePairs;
 import static pl.vanta.adventofcode.Utils.inBounds;
 
@@ -33,14 +30,10 @@ public class Day8 implements ParserSolver<char[][], Integer> {
     public Integer solve(char[][] parsedInput) {
         var frequenciesMap = generateFrequenciesMap(parsedInput);
 
-        var antiNodeLocations = new HashSet<Location>();
-
-        for (var freq : frequenciesMap.keySet()) {
-            antiNodeLocations.addAll(generateLocations(freq, frequenciesMap));
-        }
-
-        return (int) antiNodeLocations.stream()
+        return (int) frequenciesMap.keySet().stream()
+                .flatMap(f -> generateLocations(f, frequenciesMap))
                 .filter(l -> inBounds(l, parsedInput.length, parsedInput[0].length))
+                .distinct()
                 .count();
     }
 
@@ -56,11 +49,10 @@ public class Day8 implements ParserSolver<char[][], Integer> {
         return frequenciesMap;
     }
 
-    private static Set<Location> generateLocations(Character freq, AbstractListValuedMap<Character, Location> frequenciesMap) {
+    private static Stream<Location> generateLocations(Character freq, AbstractListValuedMap<Character, Location> frequenciesMap) {
         return generatePairs(frequenciesMap.get(freq)).stream()
                 .map(Day8::generateAntiNodes)
-                .flatMap(p -> Stream.of(p.getLeft(), p.getRight()))
-                .collect(toSet());
+                .flatMap(p -> Stream.of(p.getLeft(), p.getRight()));
     }
 
     private static Pair<Location, Location> generateAntiNodes(Pair<Location, Location> pair) {
