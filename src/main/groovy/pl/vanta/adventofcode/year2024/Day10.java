@@ -40,12 +40,12 @@ public class Day10 implements ParserSolver<char[][], Integer> {
             return Set.of(location);
         }
 
-        var i = current + 1;
+        var next = current + 1;
         return location.neighbours()
                 .stream()
                 .filter(l -> inBounds(l, array.length, array[0].length))
-                .filter(l -> array[l.x()][l.y()] == i)
-                .flatMap(l -> countScore(array, l, i).stream())
+                .filter(l -> array[l.x()][l.y()] == next)
+                .flatMap(l -> countScore(array, l, next).stream())
                 .collect(toSet());
     }
 
