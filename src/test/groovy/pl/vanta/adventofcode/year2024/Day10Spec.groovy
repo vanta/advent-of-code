@@ -34,7 +34,10 @@ class Day10Spec extends BaseSpec2024 {
     @Override
     List<Map> getTestData2() {
         [
-                [result: 2858],
+                [result: 3, suffix: '-part2-m1'],
+                [result: 13, suffix: '-part2-m2'],
+                [result: 81, suffix: '-part2-m3'],
+                [result: 227, suffix: '-part2-m4'],
         ]
     }
 
