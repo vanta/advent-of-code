@@ -1,13 +1,14 @@
 package pl.vanta.adventofcode.year2024;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.lang.Integer.parseInt;
-import static org.apache.commons.lang3.StringUtils.countMatches;
-import static org.apache.commons.lang3.StringUtils.repeat;
-import static org.apache.commons.lang3.StringUtils.reverse;
+import static java.util.Collections.swap;
 
-public class Day9 implements ParserSolver<String, Integer> {
+public class Day9 implements ParserSolver<String, Long> {
 
     @Override
     public int getDayNumber() {
@@ -20,7 +21,7 @@ public class Day9 implements ParserSolver<String, Integer> {
     }
 
     @Override
-    public Integer solve(String parsedInput) {
+    public Long solve(String parsedInput) {
         var mapped = map(parsedInput);
 
         var rearranged = rearrange(mapped);
@@ -28,58 +29,76 @@ public class Day9 implements ParserSolver<String, Integer> {
         return checksum(rearranged);
     }
 
-    private String rearrange(String mapped) {
-        var result = new StringBuilder(mapped);
-        var reversed = reverse(mapped).replace(".", "");
+    private static List<Integer> map(String parsedInput) {
+        var result = new ArrayList<Integer>();
 
-        var dots = countMatches(mapped, ".");
-        var digits = mapped.length() - dots;
+        var files = 0;
 
-        var changed = 0;
+        for (int i = 0; i < parsedInput.length(); i++) {
+            var c = parsedInput.charAt(i);
+            var v = parseInt(String.valueOf(c));
+            var parity = i % 2;
 
-        for (int i = 0; i < digits; i++) {
-            if (result.charAt(i) == '.') {
-                result.setCharAt(i, reversed.charAt(changed++));
+            for (int j = 0; j < v; j++) {
+                if (parity == 0) {
+                    result.add(files);
+                } else {
+                    result.add(null);
+                }
             }
-        }
-        result.setLength(digits);
 
-        return result.toString();
-    }
-
-    private int checksum(String rearranged) {
-        int result = 0;
-
-        for (int i = 0; i < rearranged.length(); i++) {
-            if (rearranged.charAt(i) != '.') {
-                result += i * parseInt(String.valueOf(rearranged.charAt(i)));
+            if (parity == 0) {
+                files++;
             }
         }
 
         return result;
     }
 
-    private static String map(String parsedInput) {
-        var result = new StringBuilder();
+    private List<Integer> rearrange(List<Integer> mapped) {
+        var result = new ArrayList<>(mapped);
 
-        var files = 0;
-        for (int i = 0; i < parsedInput.length(); i++) {
-            var c = parsedInput.charAt(i);
-            var v = parseInt(String.valueOf(c));
+        for (int i = 0; i < result.size(); i++) {
+            if (result.get(i) == null) {
+                var lastNumberIndex = findLastNumberIndex(result);
 
-            if (i % 2 == 0) {
-                result.append(repeat(String.valueOf(files++), v));
-            } else {
-                result.append(repeat('.', v));
+                if (lastNumberIndex < i) {
+                    break;
+                }
+
+                swap(result, i, lastNumberIndex);
             }
         }
 
-        return result.toString();
+        return result;
+    }
+
+    private int findLastNumberIndex(List<Integer> mapped) {
+        for (int i = mapped.size() - 1; i >= 0; i--) {
+            if (mapped.get(i) != null) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private long checksum(List<Integer> rearranged) {
+        long result = 0;
+
+        for (int i = 0; i < rearranged.size(); i++) {
+            var value = rearranged.get(i);
+            if (value != null) {
+                result += i * value;
+            }
+        }
+
+        return result;
     }
 
     @Override
-    public Integer solve2(String parsedInput) {
-        return 0;
+    public Long solve2(String parsedInput) {
+        return 0L;
     }
 
 }
