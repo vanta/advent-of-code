@@ -3,10 +3,12 @@ package pl.vanta.adventofcode.year2024;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
 
+import static java.util.stream.Collectors.toSet;
 import static pl.vanta.adventofcode.Utils.inBounds;
 
 public class Day10 implements ParserSolver<char[][], Integer> {
@@ -28,13 +30,14 @@ public class Day10 implements ParserSolver<char[][], Integer> {
     @Override
     public Integer solve(char[][] parsedInput) {
         return findZeros(parsedInput).stream()
-                .mapToInt(zero -> countScore(parsedInput, zero, ZERO))
-                .sum();
+                .map(zero -> countScore(parsedInput, zero, ZERO))
+                .map(Set::size)
+                .reduce(0, Integer::sum);
     }
 
-    private int countScore(char[][] array, Location location, int current) {
+    private Set<Location> countScore(char[][] array, Location location, int current) {
         if (current == NINE) {
-            return 1;
+            return Set.of(location);
         }
 
         var i = current + 1;
@@ -42,9 +45,8 @@ public class Day10 implements ParserSolver<char[][], Integer> {
                 .stream()
                 .filter(l -> inBounds(l, array.length, array[0].length))
                 .filter(l -> array[l.x()][l.y()] == i)
-                .map(l -> countScore(array, l, i))
-                .mapToInt(Integer::intValue)
-                .sum();
+                .flatMap(l -> countScore(array, l, i).stream())
+                .collect(toSet());
     }
 
     private List<Location> findZeros(char[][] parsedInput) {
