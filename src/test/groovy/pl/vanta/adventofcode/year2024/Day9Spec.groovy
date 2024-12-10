@@ -20,7 +20,6 @@ class Day9Spec extends BaseSpec2024 {
         [
                 [result: 60, suffix: '-easy'],
                 [result: 1928],
-//                [result: 4, suffix: '-easy2'],
         ]
     }
 
