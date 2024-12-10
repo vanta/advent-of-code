@@ -32,23 +32,17 @@ public class Day9 implements ParserSolver<String, Long> {
     private static List<Integer> map(String parsedInput) {
         var result = new ArrayList<Integer>();
 
-        var files = 0;
-
         for (int i = 0; i < parsedInput.length(); i++) {
             var c = parsedInput.charAt(i);
             var v = parseInt(String.valueOf(c));
-            var parity = i % 2;
+            var val = i / 2;
 
             for (int j = 0; j < v; j++) {
-                if (parity == 0) {
-                    result.add(files);
+                if (val * 2 == i) {
+                    result.add(val);
                 } else {
                     result.add(null);
                 }
-            }
-
-            if (parity == 0) {
-                files++;
             }
         }
 
@@ -98,7 +92,12 @@ public class Day9 implements ParserSolver<String, Long> {
 
     @Override
     public Long solve2(String parsedInput) {
-        return 0L;
+        var mapped = map(parsedInput);
+
+        var rearranged = rearrange(mapped);
+
+        return checksum(rearranged);
+
     }
 
 }
