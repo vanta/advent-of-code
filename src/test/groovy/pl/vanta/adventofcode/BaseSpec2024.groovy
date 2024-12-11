@@ -4,13 +4,17 @@ import spock.lang.Specification
 
 abstract class BaseSpec2024 extends Specification {
     abstract int getYear()
+
     abstract ParserSolver getParserSolver()
+
     abstract Object getRealAnswer1()
+
     abstract Object getRealAnswer2()
 
     def parserSolver = getParserSolver()
 
     abstract List<Map> getTestData1()
+
     abstract List<Map> getTestData2()
 
     def 'should solve example data'() {
