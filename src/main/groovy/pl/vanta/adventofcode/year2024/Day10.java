@@ -8,6 +8,7 @@ import java.util.Set;
 import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
 
+import static java.lang.Character.*;
 import static java.util.stream.Collectors.toSet;
 import static pl.vanta.adventofcode.Utils.inBounds;
 
@@ -36,7 +37,7 @@ public class Day10 implements ParserSolver<char[][], Integer> {
     }
 
     private Set<Location> countScore(char[][] array, Location location, int current) {
-        if (current == NINE) {
+        if (current == 9) {
             return Set.of(location);
         }
 
@@ -44,7 +45,7 @@ public class Day10 implements ParserSolver<char[][], Integer> {
         return location.neighbours()
                 .stream()
                 .filter(l -> inBounds(l, array.length, array[0].length))
-                .filter(l -> array[l.x()][l.y()] == next)
+                .filter(l -> getNumericValue(array[l.x()][l.y()]) == next)
                 .flatMap(l -> countScore(array, l, next).stream())
                 .collect(toSet());
     }
@@ -63,9 +64,24 @@ public class Day10 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve2(char[][] parsedInput) {
+        return findZeros(parsedInput).stream()
+                .map(zero -> doRate(parsedInput, zero, (char) 0))
+                .reduce(0, Integer::sum);
+    }
 
-        return -1;
+    private int doRate(char[][] array, Location location, int current) {
+        if (current == 9) {
+            return 1;
+        }
 
+        var next = current + 1;
+
+        return location.neighbours()
+                .stream()
+                .filter(l -> inBounds(l, array.length, array[0].length))
+                .filter(l -> getNumericValue(array[l.x()][l.y()]) == next)
+                .mapToInt(l -> doRate(array, l, next))
+                .sum();
     }
 
 }
