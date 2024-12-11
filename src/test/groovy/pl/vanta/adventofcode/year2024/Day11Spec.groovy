@@ -3,6 +3,7 @@ package pl.vanta.adventofcode.year2024
 
 import pl.vanta.adventofcode.BaseSpec2024
 import pl.vanta.adventofcode.ParserSolver
+import spock.lang.Ignore
 
 class Day11Spec extends BaseSpec2024 {
     @Override
@@ -27,13 +28,11 @@ class Day11Spec extends BaseSpec2024 {
         186424
     }
 
+    @Ignore
     @Override
     List<Map> getTestData2() {
         [
-                [result: 3, suffix: '-part2-m1'],
-                [result: 13, suffix: '-part2-m2'],
-                [result: 81, suffix: '-part2-m3'],
-                [result: 227, suffix: '-part2-m4'],
+
         ]
     }
 

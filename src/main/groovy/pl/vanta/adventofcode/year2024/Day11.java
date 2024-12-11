@@ -1,7 +1,13 @@
 package pl.vanta.adventofcode.year2024;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.function.Function;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import org.apache.commons.lang3.concurrent.Memoizer;
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.lang.Long.parseLong;
@@ -19,14 +25,23 @@ public class Day11 implements ParserSolver<String[], Integer> {
 
     @Override
     public Integer solve(String[] parsedInput) {
-        var blinks = 25;
+        return blink(parsedInput, 25);
+    }
+
+    private int blink(String[] parsedInput, int blinks) {
         var stones = parsedInput;
 
+        var map = new HashMap<String, String[]>();
+
         for (int i = 0; i < blinks; i++) {
+            System.out.print("Blink " + i + ", ");
             stones = Arrays.stream(stones)
-                    .map(this::change)
+//                    .parallel()
+                    .map(s -> map.computeIfAbsent(s, this::change))
                     .flatMap(Arrays::stream)
                     .toArray(String[]::new);
+
+            System.out.println("stones: " + stones.length);
         }
 
         return stones.length;
@@ -47,7 +62,7 @@ public class Day11 implements ParserSolver<String[], Integer> {
 
     @Override
     public Integer solve2(String[] parsedInput) {
-        return -1;
+        return blink(parsedInput, 75);
     }
 
 }
