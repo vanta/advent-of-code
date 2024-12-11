@@ -13,9 +13,6 @@ import static java.util.stream.Collectors.toSet;
 import static pl.vanta.adventofcode.Utils.inBounds;
 
 public class Day10 implements ParserSolver<char[][], Integer> {
-    private static final char ZERO = '0';
-    private static final char NINE = '9';
-
     @Override
     public int getDayNumber() {
         return 10;
@@ -31,7 +28,7 @@ public class Day10 implements ParserSolver<char[][], Integer> {
     @Override
     public Integer solve(char[][] parsedInput) {
         return findZeros(parsedInput).stream()
-                .map(zero -> countScore(parsedInput, zero, ZERO))
+                .map(zero -> countScore(parsedInput, zero, 0))
                 .map(Set::size)
                 .reduce(0, Integer::sum);
     }
@@ -54,7 +51,7 @@ public class Day10 implements ParserSolver<char[][], Integer> {
         var zeros = new ArrayList<Location>();
         for (int i = 0; i < parsedInput.length; i++) {
             for (int j = 0; j < parsedInput[i].length; j++) {
-                if (parsedInput[i][j] == ZERO) {
+                if (parsedInput[i][j] == '0') {
                     zeros.add(new Location(i, j));
                 }
             }
