@@ -34,9 +34,9 @@ public class Day11 implements ParserSolver<Long[], Long> {
         return blink(parsedInput, 75);
     }
 
-    private long blink(Long[] parsedInput, int blinks) {
-        return Arrays.stream(parsedInput)
-                .map(a -> count(a, blinks))
+    private long blink(Long[] stones, int blinks) {
+        return Arrays.stream(stones)
+                .map(stone -> count(stone, blinks))
                 .reduce(0L, Long::sum);
     }
 
@@ -46,13 +46,17 @@ public class Day11 implements ParserSolver<Long[], Long> {
         }
 
         var key = Pair.of(n, b);
-        if (CACHE.containsKey(key)) {
-            return CACHE.get(key);
+
+        if (!CACHE.containsKey(key)) {
+            CACHE.put(key, getValue(n, b));
         }
 
-        long value;
+        return CACHE.get(key);
+    }
+
+    private long getValue(long n, int b) {
         if (n == 0) {
-            value = count(1, b - 1);
+            return count(1, b - 1);
         } else {
             var string = String.valueOf(n);
 
@@ -60,15 +64,11 @@ public class Day11 implements ParserSolver<Long[], Long> {
                 var size2 = string.length() / 2;
                 var s1 = parseLong(string.substring(0, size2));
                 var s2 = parseLong(string.substring(size2));
-                value = count(s1, b - 1) + count(s2, b - 1);
+                return count(s1, b - 1) + count(s2, b - 1);
             } else {
-                value = count(n * 2024, b - 1);
+                return count(n * 2024, b - 1);
             }
         }
-
-        CACHE.put(Pair.of(n, b), value);
-
-        return value;
     }
 
 }
