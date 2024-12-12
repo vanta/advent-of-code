@@ -42,25 +42,26 @@ public class Day12 implements ParserSolver<char[][], Integer> {
         return range(0, parsedInput.length * parsedInput[0].length)
                 .mapToObj(i -> new Location(i / parsedInput.length, i % parsedInput.length))
                 .filter(l -> !visited.contains(l))
-                .map(l -> check(l, new Region(parsedInput[l.x()][l.y()]), parsedInput, visited))
+                .map(l -> check(l, new Region(), parsedInput, visited))
                 .collect(toSet());
     }
 
     private Region check(Location location, Region region, char[][] parsedInput, Set<Location> visited) {
         var sizeX = parsedInput.length;
         var sizeY = parsedInput[0].length;
+        var letter = parsedInput[location.x()][location.y()];
 
         visited.add(location);
         region.plots.incrementAndGet();
 
         location.neighbours().stream()
                 .peek(l -> {
-                    if (!inBounds(l, sizeX, sizeY) || parsedInput[l.x()][l.y()] != region.letter) {
+                    if (!inBounds(l, sizeX, sizeY) || parsedInput[l.x()][l.y()] != letter) {
                         region.borders.add(l);
                     }
                 })
                 .filter(l -> inBounds(l, sizeX, sizeY))
-                .filter(l -> region.letter == parsedInput[l.x()][l.y()])
+                .filter(l -> letter == parsedInput[l.x()][l.y()])
                 .filter(not(visited::contains))
                 .forEach(ln -> check(ln, region, parsedInput, visited));
 
@@ -72,9 +73,9 @@ public class Day12 implements ParserSolver<char[][], Integer> {
         return -1;
     }
 
-    private record Region(char letter, AtomicInteger plots, List<Location> borders) {
-        private Region(char letter) {
-            this(letter, new AtomicInteger(0), new ArrayList<>());
+    private record Region(AtomicInteger plots, List<Location> borders) {
+        private Region() {
+            this(new AtomicInteger(0), new ArrayList<>());
         }
 
         int price() {
