@@ -34,7 +34,7 @@ public class Day12 implements ParserSolver<char[][], Integer> {
                 var l = new Location(i, j);
 
                 if (visited.add(l)) {
-                    var r = new Region(parsedInput[i][j], new HashSet<>());
+                    var r = new Region(parsedInput[i][j]);
                     check(l, r, parsedInput);
                     visited.addAll(r.plots);
                     regions.add(r);
@@ -65,9 +65,13 @@ public class Day12 implements ParserSolver<char[][], Integer> {
         return -1;
     }
 
-    private record Region(char letter, Set<Location> plots) {
+    private record Region(char letter, Set<Location> plots, Set<Location> border) {
+        private Region(char letter) {
+            this(letter, new HashSet<>(), new HashSet<>());
+        }
+
         int price() {
-            return plots.size();
+            return plots.size() * border.size();
         }
     }
 
