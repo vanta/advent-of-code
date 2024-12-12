@@ -1,7 +1,9 @@
 package pl.vanta.adventofcode.year2024;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -38,18 +40,15 @@ public class Day12 implements ParserSolver<char[][], Integer> {
 
         for (int i = 0; i < parsedInput.length; i++) {
             for (int j = 0; j < parsedInput[i].length; j++) {
-                processPlot(parsedInput, visited, regions, new Location(i, j));
+                Location location = new Location(i, j);
+                if (visited.add(location)) {
+                    var r = new Region(parsedInput[i][j]);
+                    check(location, r, parsedInput, visited);
+                    regions.add(r);
+                }
             }
         }
         return regions;
-    }
-
-    private void processPlot(char[][] parsedInput, Set<Location> visited, Set<Region> regions, Location location) {
-        if (visited.add(location)) {
-            var r = new Region(parsedInput[location.x()][location.y()]);
-            check(location, r, parsedInput, visited);
-            regions.add(r);
-        }
     }
 
     private void check(Location location, Region region, char[][] parsedInput, Set<Location> visited) {
@@ -62,7 +61,7 @@ public class Day12 implements ParserSolver<char[][], Integer> {
         location.neighbours().stream()
                 .peek(l -> {
                     if (!inBounds(l, sizeX, sizeY) || parsedInput[l.x()][l.y()] != region.letter) {
-                        region.borders.incrementAndGet();
+                        region.borders.add(l);
                     }
                 })
                 .filter(l -> inBounds(l, sizeX, sizeY))
@@ -76,13 +75,13 @@ public class Day12 implements ParserSolver<char[][], Integer> {
         return -1;
     }
 
-    private record Region(char letter, AtomicInteger plots, AtomicInteger borders) {
+    private record Region(char letter, AtomicInteger plots, List<Location> borders) {
         private Region(char letter) {
-            this(letter, new AtomicInteger(0), new AtomicInteger(0));
+            this(letter, new AtomicInteger(0), new ArrayList<>());
         }
 
         int price() {
-            return plots.get() * borders.get();
+            return plots.get() * borders.size();
         }
     }
 
