@@ -47,17 +47,17 @@ public class Day12 implements ParserSolver<char[][], Integer> {
     private void processPlot(char[][] parsedInput, Set<Location> visited, Set<Region> regions, Location location) {
         if (visited.add(location)) {
             var r = new Region(parsedInput[location.x()][location.y()]);
-            check(location, r, parsedInput);
-            visited.addAll(r.plots);
+            check(location, r, parsedInput, visited);
             regions.add(r);
         }
     }
 
-    private void check(Location location, Region region, char[][] parsedInput) {
+    private void check(Location location, Region region, char[][] parsedInput, Set<Location> visited) {
         var sizeX = parsedInput.length;
         var sizeY = parsedInput[0].length;
 
-        region.plots.add(location);
+        visited.add(location);
+        region.plots.incrementAndGet();
 
         location.neighbours().stream()
                 .peek(l -> {
@@ -67,8 +67,8 @@ public class Day12 implements ParserSolver<char[][], Integer> {
                 })
                 .filter(l -> inBounds(l, sizeX, sizeY))
                 .filter(l -> region.letter == parsedInput[l.x()][l.y()])
-                .filter(not(region.plots::contains))
-                .forEach(ln -> check(ln, region, parsedInput));
+                .filter(not(visited::contains))
+                .forEach(ln -> check(ln, region, parsedInput, visited));
     }
 
     @Override
@@ -76,13 +76,13 @@ public class Day12 implements ParserSolver<char[][], Integer> {
         return -1;
     }
 
-    private record Region(char letter, Set<Location> plots, AtomicInteger borders) {
+    private record Region(char letter, AtomicInteger plots, AtomicInteger borders) {
         private Region(char letter) {
-            this(letter, new HashSet<>(), new AtomicInteger(0));
+            this(letter, new AtomicInteger(0), new AtomicInteger(0));
         }
 
         int price() {
-            return plots.size() * borders.get();
+            return plots.get() * borders.get();
         }
     }
 
