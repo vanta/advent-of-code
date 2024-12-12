@@ -11,6 +11,8 @@ import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.IntStream.range;
 import static pl.vanta.adventofcode.Utils.inBounds;
 
 public class Day12 implements ParserSolver<char[][], Integer> {
@@ -36,22 +38,15 @@ public class Day12 implements ParserSolver<char[][], Integer> {
 
     private Set<Region> getRegions(char[][] parsedInput) {
         Set<Location> visited = new HashSet<>();
-        Set<Region> regions = new HashSet<>();
 
-        for (int i = 0; i < parsedInput.length; i++) {
-            for (int j = 0; j < parsedInput[i].length; j++) {
-                Location location = new Location(i, j);
-                if (visited.add(location)) {
-                    var r = new Region(parsedInput[i][j]);
-                    check(location, r, parsedInput, visited);
-                    regions.add(r);
-                }
-            }
-        }
-        return regions;
+        return range(0, parsedInput.length * parsedInput[0].length)
+                .mapToObj(i -> new Location(i / parsedInput.length, i % parsedInput.length))
+                .filter(l -> !visited.contains(l))
+                .map(l -> check(l, new Region(parsedInput[l.x()][l.y()]), parsedInput, visited))
+                .collect(toSet());
     }
 
-    private void check(Location location, Region region, char[][] parsedInput, Set<Location> visited) {
+    private Region check(Location location, Region region, char[][] parsedInput, Set<Location> visited) {
         var sizeX = parsedInput.length;
         var sizeY = parsedInput[0].length;
 
@@ -68,6 +63,8 @@ public class Day12 implements ParserSolver<char[][], Integer> {
                 .filter(l -> region.letter == parsedInput[l.x()][l.y()])
                 .filter(not(visited::contains))
                 .forEach(ln -> check(ln, region, parsedInput, visited));
+
+        return region;
     }
 
     @Override
