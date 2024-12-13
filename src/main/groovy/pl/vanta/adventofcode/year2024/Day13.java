@@ -9,7 +9,9 @@ import pl.vanta.adventofcode.Utils;
 
 import static java.lang.Integer.parseInt;
 
-public class Day13 implements ParserSolver<List<Day13.Machine>, Integer> {
+public class Day13 implements ParserSolver<List<Day13.Machine>, Long> {
+
+    private static final long FIX = 10000000000000L;
 
     @Override
     public int getDayNumber() {
@@ -42,32 +44,37 @@ public class Day13 implements ParserSolver<List<Day13.Machine>, Integer> {
     }
 
     @Override
-    public Integer solve(List<Machine> parsedInput) {
+    public Long solve(List<Machine> parsedInput) {
         return parsedInput.stream()
-                .map(Machine::solve)
-                .reduce(0, Integer::sum);
+                .map(machine -> machine.solve(0))
+                .reduce(0L, Long::sum);
     }
 
     @Override
-    public Integer solve2(List<Machine> parsedInput) {
-        return 0;
+    public Long solve2(List<Machine> parsedInput) {
+        return parsedInput.stream()
+                .map(machine -> machine.solve(FIX))
+                .reduce(0L, Long::sum);
     }
 
-    record Machine(int ax, int ay, int bx, int by, int px, int py) {
-        int solve() {
-            double d = ax * by - ay * bx;
+    record Machine(int ax, int ay, int bx, int by, long px, long py) {
+        long solve(long fix) {
+            int d = ax * by - ay * bx;
 
-            double da = px * by - py * bx;
-            double db = ax * py - ay * px;
+            long npx = px + fix;
+            long npy = py + fix;
 
-            double a = da / d;
-            double b = db / d;
+            long da = npx * by - npy * bx;
+            long db = ax * npy - ay * npx;
 
-            if (a != (int) a || b != (int) b) {
+            double a = (double) da / d;
+            double b = (double) db / d;
+
+            if (a != (long) a || b != (long) b) {
                 return 0;
             }
 
-            return (int) (3 * a + b);
+            return (long) (3 * a + b);
         }
     }
 }
