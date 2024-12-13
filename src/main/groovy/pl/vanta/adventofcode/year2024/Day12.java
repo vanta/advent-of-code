@@ -10,7 +10,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
 
-import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.IntStream.range;
 import static pl.vanta.adventofcode.Utils.inBounds;
@@ -54,18 +53,23 @@ public class Day12 implements ParserSolver<char[][], Integer> {
         visited.add(location);
         region.plots.incrementAndGet();
 
-        location.neighbours().stream()
-                .peek(l -> {
-                    if (!inBounds(l, sizeX, sizeY) || parsedInput[l.x()][l.y()] != letter) {
-                        region.borders.add(l);
-                    }
-                })
-                .filter(l -> inBounds(l, sizeX, sizeY))
-                .filter(l -> letter == parsedInput[l.x()][l.y()])
-                .filter(not(visited::contains))
-                .forEach(ln -> check(ln, region, parsedInput, visited));
+        location.neighbours().forEach(l -> process(l, region, parsedInput, visited, letter));
 
         return region;
+    }
+
+    private void process(Location location, Region region, char[][] parsedInput, Set<Location> visited, char letter) {
+        if (inBounds(location, parsedInput.length, parsedInput[0].length)) {
+            if (parsedInput[location.x()][location.y()] == letter) {
+                if (!visited.contains(location)) {
+                    check(location, region, parsedInput, visited);
+                }
+            } else {
+                region.borders.add(location);
+            }
+        } else {
+            region.borders.add(location);
+        }
     }
 
     @Override
