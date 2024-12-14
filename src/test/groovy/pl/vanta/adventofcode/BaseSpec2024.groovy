@@ -1,5 +1,6 @@
 package pl.vanta.adventofcode
 
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 abstract class BaseSpec2024 extends Specification {
@@ -17,6 +18,15 @@ abstract class BaseSpec2024 extends Specification {
 
     abstract List<Map> getTestData2()
 
+    boolean skipExamplePart1() {
+        false
+    }
+
+    boolean skipExamplePart2() {
+        false
+    }
+
+    @IgnoreIf({ instance.skipExamplePart1() })
     def 'should solve example data'() {
         setup:
         def resourceName = "/${getYear()}/example-day${parserSolver.getDayNumber()}${data.suffix ?: ''}.txt"
@@ -33,6 +43,7 @@ abstract class BaseSpec2024 extends Specification {
         parserSolver.solveReal(parserSolver.parse(parserSolver.getClass().getResource("/${getYear()}/day${parserSolver.getDayNumber()}.txt").text)) == this.getRealAnswer1()
     }
 
+    @IgnoreIf({ instance.skipExamplePart2() })
     def 'should solve example data - part2'() {
         setup:
         def resourceName = "/${getYear()}/example-day${parserSolver.getDayNumber()}${data.suffix ?: ''}.txt"

@@ -1,9 +1,7 @@
 package pl.vanta.adventofcode.year2024
 
-
 import pl.vanta.adventofcode.BaseSpec2024
 import pl.vanta.adventofcode.ParserSolver
-import spock.lang.Ignore
 
 class Day14Spec extends BaseSpec2024 {
     @Override
@@ -28,7 +26,6 @@ class Day14Spec extends BaseSpec2024 {
         233709840
     }
 
-    @Ignore
     @Override
     List<Map> getTestData2() {
         [
@@ -38,6 +35,11 @@ class Day14Spec extends BaseSpec2024 {
 
     @Override
     Long getRealAnswer2() {
-        93866170395343
+        6620
+    }
+
+    @Override
+    boolean skipExamplePart2() {
+        true
     }
 }

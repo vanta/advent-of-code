@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeMap;
 
 import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
@@ -42,17 +43,37 @@ public class Day14 implements ParserSolver<List<Day14.Robot>, Integer> {
 
     private int solveInternal(List<Robot> parsedInput, int sizeX, int sizeY, int seconds) {
         var temp = parsedInput;
+        var map = new TreeMap<Integer, Integer>();
+
         for (int i = 0; i < seconds; i++) {
             temp = temp.stream()
                     .map(robot -> robot.move(sizeX, sizeY))
                     .toList();
 
-            print(temp, sizeX, sizeY, i);
-            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-            System.out.println("i=" + i);
-            System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            map.put(safetyScore(sizeX, sizeY, temp), i);
         }
 
+        System.out.println(map);
+
+        return safetyScore(sizeX, sizeY, temp);
+    }
+
+    private int solveInternal2(List<Robot> parsedInput, int sizeX, int sizeY, int seconds) {
+        var temp = parsedInput;
+        var map = new TreeMap<Integer, Integer>();
+
+        for (int i = 0; i < seconds; i++) {
+            temp = temp.stream()
+                    .map(robot -> robot.move(sizeX, sizeY))
+                    .toList();
+
+            map.put(safetyScore(sizeX, sizeY, temp), i);
+        }
+
+        return map.firstEntry().getValue();
+    }
+
+    private int safetyScore(int sizeX, int sizeY, List<Robot> temp) {
         var sizeX2 = sizeX / 2;
         var sizeY2 = sizeY / 2;
         int q1 = countRobots(temp, 0, 0, sizeX2, sizeY2);
@@ -71,36 +92,7 @@ public class Day14 implements ParserSolver<List<Day14.Robot>, Integer> {
 
     @Override
     public Integer solve2(List<Robot> parsedInput) {
-        return solveInternal(parsedInput, 101, 103, 10000);
-    }
-
-    private void print(List<Robot> robots, int sizeX, int sizeY, int index) {
-        var set = robots.stream()
-                .map(Robot::location)
-                .collect(toSet());
-
-        var chars = new char[sizeY][sizeX];
-
-        for (int i = 0; i < sizeY; i++) {
-            for (int j = 0; j < sizeX; j++) {
-                chars[i][j] = set.contains(new Location(j, i)) ? '#' : '.';
-            }
-        }
-
-        // Convert chars array to a string
-        StringBuilder sb = new StringBuilder();
-        for (char[] row : chars) {
-            sb.append(row).append(System.lineSeparator());
-        }
-
-        // Write the string to a file
-        Path path = Paths.get("output_" + index + ".txt");
-        try {
-            Files.writeString(path, sb.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        return solveInternal2(parsedInput, 101, 103, 101*103) + 1;
     }
 
     public record Robot(Location location, int vx, int vy) {
