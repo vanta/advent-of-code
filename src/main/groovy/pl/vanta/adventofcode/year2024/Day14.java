@@ -1,9 +1,5 @@
 package pl.vanta.adventofcode.year2024;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
@@ -12,7 +8,6 @@ import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.lang.Integer.parseInt;
-import static java.util.stream.Collectors.toSet;
 import static pl.vanta.adventofcode.Utils.getTokens;
 
 public class Day14 implements ParserSolver<List<Day14.Robot>, Integer> {
@@ -43,17 +38,12 @@ public class Day14 implements ParserSolver<List<Day14.Robot>, Integer> {
 
     private int solveInternal(List<Robot> parsedInput, int sizeX, int sizeY, int seconds) {
         var temp = parsedInput;
-        var map = new TreeMap<Integer, Integer>();
 
         for (int i = 0; i < seconds; i++) {
             temp = temp.stream()
                     .map(robot -> robot.move(sizeX, sizeY))
                     .toList();
-
-            map.put(safetyScore(sizeX, sizeY, temp), i);
         }
-
-        System.out.println(map);
 
         return safetyScore(sizeX, sizeY, temp);
     }
@@ -92,7 +82,7 @@ public class Day14 implements ParserSolver<List<Day14.Robot>, Integer> {
 
     @Override
     public Integer solve2(List<Robot> parsedInput) {
-        return solveInternal2(parsedInput, 101, 103, 101*103) + 1;
+        return solveInternal2(parsedInput, 101, 103, 101 * 103) + 1;
     }
 
     public record Robot(Location location, int vx, int vy) {
