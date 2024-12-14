@@ -33,7 +33,7 @@ public class Day13 implements ParserSolver<List<Day13.Machine>, Long> {
             var bx = lineb.substring(12, 14);
             var by = lineb.substring(18, 20);
 
-            var p = Utils.find("X=(\\d+), Y=(\\d+)", linep);
+            var p = Utils.getTokens("X=(\\d+), Y=(\\d+)", linep);
 
             result.add(new Machine(parseInt(ax), parseInt(ay),
                     parseInt(bx), parseInt(by),

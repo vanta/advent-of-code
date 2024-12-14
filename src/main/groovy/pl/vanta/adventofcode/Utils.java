@@ -3,16 +3,12 @@ package pl.vanta.adventofcode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.tuple.Pair;
 
 import static java.lang.System.out;
-import static java.util.regex.Pattern.*;
-import static java.util.stream.Collectors.toSet;
 
 public class Utils {
     private static final String RESET = "\u001B[0m";
@@ -82,7 +78,7 @@ public class Utils {
     }
 
     //write a java method that will return all groups that matches the regexp given as a param in a string given as a second param
-    public static List<String> find(String regex, String input) {
+    public static List<String> getTokens(String regex, String input) {
         List<String> groups = new ArrayList<>();
         Matcher matcher = Pattern.compile(regex).matcher(input);
 
