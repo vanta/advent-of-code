@@ -26,18 +26,12 @@ public class Day14 implements ParserSolver<List<Day14.Robot>, Integer> {
 
     @Override
     public Integer solve(List<Robot> parsedInput) {
-        int sizeX = 11;
-        int sizeY = 7;
-
-        return extracted(parsedInput, sizeX, sizeY);
+        return extracted(parsedInput, 11, 7);
     }
 
     @Override
     public Integer solveReal(List<Robot> parsedInput) {
-        int sizeX = 101;
-        int sizeY = 103;
-
-        return extracted(parsedInput, sizeX, sizeY);
+        return extracted(parsedInput, 101, 103);
     }
 
     private int extracted(List<Robot> parsedInput, int sizeX, int sizeY) {
