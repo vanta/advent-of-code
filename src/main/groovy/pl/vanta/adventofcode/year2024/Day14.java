@@ -27,15 +27,15 @@ public class Day14 implements ParserSolver<List<Day14.Robot>, Integer> {
 
     @Override
     public Integer solve(List<Robot> parsedInput) {
-        return extracted(parsedInput, 11, 7);
+        return solveInternal(parsedInput, 11, 7);
     }
 
     @Override
     public Integer solveReal(List<Robot> parsedInput) {
-        return extracted(parsedInput, 101, 103);
+        return solveInternal(parsedInput, 101, 103);
     }
 
-    private int extracted(List<Robot> parsedInput, int sizeX, int sizeY) {
+    private int solveInternal(List<Robot> parsedInput, int sizeX, int sizeY) {
         var seconds = 100;
         var temp = parsedInput;
         for (int i = 0; i < seconds; i++) {
