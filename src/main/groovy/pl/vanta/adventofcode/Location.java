@@ -22,4 +22,27 @@ public record Location(int x, int y) {
     public Set<Location> neighbours() {
         return Set.of(up(), down(), left(), right());
     }
+
+    public Location move(int dx, int dy) {
+        return new Location(x + dx, y + dy);
+    }
+
+    public Location teleport(int sizeX, int sizeY) {
+        int newX = x;
+        int newY = y;
+
+        if(newX < 0){
+            newX += sizeX;
+        } else if(newX >= sizeX){
+            newX -= sizeX;
+        }
+
+        if(newY < 0){
+            newY += sizeY;
+        } else if(newY >= sizeY){
+            newY -= sizeY;
+        }
+
+        return new Location(newX, newY);
+    }
 }
