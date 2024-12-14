@@ -10,6 +10,7 @@ import static java.lang.Integer.parseInt;
 import static pl.vanta.adventofcode.Utils.getTokens;
 
 public class Day14 implements ParserSolver<List<Day14.Robot>, Integer> {
+    private static final String REGEX = "p=([0-9-]+),([0-9-]+) v=([0-9-]+),([0-9-]+)";
 
     @Override
     public int getDayNumber() {
@@ -19,7 +20,7 @@ public class Day14 implements ParserSolver<List<Day14.Robot>, Integer> {
     @Override
     public List<Robot> parse(String lines) {
         return Arrays.stream(lines.split("\n"))
-                .map(line -> getTokens("p=([0-9-]+),([0-9-]+) v=([0-9-]+),([0-9-]+)", line))
+                .map(line -> getTokens(REGEX, line))
                 .map(l -> new Robot(new Location(parseInt(l.get(0)), parseInt(l.get(1))), parseInt(l.get(2)), parseInt(l.get(3))))
                 .toList();
     }
