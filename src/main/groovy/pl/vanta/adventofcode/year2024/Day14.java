@@ -26,10 +26,10 @@ public class Day14 implements ParserSolver<List<Day14.Robot>, Integer> {
 
     @Override
     public Integer solve(List<Robot> parsedInput) {
-//        int sizeX = 101;
-//        int sizeY = 103;
-        int sizeX = 11;
-        int sizeY = 7;
+        int sizeX = 101;
+        int sizeY = 103;
+//        int sizeX = 11;
+//        int sizeY = 7;
 
         int seconds = 100;
 
@@ -43,8 +43,8 @@ public class Day14 implements ParserSolver<List<Day14.Robot>, Integer> {
         var sizeX2 = sizeX / 2;
         var sizeY2 = sizeY / 2;
         int q1 = countRobots(temp, 0, 0, sizeX2, sizeY2);
-        int q2 = countRobots(temp, 0, sizeY2, sizeX2 + 1, sizeY);
-        int q3 = countRobots(temp, sizeX2, 0, sizeX, sizeY2);
+        int q2 = countRobots(temp, 0, sizeY2 + 1, sizeX2, sizeY);
+        int q3 = countRobots(temp, sizeX2 + 1, 0, sizeX, sizeY2);
         int q4 = countRobots(temp, sizeX2 + 1, sizeY2 + 1, sizeX, sizeY);
 
         return q1 * q2 * q3 * q4;
