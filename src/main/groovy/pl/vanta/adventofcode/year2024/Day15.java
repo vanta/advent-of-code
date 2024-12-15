@@ -42,12 +42,12 @@ public class Day15 implements ParserSolver<Day15.Input, Integer> {
             var nexPos = position.move(move);
 
             //wall
-            if(input.map[nexPos.y()][nexPos.x()] == '#') {
+            if (input.map[nexPos.y()][nexPos.x()] == '#') {
                 continue;
             }
 
             //empty
-            if(input.map[nexPos.y()][nexPos.x()] == '.') {
+            if (input.map[nexPos.y()][nexPos.x()] == '.') {
                 position = nexPos;
             }
 
@@ -90,13 +90,5 @@ public class Day15 implements ParserSolver<Day15.Input, Integer> {
 
     public record Input(char[][] map, String moves) {
 
-    }
-
-    record Robot(Location location, char direction) {
-//        Robot move(int sizeX, int sizeY) {
-//            var newLocation = location.move(vx, vy).teleport(sizeX, sizeY);
-//
-//            return new Day14.Robot(newLocation, vx, vy);
-//        }
     }
 }
