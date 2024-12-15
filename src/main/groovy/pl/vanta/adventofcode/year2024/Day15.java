@@ -1,6 +1,7 @@
 package pl.vanta.adventofcode.year2024;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import pl.vanta.adventofcode.Location;
@@ -35,7 +36,23 @@ public class Day15 implements ParserSolver<Day15.Input, Integer> {
 
     @Override
     public Integer solve(Day15.Input parsedInput) {
-        return -1;
+        var position = findRobot(parsedInput.map);
+
+
+        return findGoods(parsedInput.map).stream()
+                .mapToInt(l -> 100 * l.x() + l.y())
+                .sum();
+    }
+
+    private List<Location> findGoods(char[][] map) {
+        var result = new ArrayList<Location>();
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[i].length; j++) {
+                result.add(new Location(i, j));
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -47,6 +64,7 @@ public class Day15 implements ParserSolver<Day15.Input, Integer> {
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[i].length; j++) {
                 if (map[i][j] == '@') {
+                    map[i][j] = '.';
                     return new Location(j, i);
                 }
             }
