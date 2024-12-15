@@ -55,4 +55,8 @@ public record Location(int x, int y) {
             default -> throw new IllegalArgumentException("Unknown direction: " + direction);
         };
     }
+
+    public Location move(Offset offset) {
+        return new Location(x + offset.x(), y + offset.y());
+    }
 }

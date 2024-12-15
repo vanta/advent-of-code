@@ -2,12 +2,19 @@ package pl.vanta.adventofcode.year2024;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.StringTokenizer;
 
 import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
 
+import static java.util.Optional.empty;
+
 public class Day15 implements ParserSolver<Day15.Input, Integer> {
+    private static final char ROBOT = '@';
+    private static final char BOX = 'O';
+    private static final char WALL = '#';
+    private static final char EMPTY = '.';
 
     @Override
     public int getDayNumber() {
@@ -39,19 +46,27 @@ public class Day15 implements ParserSolver<Day15.Input, Integer> {
         var position = findRobot(input.map);
 
         for (var move : input.moves.toCharArray()) {
+            print(input.map, position);
+            System.out.println("Move: " + move);
             var nexPos = position.move(move);
 
             //wall
-            if (input.map[nexPos.y()][nexPos.x()] == '#') {
+            var whereIsFreeSpace = whereIsFreeSpace(input.map, nexPos, move);
+            if (whereIsFreeSpace.isEmpty()) {
                 continue;
             }
 
             //empty
-            if (input.map[nexPos.y()][nexPos.x()] == '.') {
-                position = nexPos;
+            var freeSpacePosition = whereIsFreeSpace.get();
+            position = nexPos;
+
+            if (freeSpacePosition.equals(nexPos)) {
+                continue;
             }
 
-
+            //pushing
+            input.map[freeSpacePosition.x()][freeSpacePosition.y()] = BOX;
+            input.map[position.x()][position.y()] = EMPTY;
         }
 
         return findGoods(input.map).stream()
@@ -59,11 +74,27 @@ public class Day15 implements ParserSolver<Day15.Input, Integer> {
                 .sum();
     }
 
+    private Optional<Location> whereIsFreeSpace(char[][] map, Location nexPos, char direction) {
+        var newLocation = nexPos;
+
+        while (map[newLocation.x()][newLocation.y()] != WALL) {
+            if (map[newLocation.x()][newLocation.y()] == EMPTY) {
+                return Optional.of(newLocation);
+            }
+
+            newLocation = newLocation.move(direction);
+        }
+
+        return empty();
+    }
+
     private List<Location> findGoods(char[][] map) {
         var result = new ArrayList<Location>();
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[i].length; j++) {
-                result.add(new Location(i, j));
+                if(map[i][j] == BOX) {
+                    result.add(new Location(i, j));
+                }
             }
         }
 
@@ -78,14 +109,27 @@ public class Day15 implements ParserSolver<Day15.Input, Integer> {
     private Location findRobot(char[][] map) {
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[i].length; j++) {
-                if (map[i][j] == '@') {
-                    map[i][j] = '.';
+                if (map[i][j] == ROBOT) {
+                    map[i][j] = EMPTY;
                     return new Location(j, i);
                 }
             }
         }
 
         throw new IllegalStateException("Robot not found");
+    }
+
+    private void print(char[][] map, Location robot) {
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[i].length; j++) {
+                if (robot.x() == i && robot.y() == j) {
+                    System.out.print("@");
+                } else {
+                    System.out.print(map[i][j]);
+                }
+            }
+            System.out.println();
+        }
     }
 
     public record Input(char[][] map, String moves) {
