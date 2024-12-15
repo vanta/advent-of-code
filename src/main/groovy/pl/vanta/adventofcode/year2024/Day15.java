@@ -48,10 +48,10 @@ public class Day15 implements ParserSolver<Day15.Input, Integer> {
     }
 
     record Robot(Location location, char direction) {
-        Robot move(int sizeX, int sizeY) {
-            var newLocation = location.move(vx, vy).teleport(sizeX, sizeY);
-
-            return new Day14.Robot(newLocation, vx, vy);
-        }
+//        Robot move(int sizeX, int sizeY) {
+//            var newLocation = location.move(vx, vy).teleport(sizeX, sizeY);
+//
+//            return new Day14.Robot(newLocation, vx, vy);
+//        }
     }
 }
