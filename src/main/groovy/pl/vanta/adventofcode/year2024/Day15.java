@@ -43,6 +43,18 @@ public class Day15 implements ParserSolver<Day15.Input, Integer> {
         return -1;
     }
 
+    private Location findRobot(char[][] map) {
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[i].length; j++) {
+                if (map[i][j] == '@') {
+                    return new Location(j, i);
+                }
+            }
+        }
+
+        return null;
+    }
+
     public record Input(char[][] map, String moves) {
 
     }
