@@ -31,18 +31,28 @@ public record Location(int x, int y) {
         int newX = x;
         int newY = y;
 
-        if(newX < 0){
+        if (newX < 0) {
             newX += sizeX;
-        } else if(newX >= sizeX){
+        } else if (newX >= sizeX) {
             newX -= sizeX;
         }
 
-        if(newY < 0){
+        if (newY < 0) {
             newY += sizeY;
-        } else if(newY >= sizeY){
+        } else if (newY >= sizeY) {
             newY -= sizeY;
         }
 
         return new Location(newX, newY);
+    }
+
+    public Location move(char direction) {
+        return switch (direction) {
+            case '^' -> this.up();
+            case 'v' -> this.down();
+            case '<' -> this.left();
+            case '>' -> this.right();
+            default -> throw new IllegalArgumentException("Unknown direction: " + direction);
+        };
     }
 }

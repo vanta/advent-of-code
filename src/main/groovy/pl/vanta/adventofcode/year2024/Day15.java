@@ -35,11 +35,26 @@ public class Day15 implements ParserSolver<Day15.Input, Integer> {
     }
 
     @Override
-    public Integer solve(Day15.Input parsedInput) {
-        var position = findRobot(parsedInput.map);
+    public Integer solve(Day15.Input input) {
+        var position = findRobot(input.map);
+
+        for (var move : input.moves.toCharArray()) {
+            var nexPos = position.move(move);
+
+            //wall
+            if(input.map[nexPos.y()][nexPos.x()] == '#') {
+                continue;
+            }
+
+            //empty
+            if(input.map[nexPos.y()][nexPos.x()] == '.') {
+                position = nexPos;
+            }
 
 
-        return findGoods(parsedInput.map).stream()
+        }
+
+        return findGoods(input.map).stream()
                 .mapToInt(l -> 100 * l.x() + l.y())
                 .sum();
     }
@@ -70,7 +85,7 @@ public class Day15 implements ParserSolver<Day15.Input, Integer> {
             }
         }
 
-        return null;
+        throw new IllegalStateException("Robot not found");
     }
 
     public record Input(char[][] map, String moves) {
