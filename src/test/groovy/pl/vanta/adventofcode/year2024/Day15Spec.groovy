@@ -39,9 +39,4 @@ class Day15Spec extends BaseSpec2024 {
     Long getRealAnswer2() {
         6620
     }
-
-    @Override
-    boolean skipExamplePart2() {
-        true
-    }
 }
