@@ -1,16 +1,10 @@
 package pl.vanta.adventofcode.year2024;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.StringTokenizer;
+import java.util.Arrays;
 
-import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
 
-import static java.util.Optional.empty;
-
-public class Day16 implements ParserSolver<Day16.Input, Integer> {
+public class Day16 implements ParserSolver<char[][], Integer> {
 
     @Override
     public int getDayNumber() {
@@ -18,21 +12,22 @@ public class Day16 implements ParserSolver<Day16.Input, Integer> {
     }
 
     @Override
-    public Day16.Input parse(String lines) {
-
+    public char[][] parse(String lines) {
+        return Arrays.stream(lines.split("\n"))
+                .map(String::toCharArray)
+                .toArray(char[][]::new);
     }
 
     @Override
-    public Integer solve(Day16.Input input) {
+    public Integer solve(char[][] input) {
 
-    }
 
-    @Override
-    public Integer solve2(Day16.Input parsedInput) {
         return -1;
     }
 
-    public record Input(char[][] map, String moves) {
-
+    @Override
+    public Integer solve2(char[][] parsedInput) {
+        return -1;
     }
+
 }
