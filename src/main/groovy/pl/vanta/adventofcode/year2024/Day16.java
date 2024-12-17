@@ -2,7 +2,9 @@ package pl.vanta.adventofcode.year2024;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import pl.vanta.adventofcode.Direction;
@@ -30,12 +32,11 @@ public class Day16 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve(char[][] input) {
+        var map = new HashMap<Location, Integer>();
         var start = findStart(input);
 
         var path = new ArrayList<Location>();
-        var step = step(input, start, Direction.from('>'), path, 0);
-
-//        print(input, path);
+        var step = step(input, start, Direction.from('>'), path, 0, map);
 
         return step;
     }
@@ -53,8 +54,14 @@ public class Day16 implements ParserSolver<char[][], Integer> {
         }
     }
 
-    private int step(char[][] input, Location current, Direction direction, ArrayList<Location> path, int cost) {
+    private int step(char[][] input, Location current, Direction direction, ArrayList<Location> path, int cost, Map<Location, Integer> map) {
+//        if(map.containsKey(current)) {
+//            return map.get(current);
+//        }
+
         path.add(current);
+
+//        System.out.println("path size=" + path.size() + ", current=" + current + ", direction=" + direction);
 
         if (input[current.x()][current.y()] == END) {
             return cost;
@@ -66,20 +73,24 @@ public class Day16 implements ParserSolver<char[][], Integer> {
 
         var r1 = cantMoveHere(input, posAhead, path)
                 ? -1
-                : step(input, posAhead, direction, path, cost + 1);
+                : step(input, posAhead, direction, path, cost + 1, map);
 
         var r2 = cantMoveHere(input, posLeft, path)
                 ? -1
-                : step(input, posLeft, direction.turnLeft(), new ArrayList<>(path), cost + 1001);
+                : step(input, posLeft, direction.turnLeft(), new ArrayList<>(path), cost + 1001, map);
 
         var r3 = cantMoveHere(input, posRight, path)
                 ? -1
-                : step(input, posRight, direction.turnRight(), new ArrayList<>(path), cost + 1001);
+                : step(input, posRight, direction.turnRight(), new ArrayList<>(path), cost + 1001, map);
 
-        return Stream.of(r1, r2, r3)
+        var result = Stream.of(r1, r2, r3)
                 .filter(l -> l > 0)
                 .min(comparingInt(l -> l))
                 .orElse(-1);
+
+//        map.put(current, result);
+
+        return result;
     }
 
     private static boolean cantMoveHere(char[][] input, Location current, ArrayList<Location> path) {
