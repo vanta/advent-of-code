@@ -33,10 +33,14 @@ public class Day17 implements ParserSolver<Day17.Input, String> {
     @Override
     public String solve(Day17.Input input) {
         var computer = new Computer(input.a, input.b, input.c, input.program);
+//        new Computer(0, 0, 9, new int[]{2, 6}).run();
+//        new Computer(0, 29, 0, new int[]{1, 7}).run();
+//        new Computer(0, 2024, 43690, new int[]{4, 0}).run();
 
         var out = computer.run();
 
         return out.stream().map(String::valueOf).collect(joining(","));
+//        return "";
     }
 
     @Override
@@ -84,6 +88,8 @@ public class Day17 implements ParserSolver<Day17.Input, String> {
         private void jnz(int param) {
             if (a != 0) {
                 ip = param;
+            } else {
+                ip += 2;
             }
         }
 
@@ -94,7 +100,7 @@ public class Day17 implements ParserSolver<Day17.Input, String> {
         }
 
         private void out(int param) {
-            out.add(combo(param % 8));
+            out.add(combo(param) % 8);
 
             ip += 2;
         }
@@ -138,6 +144,8 @@ public class Day17 implements ParserSolver<Day17.Input, String> {
                     default -> throw new IllegalArgumentException("Unknown opcode: " + opcode);
                 }
             }
+
+            System.out.println("a=" + a + ", b=" + b + ", c=" + c + ", out=" + out);
 
             return out;
         }

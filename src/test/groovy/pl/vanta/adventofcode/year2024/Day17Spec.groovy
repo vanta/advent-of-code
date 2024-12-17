@@ -19,6 +19,8 @@ class Day17Spec extends BaseSpec2024 {
     List<Map> getTestData1() {
         [
                 [result: '4,6,3,5,6,3,5,2,1,0'],
+                [result: '0,1,2', suffix: '-simple1'],
+                [result: '4,2,5,6,7,7,7,7,3,1,0', suffix: '-simple2'],
         ]
     }
 
