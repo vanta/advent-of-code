@@ -25,8 +25,8 @@ class Day17Spec extends BaseSpec2024 {
     }
 
     @Override
-    Long getRealAnswer1() {
-        1559280
+    String getRealAnswer1() {
+        '1,5,0,1,7,4,1,0,3'
     }
 
     @Override
@@ -37,7 +37,7 @@ class Day17Spec extends BaseSpec2024 {
     }
 
     @Override
-    Long getRealAnswer2() {
-        6620
+    String getRealAnswer2() {
+        ''
     }
 }
