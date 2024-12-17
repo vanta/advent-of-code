@@ -66,7 +66,7 @@ public class Day17 implements ParserSolver<Day17.Input, String> {
         int[] program;
 
         private int ip = 0;
-        private List<Integer> out = new ArrayList<>();
+        private final List<Integer> out = new ArrayList<>();
 
         Computer(int a, int b, int c, int[] program) {
             this.a = a;
