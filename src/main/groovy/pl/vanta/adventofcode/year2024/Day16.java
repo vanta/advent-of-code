@@ -2,10 +2,13 @@ package pl.vanta.adventofcode.year2024;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import pl.vanta.adventofcode.Direction;
 import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
+
+import static java.util.Comparator.comparingInt;
 
 public class Day16 implements ParserSolver<char[][], Integer> {
     private static final char WALL = '#';
@@ -29,31 +32,24 @@ public class Day16 implements ParserSolver<char[][], Integer> {
         var start = findStart(input);
 
         var path = new ArrayList<Location>();
-        step(input, start, Direction.from('>'), path);
+        var result = step(input, start, Direction.from('>'), path, 0);
 
-        return -1;
+        return result.size();
     }
 
-    private void step(char[][] input, Location current, Direction direction, ArrayList<Location> path) {
-        if(input[current.x()][current.y()] == WALL) {
-            return;
-        }
-
-        if(path.contains(current)) {
-            return;
-        }
-
+    private List<Location> step(char[][] input, Location current, Direction direction, ArrayList<Location> path, int cost) {
         path.add(current);
 
-        if(input[current.x()][current.y()] == END) {
-            return;
+        if (input[current.x()][current.y()] == END) {
+            return path;
         }
 
-        current.neighbours().stream()
+        return current.neighbours().stream()
                 .filter(n -> input[n.x()][n.y()] != WALL)
                 .filter(n -> !path.contains(n))
-                .forEach(n -> step(input, n, direction, path));
-
+                .map(n -> step(input, n, direction, new ArrayList<>(path), cost + 1))
+                .min(comparingInt(List::size))
+                .orElse(List.of());
     }
 
     @Override
