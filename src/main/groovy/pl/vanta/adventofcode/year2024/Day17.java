@@ -44,6 +44,10 @@ public class Day17 implements ParserSolver<Day17.Input, String> {
     @Override
     public String solve2(Day17.Input parsedInput) {
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            if(i % 1_000_000 == 0) {
+                System.out.println(i);
+            }
+
             var computer = new Computer(i, parsedInput.b, parsedInput.c, parsedInput.program);
 
             var out = computer.run();
@@ -153,7 +157,7 @@ public class Day17 implements ParserSolver<Day17.Input, String> {
                 }
             }
 
-            System.out.println("a=" + a + ", b=" + b + ", c=" + c + ", out=" + out);
+//            System.out.println("a=" + a + ", b=" + b + ", c=" + c + ", out=" + out);
 
             return out.stream().mapToInt(i -> i).toArray();
         }
