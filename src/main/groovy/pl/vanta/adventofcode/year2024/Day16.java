@@ -2,7 +2,6 @@ package pl.vanta.adventofcode.year2024;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import pl.vanta.adventofcode.Direction;
 import pl.vanta.adventofcode.Location;
@@ -34,22 +33,23 @@ public class Day16 implements ParserSolver<char[][], Integer> {
         var path = new ArrayList<Location>();
         var result = step(input, start, Direction.from('>'), path, 0);
 
-        return result.size();
+        return result;
     }
 
-    private List<Location> step(char[][] input, Location current, Direction direction, ArrayList<Location> path, int cost) {
+    private int step(char[][] input, Location current, Direction direction, ArrayList<Location> path, int cost) {
         path.add(current);
 
         if (input[current.x()][current.y()] == END) {
-            return path;
+            return cost;
         }
 
         return current.neighbours().stream()
                 .filter(n -> input[n.x()][n.y()] != WALL)
                 .filter(n -> !path.contains(n))
                 .map(n -> step(input, n, direction, new ArrayList<>(path), cost + 1))
-                .min(comparingInt(List::size))
-                .orElse(List.of());
+                .filter(l -> l > 0)
+                .min(comparingInt(l -> l))
+                .orElse(-1);
     }
 
     @Override
