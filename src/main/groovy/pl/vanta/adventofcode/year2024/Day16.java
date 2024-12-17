@@ -2,6 +2,7 @@ package pl.vanta.adventofcode.year2024;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 import pl.vanta.adventofcode.Direction;
 import pl.vanta.adventofcode.Location;
@@ -31,25 +32,39 @@ public class Day16 implements ParserSolver<char[][], Integer> {
         var start = findStart(input);
 
         var path = new ArrayList<Location>();
-        var result = step(input, start, Direction.from('>'), path, 0);
 
-        return result;
+        return step(input, start, Direction.from('>'), path, 0);
     }
 
     private int step(char[][] input, Location current, Direction direction, ArrayList<Location> path, int cost) {
+        if(input[current.x()][current.y()] == WALL || path.contains(current)) {
+            return -1;
+        }
+
         path.add(current);
 
         if (input[current.x()][current.y()] == END) {
             return cost;
         }
 
-        return current.neighbours().stream()
-                .filter(n -> input[n.x()][n.y()] != WALL)
-                .filter(n -> !path.contains(n))
-                .map(n -> step(input, n, direction, new ArrayList<>(path), cost + 1))
+        var posAhead = current.move(direction);
+        var posLeft = current.move(direction.turnLeft());
+        var posRight = current.move(direction.turnRight());
+
+        var r1 = step(input, posAhead, direction, path, cost + 1);
+        var r2 = step(input, posLeft, direction.turnLeft(), path, cost + 1001);
+        var r3 = step(input, posRight, direction.turnRight(), path, cost + 1001);
+
+        return Stream.of(r1, r2, r3)
                 .filter(l -> l > 0)
                 .min(comparingInt(l -> l))
                 .orElse(-1);
+
+//        return current.neighbours().stream()
+//                .map(n -> step(input, n, direction, new ArrayList<>(path), cost + 1))
+//                .filter(l -> l > 0)
+//                .min(comparingInt(l -> l))
+//                .orElse(-1);
     }
 
     @Override
