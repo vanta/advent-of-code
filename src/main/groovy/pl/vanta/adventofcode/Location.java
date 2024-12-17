@@ -46,6 +46,10 @@ public record Location(int x, int y) {
         return new Location(newX, newY);
     }
 
+    public Location move(Direction direction) {
+        return move(direction.getSymbol());
+    }
+
     public Location move(char direction) {
         return switch (direction) {
             case '^' -> this.up();
