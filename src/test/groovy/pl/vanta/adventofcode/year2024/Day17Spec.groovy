@@ -33,12 +33,12 @@ class Day17Spec extends BaseSpec2024 {
     @Override
     List<Map> getTestData2() {
         [
-                [result: 117440, suffix: '-part2'],
+                [result: '117440', suffix: '-part2'],
         ]
     }
 
     @Override
-    Long getRealAnswer2() {
-        -1
+    String getRealAnswer2() {
+        '1'
     }
 }

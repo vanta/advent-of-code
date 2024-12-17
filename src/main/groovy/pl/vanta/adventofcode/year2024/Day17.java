@@ -33,18 +33,26 @@ public class Day17 implements ParserSolver<Day17.Input, String> {
     @Override
     public String solve(Day17.Input input) {
         var computer = new Computer(input.a, input.b, input.c, input.program);
-//        new Computer(0, 0, 9, new int[]{2, 6}).run();
-//        new Computer(0, 29, 0, new int[]{1, 7}).run();
-//        new Computer(0, 2024, 43690, new int[]{4, 0}).run();
 
         var out = computer.run();
 
-        return out.stream().map(String::valueOf).collect(joining(","));
-//        return "";
+        return Arrays.stream(out)
+                .mapToObj(String::valueOf)
+                .collect(joining(","));
     }
 
     @Override
     public String solve2(Day17.Input parsedInput) {
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            var computer = new Computer(i, parsedInput.b, parsedInput.c, parsedInput.program);
+
+            var out = computer.run();
+
+            if(Arrays.equals(out, parsedInput.program)) {
+                return String.valueOf(i);
+            }
+        }
+
         return "";
     }
 
@@ -127,7 +135,7 @@ public class Day17 implements ParserSolver<Day17.Input, String> {
             };
         }
 
-        List<Integer> run() {
+        int[] run() {
             while (ip < program.length) {
                 var opcode = program[ip];
                 var param = program[ip + 1];
@@ -147,7 +155,7 @@ public class Day17 implements ParserSolver<Day17.Input, String> {
 
             System.out.println("a=" + a + ", b=" + b + ", c=" + c + ", out=" + out);
 
-            return out;
+            return out.stream().mapToInt(i -> i).toArray();
         }
     }
 }
