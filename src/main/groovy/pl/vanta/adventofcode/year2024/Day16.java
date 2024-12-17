@@ -35,7 +35,7 @@ public class Day16 implements ParserSolver<char[][], Integer> {
         var path = new ArrayList<Location>();
         var step = step(input, start, Direction.from('>'), path, 0);
 
-        print(input, path);
+//        print(input, path);
 
         return step;
     }
@@ -54,10 +54,6 @@ public class Day16 implements ParserSolver<char[][], Integer> {
     }
 
     private int step(char[][] input, Location current, Direction direction, ArrayList<Location> path, int cost) {
-        if (input[current.x()][current.y()] == WALL || path.contains(current)) {
-            return -1;
-        }
-
         path.add(current);
 
         if (input[current.x()][current.y()] == END) {
@@ -68,14 +64,26 @@ public class Day16 implements ParserSolver<char[][], Integer> {
         var posLeft = current.move(direction.turnLeft());
         var posRight = current.move(direction.turnRight());
 
-        var r1 = step(input, posAhead, direction, path, cost + 1);
-        var r2 = step(input, posLeft, direction.turnLeft(), new ArrayList<>(path), cost + 1001);
-        var r3 = step(input, posRight, direction.turnRight(), new ArrayList<>(path), cost + 1001);
+        var r1 = cantMoveHere(input, posAhead, path)
+                ? -1
+                : step(input, posAhead, direction, path, cost + 1);
+
+        var r2 = cantMoveHere(input, posLeft, path)
+                ? -1
+                : step(input, posLeft, direction.turnLeft(), new ArrayList<>(path), cost + 1001);
+
+        var r3 = cantMoveHere(input, posRight, path)
+                ? -1
+                : step(input, posRight, direction.turnRight(), new ArrayList<>(path), cost + 1001);
 
         return Stream.of(r1, r2, r3)
                 .filter(l -> l > 0)
                 .min(comparingInt(l -> l))
                 .orElse(-1);
+    }
+
+    private static boolean cantMoveHere(char[][] input, Location current, ArrayList<Location> path) {
+        return input[current.x()][current.y()] == WALL || path.contains(current);
     }
 
     @Override
