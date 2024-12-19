@@ -28,10 +28,15 @@ public class Day19 implements ParserSolver<Day19.Input, Integer> {
 
     @Override
     public Integer solve(Day19.Input input) {
+        return (int) input.designs.stream()
+                .filter(d -> isPossible(d, input.towels))
+                .count();
+    }
+
+    private boolean isPossible(String d, Set<String> towels) {
 
 
-
-        return 0;
+        return false;
     }
 
     @Override
