@@ -49,7 +49,7 @@ public class Day18 implements ParserSolver<Set<Location>, Integer> {
 
 
 
-
+        return null;
     }
 
     @Override
