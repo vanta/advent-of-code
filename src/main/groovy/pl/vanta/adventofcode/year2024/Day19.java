@@ -33,10 +33,14 @@ public class Day19 implements ParserSolver<Day19.Input, Integer> {
                 .count();
     }
 
-    private boolean isPossible(String d, Set<String> towels) {
+    private boolean isPossible(String design, Set<String> towels) {
+        if (design.isEmpty()) {
+            return true;
+        }
 
-
-        return false;
+        return towels.stream()
+                .filter(design::startsWith)
+                .anyMatch(m -> isPossible(design.replace(m, ""), towels));
     }
 
     @Override

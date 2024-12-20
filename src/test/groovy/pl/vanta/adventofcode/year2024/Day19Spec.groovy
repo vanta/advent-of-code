@@ -24,7 +24,7 @@ class Day19Spec extends BaseSpec2024 {
 
     @Override
     Integer getRealAnswer1() {
-        -111
+        267
     }
 
     @Override
