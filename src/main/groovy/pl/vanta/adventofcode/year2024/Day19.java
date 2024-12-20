@@ -69,6 +69,8 @@ public class Day19 implements ParserSolver<Day19.Input, Long> {
 
     @Override
     public Long solve2(Day19.Input input) {
+        CACHE.clear();
+
         return input.designs.stream()
                 .map(d -> howManyPossible(d, input.towels))
                 .reduce(0L, Long::sum);
