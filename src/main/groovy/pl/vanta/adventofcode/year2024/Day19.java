@@ -40,12 +40,34 @@ public class Day19 implements ParserSolver<Day19.Input, Integer> {
 
         return towels.stream()
                 .filter(design::startsWith)
-                .anyMatch(m -> isPossible(design.replace(m, ""), towels));
+                .anyMatch(m -> isPossible(removePrefix(design, m), towels));
+    }
+
+    private int isPossible2(String design, Set<String> towels) {
+        if (design.isEmpty()) {
+            return 1;
+        }
+
+        return towels.stream()
+                .filter(design::startsWith)
+                .map(m -> isPossible2(removePrefix(design, m), towels))
+                .reduce(0, Integer::sum);
+    }
+
+    private static String removePrefix(String str, String prefix) {
+        if (str.startsWith(prefix)) {
+            return str.substring(prefix.length());
+        }
+        return str;
     }
 
     @Override
     public Integer solve2(Day19.Input input) {
-        return 0;
+        return input.designs.stream()
+                .peek(System.out::println)
+                .map(d -> isPossible2(d, input.towels))
+                .peek(System.out::println)
+                .reduce(0, Integer::sum);
     }
 
     public record Input(Set<String> towels, Set<String> designs) {
