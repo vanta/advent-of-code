@@ -1,14 +1,17 @@
 package pl.vanta.adventofcode.year2024;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.util.stream.Collectors.toSet;
 
-public class Day19 implements ParserSolver<Day19.Input, Integer> {
+public class Day19 implements ParserSolver<Day19.Input, Long> {
+    private static final Map<String, Long> CACHE = new HashMap<>();
 
     @Override
     public int getDayNumber() {
@@ -27,8 +30,8 @@ public class Day19 implements ParserSolver<Day19.Input, Integer> {
     }
 
     @Override
-    public Integer solve(Day19.Input input) {
-        return (int) input.designs.stream()
+    public Long solve(Day19.Input input) {
+        return input.designs.stream()
                 .filter(d -> isPossible(d, input.towels))
                 .count();
     }
@@ -40,34 +43,35 @@ public class Day19 implements ParserSolver<Day19.Input, Integer> {
 
         return towels.stream()
                 .filter(design::startsWith)
-                .anyMatch(m -> isPossible(removePrefix(design, m), towels));
+                .map(t -> design.substring(t.length()))
+                .anyMatch(m -> isPossible(m, towels));
     }
 
-    private int isPossible2(String design, Set<String> towels) {
+    private long howManyPossible(String design, Set<String> towels) {
+        if (CACHE.containsKey(design)) {
+            return CACHE.get(design);
+        }
+
         if (design.isEmpty()) {
             return 1;
         }
 
-        return towels.stream()
+        var result = towels.stream()
                 .filter(design::startsWith)
-                .map(m -> isPossible2(removePrefix(design, m), towels))
-                .reduce(0, Integer::sum);
-    }
+                .map(t -> design.substring(t.length()))
+                .map(t -> howManyPossible(t, towels))
+                .reduce(0L, Long::sum);
 
-    private static String removePrefix(String str, String prefix) {
-        if (str.startsWith(prefix)) {
-            return str.substring(prefix.length());
-        }
-        return str;
+        CACHE.put(design, result);
+
+        return result;
     }
 
     @Override
-    public Integer solve2(Day19.Input input) {
+    public Long solve2(Day19.Input input) {
         return input.designs.stream()
-                .peek(System.out::println)
-                .map(d -> isPossible2(d, input.towels))
-                .peek(System.out::println)
-                .reduce(0, Integer::sum);
+                .map(d -> howManyPossible(d, input.towels))
+                .reduce(0L, Long::sum);
     }
 
     public record Input(Set<String> towels, Set<String> designs) {
