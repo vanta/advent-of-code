@@ -10,6 +10,7 @@ import static java.lang.Integer.parseInt;
 import static java.util.Arrays.stream;
 import static java.util.Map.entry;
 import static java.util.Map.ofEntries;
+import static org.apache.commons.lang3.StringUtils.repeat;
 
 public class Day21 implements ParserSolver<List<String>, Integer> {
 
@@ -89,9 +90,23 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
         }
 
         private String findSequence(Location current, Location next) {
+            var result = "";
+            int dx = next.x() - current.x();
+            int dy = next.y() - current.y();
 
+            if (dx > 0) {
+                result += repeat('>', dx);
+            } else if (dx < 0) {
+                result += repeat('<', -dx);
+            }
 
-            return null;
+            if (dy > 0) {
+                result += repeat('v', dy);
+            } else if (dy < 0) {
+                result += repeat('^', -dy);
+            }
+
+            return result;
         }
     }
 
