@@ -1,12 +1,15 @@
 package pl.vanta.adventofcode.year2024;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
+import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.stream;
+import static java.util.Map.entry;
+import static java.util.Map.ofEntries;
 
 public class Day21 implements ParserSolver<List<String>, Integer> {
 
@@ -29,21 +32,37 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
     }
 
     private int complexity(String s) {
-        var numericKeypad = new Keypad(Set.of(
-                new Key(0,0, '7'), new Key(0,1, '8'), new Key(0,2, '9'),
-                new Key(1,0, '4'), new Key(1,1, '5'), new Key(1,2, '6'),
-                new Key(2,0, '1'), new Key(2,1, '2'), new Key(2,2, '3'),
-                                   new Key(3,1, '0'), new Key(3,2, 'A')
+        var numericKeypad = new Keypad(ofEntries(
+                entry('7', new Location(0, 0)),
+                entry('8', new Location(0, 1)),
+                entry('9', new Location(0, 2)),
+                entry('4', new Location(1, 0)),
+                entry('5', new Location(1, 1)),
+                entry('6', new Location(1, 2)),
+                entry('1', new Location(2, 0)),
+                entry('2', new Location(2, 1)),
+                entry('3', new Location(2, 2)),
+                entry('0', new Location(3, 1)),
+                entry('A', new Location(3, 2))
         ));
 
-        var directionalKeypad = new Keypad(Set.of(
-                new Key(0, 1, '^'), new Key( 0, 2, 'A'),
-                new Key(1, 0, '<'), new Key(1, 1, 'v'), new Key(1, 2, '>')
+        var directionalKeypad1 = new Keypad(Map.of(
+                '^', new Location(0, 1),
+                'A', new Location(0, 2),
+                '<', new Location(1, 0),
+                'v', new Location(1, 1),
+                '>', new Location(1, 2)
         ));
 
+        var directionalKeypad2 = new Keypad(Map.of(
+                '^', new Location(0, 1),
+                'A', new Location(0, 2),
+                '<', new Location(1, 0),
+                'v', new Location(1, 1),
+                '>', new Location(1, 2)
+        ));
 
-
-        return 1;
+        return directionalKeypad2.sequence(directionalKeypad1.sequence(numericKeypad.sequence(s))).length();
     }
 
     @Override
@@ -52,11 +71,28 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
         return 0;
     }
 
-    private record Key (int x, int y, char value) {
+    private record Keypad(Map<Character, Location> keys) {
+        String sequence(String given) {
+            var result = new StringBuilder();
+            var current = keys.get('A');
 
+            for (char toClick : given.toCharArray()) {
+                var next = keys.get(toClick);
+
+                result.append(findSequence(current, next));
+                result.append('A');
+
+                current = next;
+            }
+
+            return result.toString();
+        }
+
+        private String findSequence(Location current, Location next) {
+
+
+            return null;
+        }
     }
 
-    private record Keypad (Set<Key> keys) {
-
-    }
 }
