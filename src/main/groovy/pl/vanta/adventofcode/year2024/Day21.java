@@ -5,13 +5,14 @@ import java.util.Set;
 
 import pl.vanta.adventofcode.ParserSolver;
 
+import static java.lang.Integer.parseInt;
 import static java.util.Arrays.stream;
 
 public class Day21 implements ParserSolver<List<String>, Integer> {
 
     @Override
     public int getDayNumber() {
-        return 19;
+        return 21;
     }
 
     @Override
@@ -22,8 +23,13 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
 
     @Override
     public Integer solve(List<String> input) {
+        return input.stream()
+                .map(s -> complexity(s) * parseInt(s.substring(0, s.length() - 1)))
+                .reduce(0, Integer::sum);
+    }
 
-        return 0;
+    private int complexity(String s) {
+        return 1;
     }
 
     @Override
