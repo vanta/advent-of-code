@@ -29,6 +29,20 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
     }
 
     private int complexity(String s) {
+        var numericKeypad = new Keypad(Set.of(
+                new Key(0,0, '7'), new Key(0,1, '8'), new Key(0,2, '9'),
+                new Key(1,0, '4'), new Key(1,1, '5'), new Key(1,2, '6'),
+                new Key(2,0, '1'), new Key(2,1, '2'), new Key(2,2, '3'),
+                                   new Key(3,1, '0'), new Key(3,2, 'A')
+        ));
+
+        var directionalKeypad = new Keypad(Set.of(
+                new Key(0, 1, '^'), new Key( 0, 2, 'A'),
+                new Key(1, 0, '<'), new Key(1, 1, 'v'), new Key(1, 2, '>')
+        ));
+
+
+
         return 1;
     }
 
@@ -38,6 +52,11 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
         return 0;
     }
 
-    public record Input(Set<String> towels, Set<String> designs) {
+    private record Key (int x, int y, char value) {
+
+    }
+
+    private record Keypad (Set<Key> keys) {
+
     }
 }
