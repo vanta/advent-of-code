@@ -2,6 +2,7 @@ package pl.vanta.adventofcode.year2024;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
@@ -10,6 +11,7 @@ import static java.lang.Integer.parseInt;
 import static java.util.Arrays.stream;
 import static java.util.Map.entry;
 import static java.util.Map.ofEntries;
+import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.repeat;
 
 public class Day21 implements ParserSolver<List<String>, Integer> {
@@ -72,16 +74,16 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
                 '>', new Location(1, 2)
         ));
 
-        var sequence = numericKeypad.sequence(s);
-        var sequence1 = directionalKeypad1.sequence(sequence);
-        var sequence2 = directionalKeypad2.sequence(sequence1);
+        var revSequence = numericKeypad.revSequence(s);
+        var revSequence1 = directionalKeypad1.revSequence(revSequence);
+        var revSequence2 = directionalKeypad2.revSequence(revSequence1);
 
-        System.out.println(sequence2);
-        System.out.println(sequence1);
-        System.out.println(sequence);
+        System.out.println(revSequence2);
+        System.out.println(revSequence1);
+        System.out.println(revSequence);
         System.out.println(s);
 
-        return sequence2;
+        return revSequence2;
     }
 
     @Override
@@ -92,6 +94,36 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
 
     private record Keypad(Map<Character, Location> keys) {
         String sequence(String given) {
+            var revKeys = keys.entrySet().stream()
+                    .collect(toMap(
+                            Entry::getValue,
+                            Entry::getKey
+                    ));
+
+            var result = new StringBuilder();
+
+            char buffer;
+
+            var current = keys.get('A');
+
+            for (char toClick : given.toCharArray()) {
+                if (toClick == 'A') {
+                    result.append(revKeys.get(current));
+                } else {
+                    var newKey = current.move(toClick);
+
+                    if (!keys.containsValue(newKey)) {
+                        throw new IllegalStateException("No key for " + newKey);
+                    }
+
+                    current = newKey;
+                }
+            }
+
+            return result.toString();
+        }
+
+        String revSequence(String given) {
             var result = new StringBuilder();
             var current = keys.get('A');
 
@@ -112,19 +144,19 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
             int dx = next.x() - current.x();
             int dy = next.y() - current.y();
 
-            if(dx < 0 && dy < 0) {
+            if (dx < 0 && dy < 0) {
                 result = addX(dx, result);
                 result = addY(dy, result);
-            } else if (dx > 0 && dy > 0){
+            } else if (dx > 0 && dy > 0) {
                 result = addY(dy, result);
                 result = addX(dx, result);
-            } else if (dx > 0 && dy < 0){
+            } else if (dx > 0 && dy < 0) {
                 result = addX(dx, result);
                 result = addY(dy, result);
-            } else if (dx < 0 && dy > 0){
+            } else if (dx < 0 && dy > 0) {
                 result = addY(dy, result);
                 result = addX(dx, result);
-            }  else {
+            } else {
                 result = addY(dy, result);
                 result = addX(dx, result);
             }
