@@ -112,18 +112,41 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
             int dx = next.x() - current.x();
             int dy = next.y() - current.y();
 
-            if (dy > 0) {
-                result += repeat('>', dy);
-            } else if (dy < 0) {
-                result += repeat('<', -dy);
+            if(dx < 0 && dy < 0) {
+                result = addX(dx, result);
+                result = addY(dy, result);
+            } else if (dx > 0 && dy > 0){
+                result = addY(dy, result);
+                result = addX(dx, result);
+            } else if (dx > 0 && dy < 0){
+                result = addX(dx, result);
+                result = addY(dy, result);
+            } else if (dx < 0 && dy > 0){
+                result = addY(dy, result);
+                result = addX(dx, result);
+            }  else {
+                result = addY(dy, result);
+                result = addX(dx, result);
             }
 
+            return result;
+        }
+
+        private static String addX(int dx, String result) {
             if (dx > 0) {
                 result += repeat('v', dx);
             } else if (dx < 0) {
                 result += repeat('^', -dx);
             }
+            return result;
+        }
 
+        private static String addY(int dy, String result) {
+            if (dy > 0) {
+                result += repeat('>', dy);
+            } else if (dy < 0) {
+                result += repeat('<', -dy);
+            }
             return result;
         }
     }
