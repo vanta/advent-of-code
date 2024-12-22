@@ -28,11 +28,20 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
     @Override
     public Integer solve(List<String> input) {
         return input.stream()
-                .map(s -> complexity(s) * parseInt(s.substring(0, s.length() - 1)))
+                .map(this::complexity)
                 .reduce(0, Integer::sum);
     }
 
     private int complexity(String s) {
+        var seq = seq(s);
+        var substring = s.substring(0, s.length() - 1);
+
+        System.out.printf("seq.l=%d, sub=%s%n", seq.length(), substring);
+
+        return seq.length() * parseInt(substring);
+    }
+
+    private String seq(String s) {
         var numericKeypad = new Keypad(ofEntries(
                 entry('7', new Location(0, 0)),
                 entry('8', new Location(0, 1)),
@@ -63,7 +72,16 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
                 '>', new Location(1, 2)
         ));
 
-        return directionalKeypad2.sequence(directionalKeypad1.sequence(numericKeypad.sequence(s))).length();
+        var sequence = numericKeypad.sequence(s);
+        var sequence1 = directionalKeypad1.sequence(sequence);
+        var sequence2 = directionalKeypad2.sequence(sequence1);
+
+        System.out.println(sequence2);
+        System.out.println(sequence1);
+        System.out.println(sequence);
+        System.out.println(s);
+
+        return sequence2;
     }
 
     @Override
@@ -94,16 +112,16 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
             int dx = next.x() - current.x();
             int dy = next.y() - current.y();
 
-            if (dx > 0) {
-                result += repeat('>', dx);
-            } else if (dx < 0) {
-                result += repeat('<', -dx);
+            if (dy > 0) {
+                result += repeat('>', dy);
+            } else if (dy < 0) {
+                result += repeat('<', -dy);
             }
 
-            if (dy > 0) {
-                result += repeat('v', dy);
-            } else if (dy < 0) {
-                result += repeat('^', -dy);
+            if (dx > 0) {
+                result += repeat('v', dx);
+            } else if (dx < 0) {
+                result += repeat('^', -dx);
             }
 
             return result;
