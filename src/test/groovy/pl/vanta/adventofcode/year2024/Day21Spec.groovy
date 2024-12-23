@@ -22,6 +22,8 @@ class Day21Spec extends BaseSpec2024 {
                 [result: 24256, suffix: '-one'],
                 [result: 29184, suffix: '-two'],
                 [result: 12172, suffix: '-three'],
+                [result: 58800, suffix: '-four'],
+                [result: 1972, suffix: '-five'],
                 [result: 126384],
         ]
     }
