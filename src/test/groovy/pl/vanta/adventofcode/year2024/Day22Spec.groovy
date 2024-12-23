@@ -19,12 +19,12 @@ class Day22Spec extends BaseSpec2024 {
     @Override
     List<Map> getTestData1() {
         [
-                [result: 126384],
+                [result: 37327623],
         ]
     }
 
     @Override
-    Integer getRealAnswer1() {
+    Long getRealAnswer1() {
         1
     }
 
