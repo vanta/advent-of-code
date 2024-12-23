@@ -36,8 +36,13 @@ class Day21Spec extends BaseSpec2024 {
     @Override
     List<Map> getTestData2() {
         [
-                [result: 1],
+                [:]
         ]
+    }
+
+    @Override
+    boolean skipExamplePart2() {
+        true
     }
 
     @Override

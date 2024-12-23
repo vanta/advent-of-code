@@ -1,5 +1,6 @@
 package pl.vanta.adventofcode.year2024;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,14 +32,6 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
             entry('A', new Location(3, 2))
     );
 
-    private static final Map<Character, Location> DIRPAD = Map.of(
-            '^', new Location(0, 1),
-            'A', new Location(0, 2),
-            '<', new Location(1, 0),
-            'v', new Location(1, 1),
-            '>', new Location(1, 2)
-    );
-
     private static final Map<String, Set<String>> DIRPAD_PATHS = Map.ofEntries(
         entry("A -> ^", Set.of("<")),
         entry("A -> >", Set.of("v")),
@@ -66,6 +59,8 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
         entry("< -> v", Set.of(">"))
     );
 
+    private static final Map<String, String> CACHE = new HashMap<>();
+
     @Override
     public int getDayNumber() {
         return 21;
@@ -80,19 +75,18 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
     @Override
     public Integer solve(List<String> input) {
         return input.stream()
-                .map(this::complexity)
+                .map(s -> complexity(s, 3))
                 .reduce(0, Integer::sum);
     }
 
-    private int complexity(String s) {
-        System.out.println("Calculating complexity of: " + s);
-        return complexityInternal(s, 0).length() * parseInt(s.substring(0, s.length() - 1));
+    private int complexity(String s, int maxLevel) {
+        return complexityInternal(s, 0, maxLevel).length() * parseInt(s.substring(0, s.length() - 1));
     }
 
-    private String complexityInternal(String s, int level) {
-        System.out.printf("lvl=%d, cmpx for %s%n", level, s);
+    private String complexityInternal(String s, int level, int maxLevel) {
+//        System.out.printf("lvl=%d, cmpx for %s%n", level, s);
 
-        if (level == 3) {
+        if (level == maxLevel) {
             return s;
         }
 
@@ -104,10 +98,8 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
                     ? generatePathsNumeric(current, next)
                     : generatePathsArrows(current, next);
 
-            System.out.println("paths: " + paths);
-
             result += paths.stream()
-                    .map(p -> complexityInternal(p, level + 1))
+                    .map(p -> complexityInternal(p, level + 1, maxLevel))
                     .min(comparingInt(String::length))
                     .orElseThrow();
 //            result += " ";
@@ -115,7 +107,7 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
             current = next;
         }
 
-        System.out.printf("lvl=%d, cmpx of %s is %d%n", level, s, result.length());
+//        System.out.printf("lvl=%d, cmpx of %s is %d%n", level, s, result.length());
 
         return result;
     }
@@ -136,8 +128,9 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
 
     @Override
     public Integer solve2(List<String> input) {
-
-        return 0;
+        return input.stream()
+                .map(s -> complexity(s, 25))
+                .reduce(0, Integer::sum);
     }
 
     private static Set<String> findSequence(Location current, Location next) {
