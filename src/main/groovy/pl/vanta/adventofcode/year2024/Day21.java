@@ -11,12 +11,12 @@ import pl.vanta.adventofcode.ParserSolver;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.stream;
-import static java.util.Comparator.comparingInt;
+import static java.util.Comparator.comparingLong;
 import static java.util.Map.entry;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.repeat;
 
-public class Day21 implements ParserSolver<List<String>, Integer> {
+public class Day21 implements ParserSolver<List<String>, Long> {
 
     private static final Map<Character, Location> NUMPAD = Map.ofEntries(
             entry('7', new Location(0, 0)),
@@ -33,33 +33,33 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
     );
 
     private static final Map<String, Set<String>> DIRPAD_PATHS = Map.ofEntries(
-        entry("A -> ^", Set.of("<")),
-        entry("A -> >", Set.of("v")),
-        entry("A -> v", Set.of("<v", "v<")),
-        entry("A -> <", Set.of("v<<", "<v<")),
+            entry("A -> ^", Set.of("<")),
+            entry("A -> >", Set.of("v")),
+            entry("A -> v", Set.of("<v", "v<")),
+            entry("A -> <", Set.of("v<<", "<v<")),
 
-        entry("^ -> A", Set.of(">")),
-        entry("^ -> >", Set.of(">v", "v>")),
-        entry("^ -> v", Set.of("v")),
-        entry("^ -> <", Set.of("v<")),
+            entry("^ -> A", Set.of(">")),
+            entry("^ -> >", Set.of(">v", "v>")),
+            entry("^ -> v", Set.of("v")),
+            entry("^ -> <", Set.of("v<")),
 
-        entry("> -> A", Set.of("^")),
-        entry("> -> ^", Set.of("^<", "<^")),
-        entry("> -> v", Set.of("<")),
-        entry("> -> <", Set.of("<<")),
+            entry("> -> A", Set.of("^")),
+            entry("> -> ^", Set.of("^<", "<^")),
+            entry("> -> v", Set.of("<")),
+            entry("> -> <", Set.of("<<")),
 
-        entry("v -> A", Set.of("^>", ">^")),
-        entry("v -> ^", Set.of("^")),
-        entry("v -> >", Set.of(">")),
-        entry("v -> <", Set.of("<")),
+            entry("v -> A", Set.of("^>", ">^")),
+            entry("v -> ^", Set.of("^")),
+            entry("v -> >", Set.of(">")),
+            entry("v -> <", Set.of("<")),
 
-        entry("< -> A", Set.of(">^>", ">>^")),
-        entry("< -> ^", Set.of(">^")),
-        entry("< -> >", Set.of(">>")),
-        entry("< -> v", Set.of(">"))
+            entry("< -> A", Set.of(">^>", ">>^")),
+            entry("< -> ^", Set.of(">^")),
+            entry("< -> >", Set.of(">>")),
+            entry("< -> v", Set.of(">"))
     );
 
-    private static final Map<String, String> CACHE = new HashMap<>();
+    private static final Map<String, Long> CACHE = new HashMap<>();
 
     @Override
     public int getDayNumber() {
@@ -73,28 +73,29 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
     }
 
     @Override
-    public Integer solve(List<String> input) {
+    public Long solve(List<String> input) {
+        CACHE.clear();
         return input.stream()
                 .map(s -> complexity(s, 3))
-                .reduce(0, Integer::sum);
+                .reduce(0L, Long::sum);
     }
 
-    private int complexity(String s, int maxLevel) {
-        return complexityInternal(s, 0, maxLevel).length() * parseInt(s.substring(0, s.length() - 1));
+    private long complexity(String s, int maxLevel) {
+        return complexityInternal(s, 0, maxLevel) * parseInt(s.substring(0, s.length() - 1));
     }
 
-    private String complexityInternal(String s, int level, int maxLevel) {
+    private long complexityInternal(String s, int level, int maxLevel) {
 //        System.out.printf("lvl=%d, cmpx for %s%n", level, s);
 
         if (level == maxLevel) {
-            return s;
+            return s.length();
         }
 
-        if(level > 0 && CACHE.containsKey(s)) {
-            return CACHE.get(s);
+        if (level > 0 && CACHE.containsKey(level + s)) {
+            return CACHE.get(level + s);
         }
 
-        String result = "";
+        long result = 0;
         char current = 'A';
 
         for (char next : s.toCharArray()) {
@@ -104,7 +105,7 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
 
             result += paths.stream()
                     .map(p -> complexityInternal(p, level + 1, maxLevel))
-                    .min(comparingInt(String::length))
+                    .min(comparingLong(o -> o))
                     .orElseThrow();
 //            result += " ";
 
@@ -113,8 +114,8 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
 
 //        System.out.printf("lvl=%d, cmpx of %s is %d%n", level, s, result.length());
 
-        if(level > 0) {
-            CACHE.put(s, result);
+        if (level > 0) {
+            CACHE.put(level + s, result);
         }
 
         return result;
@@ -135,21 +136,22 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
     }
 
     @Override
-    public Integer solve2(List<String> input) {
+    public Long solve2(List<String> input) {
+        CACHE.clear();
         return input.stream()
-                .map(s -> complexity(s, 25))
-                .reduce(0, Integer::sum);
+                .map(s -> complexity(s, 26))
+                .reduce(0L, Long::sum);
     }
 
     private static Set<String> findSequence(Location current, Location next) {
         int dx = next.x() - current.x();
         int dy = next.y() - current.y();
 
-        if(dx < 0 && dy < 0 && current.x() == 3 && next.y() == 0) {
+        if (dx < 0 && dy < 0 && current.x() == 3 && next.y() == 0) {
             return Set.of(addX(dx) + addY(dy) + "A");
         }
 
-        if(dx > 0 && dy > 0 && current.y() == 0 && next.x() == 3) {
+        if (dx > 0 && dy > 0 && current.y() == 0 && next.x() == 3) {
             return Set.of(addY(dy) + addX(dx) + "A");
         }
 
