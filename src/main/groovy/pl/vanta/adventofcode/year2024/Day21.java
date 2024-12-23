@@ -86,17 +86,17 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
 
     private int complexity(String s) {
         System.out.println("Calculating complexity of: " + s);
-        return complexityInternal(s, 0) * parseInt(s.substring(0, s.length() - 1));
+        return complexityInternal(s, 0).length() * parseInt(s.substring(0, s.length() - 1));
     }
 
-    private int complexityInternal(String s, int level) {
+    private String complexityInternal(String s, int level) {
         System.out.printf("lvl=%d, cmpx for %s%n", level, s);
 
         if (level == 3) {
-            return s.length();
+            return s;
         }
 
-        int result = 0;
+        String result = "";
         char current = 'A';
 
         for (char next : s.toCharArray()) {
@@ -108,13 +108,14 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
 
             result += paths.stream()
                     .map(p -> complexityInternal(p, level + 1))
-                    .min(comparingInt(o -> o))
+                    .min(comparingInt(String::length))
                     .orElseThrow();
+//            result += " ";
 
             current = next;
         }
 
-        System.out.printf("lvl=%d, cmpx of %s is %d%n", level, s, result);
+        System.out.printf("lvl=%d, cmpx of %s is %d%n", level, s, result.length());
 
         return result;
     }
@@ -142,6 +143,14 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
     private static Set<String> findSequence(Location current, Location next) {
         int dx = next.x() - current.x();
         int dy = next.y() - current.y();
+
+        if(dx < 0 && dy < 0 && current.x() == 3 && next.y() == 0) {
+            return Set.of(addX(dx) + addY(dy) + "A");
+        }
+
+        if(dx > 0 && dy > 0 && current.y() == 0 && next.x() == 3) {
+            return Set.of(addY(dy) + addX(dx) + "A");
+        }
 
         return Stream.of(
                         addY(dy) + addX(dx),
