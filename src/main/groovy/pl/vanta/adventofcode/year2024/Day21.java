@@ -90,6 +90,10 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
             return s;
         }
 
+        if(level > 0 && CACHE.containsKey(s)) {
+            return CACHE.get(s);
+        }
+
         String result = "";
         char current = 'A';
 
@@ -108,6 +112,10 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
         }
 
 //        System.out.printf("lvl=%d, cmpx of %s is %d%n", level, s, result.length());
+
+        if(level > 0) {
+            CACHE.put(s, result);
+        }
 
         return result;
     }
