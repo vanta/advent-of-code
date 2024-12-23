@@ -85,10 +85,13 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
     }
 
     private int complexity(String s) {
+        System.out.println("Calculating complexity of: " + s);
         return complexityInternal(s, 0) * parseInt(s.substring(0, s.length() - 1));
     }
 
     private int complexityInternal(String s, int level) {
+        System.out.printf("lvl=%d, cmpx for %s%n", level, s);
+
         if (level == 3) {
             return s.length();
         }
@@ -101,6 +104,8 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
                     ? generatePathsNumeric(current, next)
                     : generatePathsArrows(current, next);
 
+            System.out.println("paths: " + paths);
+
             result += paths.stream()
                     .map(p -> complexityInternal(p, level + 1))
                     .min(comparingInt(o -> o))
@@ -108,6 +113,8 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
 
             current = next;
         }
+
+        System.out.printf("lvl=%d, cmpx of %s is %d%n", level, s, result);
 
         return result;
     }
