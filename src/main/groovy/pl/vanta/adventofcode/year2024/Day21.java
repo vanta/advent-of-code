@@ -2,19 +2,69 @@ package pl.vanta.adventofcode.year2024;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.stream;
+import static java.util.Comparator.comparingInt;
 import static java.util.Map.entry;
-import static java.util.Map.ofEntries;
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.repeat;
 
 public class Day21 implements ParserSolver<List<String>, Integer> {
+
+    private static final Map<Character, Location> NUMPAD = Map.ofEntries(
+            entry('7', new Location(0, 0)),
+            entry('8', new Location(0, 1)),
+            entry('9', new Location(0, 2)),
+            entry('4', new Location(1, 0)),
+            entry('5', new Location(1, 1)),
+            entry('6', new Location(1, 2)),
+            entry('1', new Location(2, 0)),
+            entry('2', new Location(2, 1)),
+            entry('3', new Location(2, 2)),
+            entry('0', new Location(3, 1)),
+            entry('A', new Location(3, 2))
+    );
+
+    private static final Map<Character, Location> DIRPAD = Map.of(
+            '^', new Location(0, 1),
+            'A', new Location(0, 2),
+            '<', new Location(1, 0),
+            'v', new Location(1, 1),
+            '>', new Location(1, 2)
+    );
+
+    private static final Map<String, Set<String>> DIRPAD_PATHS = Map.ofEntries(
+        entry("A -> ^", Set.of("<")),
+        entry("A -> >", Set.of("v")),
+        entry("A -> v", Set.of("<v", "v<")),
+        entry("A -> <", Set.of("v<<", "<v<")),
+
+        entry("^ -> A", Set.of(">")),
+        entry("^ -> >", Set.of(">v", "v>")),
+        entry("^ -> v", Set.of("v")),
+        entry("^ -> <", Set.of("v<")),
+
+        entry("> -> A", Set.of("^")),
+        entry("> -> ^", Set.of("^<", "<^")),
+        entry("> -> v", Set.of("<")),
+        entry("> -> <", Set.of("<<")),
+
+        entry("v -> A", Set.of("^>", ">^")),
+        entry("v -> ^", Set.of("^")),
+        entry("v -> >", Set.of(">")),
+        entry("v -> <", Set.of("<")),
+
+        entry("< -> A", Set.of(">^>", ">>^")),
+        entry("< -> ^", Set.of(">^")),
+        entry("< -> >", Set.of(">>")),
+        entry("< -> v", Set.of(">"))
+    );
 
     @Override
     public int getDayNumber() {
@@ -35,55 +85,45 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
     }
 
     private int complexity(String s) {
-        var seq = seq(s);
-        var substring = s.substring(0, s.length() - 1);
-
-        System.out.printf("seq.l=%d, sub=%s%n", seq.length(), substring);
-
-        return seq.length() * parseInt(substring);
+        return complexityInternal(s, 0) * parseInt(s.substring(0, s.length() - 1));
     }
 
-    private String seq(String s) {
-        var numericKeypad = new Keypad(ofEntries(
-                entry('7', new Location(0, 0)),
-                entry('8', new Location(0, 1)),
-                entry('9', new Location(0, 2)),
-                entry('4', new Location(1, 0)),
-                entry('5', new Location(1, 1)),
-                entry('6', new Location(1, 2)),
-                entry('1', new Location(2, 0)),
-                entry('2', new Location(2, 1)),
-                entry('3', new Location(2, 2)),
-                entry('0', new Location(3, 1)),
-                entry('A', new Location(3, 2))
-        ));
+    private int complexityInternal(String s, int level) {
+        if (level == 3) {
+            return s.length();
+        }
 
-        var directionalKeypad1 = new Keypad(Map.of(
-                '^', new Location(0, 1),
-                'A', new Location(0, 2),
-                '<', new Location(1, 0),
-                'v', new Location(1, 1),
-                '>', new Location(1, 2)
-        ));
+        int result = 0;
+        char current = 'A';
 
-        var directionalKeypad2 = new Keypad(Map.of(
-                '^', new Location(0, 1),
-                'A', new Location(0, 2),
-                '<', new Location(1, 0),
-                'v', new Location(1, 1),
-                '>', new Location(1, 2)
-        ));
+        for (char next : s.toCharArray()) {
+            Set<String> paths = level == 0
+                    ? generatePathsNumeric(current, next)
+                    : generatePathsArrows(current, next);
 
-        var revSequence = numericKeypad.revSequence(s);
-        var revSequence1 = directionalKeypad1.revSequence(revSequence);
-        var revSequence2 = directionalKeypad2.revSequence(revSequence1);
+            result += paths.stream()
+                    .map(p -> complexityInternal(p, level + 1))
+                    .min(comparingInt(o -> o))
+                    .orElseThrow();
 
-        System.out.println(revSequence2);
-        System.out.println(revSequence1);
-        System.out.println(revSequence);
-        System.out.println(s);
+            current = next;
+        }
 
-        return revSequence2;
+        return result;
+    }
+
+    private Set<String> generatePathsNumeric(char current, char next) {
+        return findSequence(NUMPAD.get(current), NUMPAD.get(next));
+    }
+
+    private Set<String> generatePathsArrows(char current, char next) {
+        if (current == next) {
+            return Set.of("A");
+        }
+
+        return DIRPAD_PATHS.get(current + " -> " + next).stream()
+                .map(s -> s + "A")
+                .collect(toSet());
     }
 
     @Override
@@ -92,95 +132,34 @@ public class Day21 implements ParserSolver<List<String>, Integer> {
         return 0;
     }
 
-    private record Keypad(Map<Character, Location> keys) {
-        String sequence(String given) {
-            var revKeys = keys.entrySet().stream()
-                    .collect(toMap(
-                            Entry::getValue,
-                            Entry::getKey
-                    ));
+    private static Set<String> findSequence(Location current, Location next) {
+        int dx = next.x() - current.x();
+        int dy = next.y() - current.y();
 
-            var result = new StringBuilder();
+        return Stream.of(
+                        addY(dy) + addX(dx),
+                        addX(dx) + addY(dy)
+                )
+                .map(s -> s + "A")
+                .collect(toSet());
+    }
 
-            char buffer;
-
-            var current = keys.get('A');
-
-            for (char toClick : given.toCharArray()) {
-                if (toClick == 'A') {
-                    result.append(revKeys.get(current));
-                } else {
-                    var newKey = current.move(toClick);
-
-                    if (!keys.containsValue(newKey)) {
-                        throw new IllegalStateException("No key for " + newKey);
-                    }
-
-                    current = newKey;
-                }
-            }
-
-            return result.toString();
+    private static String addX(int dx) {
+        if (dx > 0) {
+            return repeat('v', dx);
+        } else if (dx < 0) {
+            return repeat('^', -dx);
         }
+        return "";
+    }
 
-        String revSequence(String given) {
-            var result = new StringBuilder();
-            var current = keys.get('A');
-
-            for (char toClick : given.toCharArray()) {
-                var next = keys.get(toClick);
-
-                result.append(findSequence(current, next));
-                result.append('A');
-
-                current = next;
-            }
-
-            return result.toString();
+    private static String addY(int dy) {
+        if (dy > 0) {
+            return repeat('>', dy);
+        } else if (dy < 0) {
+            return repeat('<', -dy);
         }
-
-        private String findSequence(Location current, Location next) {
-            var result = "";
-            int dx = next.x() - current.x();
-            int dy = next.y() - current.y();
-
-            if (dx < 0 && dy < 0) {
-                result = addX(dx, result);
-                result = addY(dy, result);
-            } else if (dx > 0 && dy > 0) {
-                result = addY(dy, result);
-                result = addX(dx, result);
-            } else if (dx > 0 && dy < 0) {
-                result = addX(dx, result);
-                result = addY(dy, result);
-            } else if (dx < 0 && dy > 0) {
-                result = addY(dy, result);
-                result = addX(dx, result);
-            } else {
-                result = addY(dy, result);
-                result = addX(dx, result);
-            }
-
-            return result;
-        }
-
-        private static String addX(int dx, String result) {
-            if (dx > 0) {
-                result += repeat('v', dx);
-            } else if (dx < 0) {
-                result += repeat('^', -dx);
-            }
-            return result;
-        }
-
-        private static String addY(int dy, String result) {
-            if (dy > 0) {
-                result += repeat('>', dy);
-            } else if (dy < 0) {
-                result += repeat('<', -dy);
-            }
-            return result;
-        }
+        return "";
     }
 
 }
