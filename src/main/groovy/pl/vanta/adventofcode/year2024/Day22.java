@@ -4,10 +4,9 @@ import java.util.List;
 
 import pl.vanta.adventofcode.ParserSolver;
 
-import static java.lang.Math.floor;
 import static java.lang.Math.floorDiv;
-import static java.lang.Math.round;
 import static java.util.Arrays.stream;
+import static java.util.stream.Stream.iterate;
 
 public class Day22 implements ParserSolver<List<Integer>, Long> {
 
@@ -30,14 +29,10 @@ public class Day22 implements ParserSolver<List<Integer>, Long> {
                 .reduce(0L, Long::sum);
     }
 
-    private long secret(int initialSecret, int howMany) {
-        long result = initialSecret;
-
-        for (int i = 0; i < howMany; i++) {
-            result = nextSecret(result);
-        }
-
-        return result;
+    private long secret(long initialSecret, int howMany) {
+        return iterate(initialSecret, this::nextSecret)
+                .limit(howMany + 1)
+                .reduce(0L, (l1, l2) -> l2);
     }
 
     private long nextSecret(long secret) {
