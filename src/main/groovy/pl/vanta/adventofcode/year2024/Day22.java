@@ -29,10 +29,33 @@ public class Day22 implements ParserSolver<List<Integer>, Long> {
                 .reduce(0L, Long::sum);
     }
 
+    @Override
+    public Long solve2(List<Integer> input) {
+        return input.stream()
+                .map(i -> secret2(i, 2000))
+                .reduce(0L, Long::sum);
+    }
+
     private long secret(long initialSecret, int howMany) {
         return iterate(initialSecret, this::nextSecret)
                 .limit(howMany + 1)
                 .reduce(0L, (l1, l2) -> l2);
+    }
+
+    private long secret2(long initialSecret, int howMany) {
+        var digits = iterate(initialSecret, this::nextSecret)
+                .limit(howMany + 1)
+                .map(l -> l % 10)
+                .toList();
+
+        var diffs = iterate(1, i -> i + 1)
+                .limit(digits.size() - 1)
+                .map(i -> digits.get(i) - digits.get(i - 1))
+                .toList();
+
+
+
+        return diffs.size();
     }
 
     private long nextSecret(long secret) {
@@ -51,10 +74,5 @@ public class Day22 implements ParserSolver<List<Integer>, Long> {
 
     private long prune(long secret) {
         return secret % 16777216;
-    }
-
-    @Override
-    public Long solve2(List<Integer> input) {
-        return 0L;
     }
 }
