@@ -1,9 +1,8 @@
-
-
 package pl.vanta.adventofcode.year2024
 
 import pl.vanta.adventofcode.BaseSpec2024
 import pl.vanta.adventofcode.ParserSolver
+import pl.vanta.adventofcode.ParserSolverGeneric
 
 class Day23Spec extends BaseSpec2024 {
     @Override
@@ -12,7 +11,7 @@ class Day23Spec extends BaseSpec2024 {
     }
 
     @Override
-    ParserSolver getParserSolver() {
+    ParserSolverGeneric getParserSolver() {
         new Day23()
     }
 
@@ -31,12 +30,12 @@ class Day23Spec extends BaseSpec2024 {
     @Override
     List<Map> getTestData2() {
         [
-                [result: 23, suffix: '-part2'],
+                [result: 'co,de,ka,ta'],
         ]
     }
 
     @Override
     Long getRealAnswer2() {
-        2399
+        -1
     }
 }

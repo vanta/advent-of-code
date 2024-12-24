@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import pl.vanta.adventofcode.ParserSolver;
+import pl.vanta.adventofcode.ParserSolverGeneric;
 
 import static java.util.Arrays.stream;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toSet;
 
-public class Day23 implements ParserSolver<List<String>, Integer> {
+public class Day23 implements ParserSolverGeneric<List<String>, Integer, String> {
 
     @Override
     public int getDayNumber() {
@@ -73,8 +73,10 @@ public class Day23 implements ParserSolver<List<String>, Integer> {
     }
 
     @Override
-    public Integer solve2(List<String> input) {
-        return -1;
+    public String solve2(List<String> input) {
+
+
+        return "";
     }
 
 }

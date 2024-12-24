@@ -6,7 +6,7 @@ import spock.lang.Specification
 abstract class BaseSpec2024 extends Specification {
     abstract int getYear()
 
-    abstract ParserSolver getParserSolver()
+    abstract ParserSolverGeneric getParserSolver()
 
     abstract Object getRealAnswer1()
 
