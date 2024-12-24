@@ -10,6 +10,7 @@ import pl.vanta.adventofcode.ParserSolverGeneric;
 
 import static java.util.Arrays.stream;
 import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
@@ -71,9 +72,18 @@ public class Day23 implements ParserSolverGeneric<List<String>, Integer, String>
 
     @Override
     public String solve2(List<String> input) {
+        var map = buildMap(input);
+
+        return findBiggestEachOther(map).stream()
+                .sorted()
+                .collect(joining(","));
+    }
+
+    private Set<String> findBiggestEachOther(Map<String, Set<String>> map) {
 
 
-        return "";
+
+        return null;
     }
 
 }
