@@ -1,15 +1,16 @@
 package pl.vanta.adventofcode.year2024;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+import org.apache.commons.lang3.tuple.Pair;
 import pl.vanta.adventofcode.ParserSolverGeneric;
 
 import static java.util.Arrays.stream;
 import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
 public class Day23 implements ParserSolverGeneric<List<String>, Integer, String> {
@@ -35,19 +36,15 @@ public class Day23 implements ParserSolverGeneric<List<String>, Integer, String>
     }
 
     private static Map<String, Set<String>> buildMap(List<String> input) {
-        var map = new HashMap<String, Set<String>>();
-
-        input.stream()
+        return input.stream()
                 .map(s -> s.split("-"))
-                .forEach(s -> {
-                    map.computeIfAbsent(s[0], k -> new HashSet<>());
-                    map.computeIfAbsent(s[1], k -> new HashSet<>());
-
-                    map.get(s[0]).add(s[1]);
-                    map.get(s[1]).add(s[0]);
-                });
-
-        return map;
+                .map(t -> Set.of(Pair.of(t[0], t[1]), Pair.of(t[1], t[0])))
+                .flatMap(Set::stream)
+                .collect(toMap(
+                        Pair::getLeft,
+                        p -> Set.of(p.getRight()),
+                        Sets::union
+                ));
     }
 
     private static Set<Set<String>> findCycles(Map<String, Set<String>> map) {
