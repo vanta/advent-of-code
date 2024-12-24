@@ -1,17 +1,16 @@
 package pl.vanta.adventofcode.year2024;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.*;
+import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.toSet;
 
 public class Day23 implements ParserSolver<List<String>, Integer> {
 
@@ -28,6 +27,14 @@ public class Day23 implements ParserSolver<List<String>, Integer> {
 
     @Override
     public Integer solve(List<String> input) {
+        var map = buildMap(input);
+
+        return (int) findCycles(map).stream()
+                .filter(l -> l.stream().anyMatch(s -> s.startsWith("t")))
+                .count();
+    }
+
+    private static Map<String, Set<String>> buildMap(List<String> input) {
         var map = new HashMap<String, Set<String>>();
 
         input.stream()
@@ -40,26 +47,22 @@ public class Day23 implements ParserSolver<List<String>, Integer> {
                     map.get(s[1]).add(s[0]);
                 });
 
-        var cycles = findCycles(map);
-
-        return (int) cycles.stream()
-                .filter(l -> l.stream().anyMatch(s -> s.startsWith("t")))
-                .count();
+        return map;
     }
 
     private static Set<Set<String>> findCycles(Map<String, Set<String>> map) {
-        var result = new HashSet<Set<String>>();
+        return map.entrySet().stream()
+                .map(e -> getCycles(map, e))
+                .flatMap(Set::stream)
+                .collect(toSet());
+    }
 
-        map.forEach((k, values) -> {
-            for (String v : values) {
-                var cycle = findCycleInternal(k, v, values, map);
-                if (!cycle.isEmpty()) {
-                    result.addAll(cycle);
-                }
-            }
-        });
-
-        return result;
+    private static Set<Set<String>> getCycles(Map<String, Set<String>> map, Map.Entry<String, Set<String>> e) {
+        return e.getValue().stream()
+                .map(v -> findCycleInternal(e.getKey(), v, e.getValue(), map))
+                .flatMap(Set::stream)
+                .filter(not(Set::isEmpty))
+                .collect(toSet());
     }
 
     private static Set<Set<String>> findCycleInternal(String current, String neighbour, Set<String> values, Map<String, Set<String>> map) {
