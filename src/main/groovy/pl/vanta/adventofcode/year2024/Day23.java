@@ -1,5 +1,7 @@
 package pl.vanta.adventofcode.year2024;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -74,16 +76,37 @@ public class Day23 implements ParserSolverGeneric<List<String>, Integer, String>
     public String solve2(List<String> input) {
         var map = buildMap(input);
 
+        map.forEach((k, v) -> System.out.println(k + " -> " + v));
+
         return findBiggestEachOther(map).stream()
                 .sorted()
                 .collect(joining(","));
     }
 
     private Set<String> findBiggestEachOther(Map<String, Set<String>> map) {
+        var result = new HashMap<String, Set<String>>();
+
+        for (var e : map.entrySet()) {
+            var tmp = new HashSet<String>();
 
 
+            result.put(e.getKey(), tmp);
+        }
 
         return null;
     }
 
+    private boolean areConnected(Map<String, Set<String>> map, List<String> nodes) {
+        if (nodes.size() == 2) {
+            return map.get(nodes.get(0)).contains(nodes.get(1));
+        }
+
+        var allButFirst = nodes.subList(1, nodes.size());
+
+        if (map.get(nodes.getFirst()).containsAll(allButFirst)) {
+            return areConnected(map, allButFirst);
+        }
+
+        return false;
+    }
 }
