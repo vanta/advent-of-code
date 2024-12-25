@@ -1,5 +1,6 @@
 package pl.vanta.adventofcode.year2024;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -10,7 +11,6 @@ import java.util.regex.Pattern;
 import pl.vanta.adventofcode.ParserSolverGeneric;
 
 import static java.lang.Integer.parseInt;
-import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toMap;
 
 public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
@@ -82,9 +82,10 @@ public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
 
     @Override
     public String solve2(Input input) {
-        input.wires.values().stream()
-                .sorted(comparing(Wire::output))
-                .forEach(w -> System.out.printf("%s %s %s -> %s%n", w.input1, w.op, w.input2, w.output));
+        var map = Map.of("x00", 1, "y00", 1);
+
+        int resultZ00 = evaluate(input.wires.get("z00"), input.wires, new HashMap<>(map));
+        int resultZ01 = evaluate(input.wires.get("z01"), input.wires, new HashMap<>(map));
 
         return "";
     }
