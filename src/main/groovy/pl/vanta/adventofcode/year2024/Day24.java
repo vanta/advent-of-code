@@ -3,6 +3,7 @@ package pl.vanta.adventofcode.year2024;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
+import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -89,14 +90,18 @@ public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
     }
 
     private enum Operation {
-        AND, OR, XOR;
+        AND((i1, i2) -> i1 & i2),
+        OR((i1, i2) -> i1 | i2),
+        XOR((i1, i2) -> i1 ^ i2);
+
+        private final BiFunction<Integer, Integer, Integer> operation;
+
+        Operation(BiFunction<Integer, Integer, Integer> operation) {
+            this.operation = operation;
+        }
 
         Integer calc(Integer i1, Integer i2) {
-            return switch (this) {
-                case AND -> i1 & i2;
-                case OR -> i1 | i2;
-                case XOR -> i1 ^ i2;
-            };
+            return operation.apply(i1, i2);
         }
     }
 
