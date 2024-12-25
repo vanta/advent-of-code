@@ -8,9 +8,7 @@ import java.util.regex.Pattern;
 
 import pl.vanta.adventofcode.ParserSolver;
 
-import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Stream.generate;
 
 public class Day24 implements ParserSolver<Day24.Input, Integer> {
     private static final String REGEX = "([a-z]\\d\\d) (AND|OR|XOR) ([a-z]\\d\\d) -> ([a-z]\\d\\d)";
