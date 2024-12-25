@@ -1,14 +1,15 @@
 package pl.vanta.adventofcode.year2024;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import pl.vanta.adventofcode.ParserSolverGeneric;
 
 import static java.lang.Integer.parseInt;
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toMap;
 
 public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
@@ -54,7 +55,7 @@ public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
         return input.wires.values().stream()
                 .filter(w -> w.output.startsWith("z"))
                 .map(w -> {
-                    long r = evaluate(w, input.wires, new HashMap<>(input.results));
+                    long r = evaluate(w, input.wires, new TreeMap<>(input.results));
                     var shift = parseInt(w.output.substring(1));
 
                     return r << shift;
@@ -83,9 +84,9 @@ public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
 
     @Override
     public String solve2(Input input) {
-        input.wires.forEach(
-                (k, w) -> System.out.printf("%s: %s, %s%n", w.output, w.input1, w.input2)
-        );
+        input.wires.values().stream()
+                .sorted(comparing(Wire::output))
+                .forEach(w -> System.out.printf("%s %s %s -> %s%n", w.input1, w.op, w.input2, w.output));
 
         return "";
     }
