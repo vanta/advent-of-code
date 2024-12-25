@@ -23,18 +23,17 @@ public class Day24 implements ParserSolver<Day24.Input, Integer> {
 
     @Override
     public Input parse(String lines) {
-        var scanner = new Scanner(lines);
-
-        var inputs = generate(scanner::nextLine)
-                .takeWhile(not(String::isEmpty))
+        var scanner = new Scanner(lines).useDelimiter("\n");
+        var inputs = scanner.tokens()
                 .map(line -> line.split(": "))
+                .filter(parts -> parts.length == 2)
                 .collect(toMap(
                         parts -> parts[0],
                         parts -> parts[1].equals("1"))
                 );
 
-        var wires = generate(scanner::nextLine)
-                .takeWhile(scanner::hasNext)
+        scanner = new Scanner(lines).useDelimiter("\n");
+        var wires = scanner.tokens()
                 .map(PATTERN::matcher)
                 .filter(Matcher::matches)
                 .map(matcher -> new Wire(
