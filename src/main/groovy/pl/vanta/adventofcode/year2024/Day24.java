@@ -1,19 +1,20 @@
 package pl.vanta.adventofcode.year2024;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.stream.Stream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Stream.*;
+import static java.util.stream.Stream.generate;
 
 public class Day24 implements ParserSolver<Day24.Input, Integer> {
+    private static final String REGEX = "([a-z]\\d\\d) (AND|OR|XOR) ([a-z]\\d\\d) -> ([a-z]\\d\\d)";
+    private static final Pattern PATTERN = Pattern.compile(REGEX);
 
     @Override
     public int getDayNumber() {
@@ -22,7 +23,7 @@ public class Day24 implements ParserSolver<Day24.Input, Integer> {
 
     @Override
     public Input parse(String lines) {
-        Scanner scanner = new Scanner(lines);
+        var scanner = new Scanner(lines);
 
         var inputs = generate(scanner::nextLine)
                 .takeWhile(not(String::isEmpty))
@@ -32,16 +33,19 @@ public class Day24 implements ParserSolver<Day24.Input, Integer> {
                         parts -> parts[1].equals("1"))
                 );
 
-//        while (scanner.hasNextLine()) {
-//            String line = scanner.nextLine();
-//            if(line.isEmpty()) {
-//                break;
-//            }
-//            var parts = line.split(": ");
-//            inputs.put(parts[0], parts[1].equals("1"));
-//        }
+        var wires = generate(scanner::nextLine)
+                .takeWhile(scanner::hasNext)
+                .map(PATTERN::matcher)
+                .filter(Matcher::matches)
+                .map(matcher -> new Wire(
+                        matcher.group(1),
+                        Operation.valueOf(matcher.group(2)),
+                        matcher.group(3),
+                        matcher.group(4)
+                ))
+                .toList();
 
-        return new Input(inputs, List.of());
+        return new Input(inputs, wires);
     }
 
     @Override
@@ -58,7 +62,7 @@ public class Day24 implements ParserSolver<Day24.Input, Integer> {
         AND, OR, XOR
     }
 
-    private record Wire(String input1, String input2, Operation operation, String output) {
+    private record Wire(String input1, Operation operation, String input2, String output) {
     }
 
     public record Input(Map<String, Boolean> inputs, List<Wire> wires) {
