@@ -36,12 +36,7 @@ public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
         var wires = scanner.tokens()
                 .map(PATTERN::matcher)
                 .filter(Matcher::matches)
-                .map(matcher -> new Wire(
-                        matcher.group(1),
-                        Operation.valueOf(matcher.group(2)),
-                        matcher.group(3),
-                        matcher.group(4)
-                ))
+                .map(m -> new Wire(m.group(1), Operation.valueOf(m.group(2)), m.group(3), m.group(4)))
                 .collect(toMap(
                         w -> w.output,
                         w -> w
@@ -54,13 +49,15 @@ public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
     public Long solve(Input input) {
         return input.wires.values().stream()
                 .filter(w -> w.output.startsWith("z"))
-                .map(w -> {
-                    long r = evaluate(w, input.wires, new TreeMap<>(input.results));
-                    var shift = parseInt(w.output.substring(1));
-
-                    return r << shift;
-                })
+                .map(w -> result(input, w))
                 .reduce(0L, Long::sum);
+    }
+
+    private long result(Input input, Wire w) {
+        long r = evaluate(w, input.wires, new TreeMap<>(input.results));
+        var shift = parseInt(w.output.substring(1));
+
+        return r << shift;
     }
 
     private Integer evaluate(Wire wire, Map<String, Wire> wires, Map<String, Integer> results) {
