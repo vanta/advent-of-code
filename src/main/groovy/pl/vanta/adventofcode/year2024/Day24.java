@@ -1,12 +1,10 @@
 package pl.vanta.adventofcode.year2024;
 
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import pl.vanta.adventofcode.ParserSolverGeneric;
 
@@ -25,11 +23,13 @@ public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
     @Override
     public Input parse(String lines) {
         var scanner = new Scanner(lines).useDelimiter("\n");
-        var inputs = scanner.tokens()
+        var results = scanner.tokens()
                 .map(line -> line.split(": "))
                 .filter(parts -> parts.length == 2)
-                .map(parts -> new Wire(null, null, parts[0], (u, v) -> parseInt(parts[1])))
-                .toList();
+                .collect(toMap(
+                        parts -> parts[0],
+                        parts -> parseInt(parts[1])
+                ));
 
         scanner = new Scanner(lines).useDelimiter("\n");
         var wires = scanner.tokens()
@@ -37,53 +37,56 @@ public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
                 .filter(Matcher::matches)
                 .map(matcher -> new Wire(
                         matcher.group(1),
+                        Operation.valueOf(matcher.group(2)),
                         matcher.group(3),
-                        matcher.group(4),
-                        (u, v) -> Operation.valueOf(matcher.group(2)).calc(u, v)
+                        matcher.group(4)
                 ))
-                .toList();
+                .collect(toMap(
+                        w -> w.output,
+                        w -> w
+                ));
 
-        var result = Stream.of(inputs, wires)
-                .flatMap(Collection::stream)
-                .collect(toMap(w -> w.output, w -> w));
-
-        return new Input(result);
+        return new Input(wires, results);
     }
 
     @Override
     public Long solve(Input input) {
-        long result = input.wires.values().stream()
+        return input.wires.values().stream()
                 .filter(w -> w.output.startsWith("z"))
                 .map(w -> {
-                    long r = w.getValue(input.wires);
+                    long r = evaluate(w, input.wires, new HashMap<>(input.results));
                     var shift = parseInt(w.output.substring(1));
 
                     return r << shift;
                 })
                 .reduce(0L, Long::sum);
+    }
+
+    private Integer evaluate(Wire wire, Map<String, Wire> wires, Map<String, Integer> results) {
+        if (results.containsKey(wire.output)) {
+            return results.get(wire.output);
+        }
+
+        if (!results.containsKey(wire.input1)) {
+            results.put(wire.input1, evaluate(wires.get(wire.input1), wires, results));
+        }
+        if (!results.containsKey(wire.input2)) {
+            results.put(wire.input2, evaluate(wires.get(wire.input2), wires, results));
+        }
+
+        var result = wire.op.calc(results.get(wire.input1), results.get(wire.input2));
+
+        results.put(wire.output, result);
 
         return result;
     }
 
-//    private Integer evaluate(WireDef wire, Map<String, WireDef> wires, Map<String, Integer> results) {
-//        if (!results.containsKey(wire.input1)) {
-//            var r = evaluate(wires.get(wire.input1), wires, results);
-//            results.put(wire.input1, r);
-//        }
-//
-//        if (!results.containsKey(wire.input2)) {
-//            var r = evaluate(wires.get(wire.input2), wires, results);
-//            results.put(wire.input2, r);
-//        }
-//
-//        var i1 = results.get(wire.input1);
-//        var i2 = results.get(wire.input2);
-//
-//        return wire.calc(i1, i2);
-//    }
-
     @Override
     public String solve2(Input input) {
+        input.wires.forEach(
+                (k, w) -> System.out.printf("%s: %s, %s%n", w.output, w.input1, w.input2)
+        );
+
         return "";
     }
 
@@ -99,23 +102,9 @@ public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
         }
     }
 
-    record Wire(String input1, String input2, String output, BiFunction<Integer, Integer, Integer> function) {
-        Integer getValue(Map<String, Wire> wires) {
-            var i1 = getInput(wires, input1);
-            var i2 = getInput(wires, input2);
-
-            return function.apply(i1, i2);
-        }
-
-        private Integer getInput(Map<String, Wire> wires, String input) {
-            if (input == null) {
-                return null;
-            }
-
-            return wires.get(input).getValue(wires);
-        }
+    private record Wire(String input1, Operation op, String input2, String output) {
     }
 
-    public record Input(Map<String, Wire> wires) {
+    public record Input(Map<String, Wire> wires, Map<String, Integer> results) {
     }
 }
