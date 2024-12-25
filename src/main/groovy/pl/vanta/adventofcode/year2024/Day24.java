@@ -8,12 +8,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import pl.vanta.adventofcode.ParserSolver;
+import pl.vanta.adventofcode.ParserSolverGeneric;
 
 import static java.lang.Integer.parseInt;
 import static java.util.stream.Collectors.toMap;
 
-public class Day24 implements ParserSolver<Day24.Input, Long> {
+public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
     private static final String REGEX = "([a-z0-9]{3}) (AND|OR|XOR) ([a-z0-9]{3}) -> ([a-z0-9]{3})";
     private static final Pattern PATTERN = Pattern.compile(REGEX);
 
@@ -83,8 +83,8 @@ public class Day24 implements ParserSolver<Day24.Input, Long> {
 //    }
 
     @Override
-    public Long solve2(Input input) {
-        return 1L;
+    public String solve2(Input input) {
+        return "";
     }
 
     private enum Operation {
@@ -108,7 +108,7 @@ public class Day24 implements ParserSolver<Day24.Input, Long> {
         }
 
         private Integer getInput(Map<String, Wire> wires, String input) {
-            if(input == null) {
+            if (input == null) {
                 return null;
             }
 

@@ -30,7 +30,7 @@ class Day24Spec extends BaseSpec2024 {
     @Override
     List<Map> getTestData2() {
         [
-                [result: 'co,de,ka,ta'],
+                [result: 'z00,z01,z02,z05', suffix: '-part2'],
         ]
     }
 
