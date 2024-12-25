@@ -1,7 +1,5 @@
 package pl.vanta.adventofcode.year2024;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,9 +8,10 @@ import com.google.common.collect.Sets;
 import org.apache.commons.lang3.tuple.Pair;
 import pl.vanta.adventofcode.ParserSolverGeneric;
 
+import static java.lang.String.join;
 import static java.util.Arrays.stream;
 import static java.util.function.Predicate.not;
-import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
@@ -76,37 +75,27 @@ public class Day23 implements ParserSolverGeneric<List<String>, Integer, String>
     public String solve2(List<String> input) {
         var map = buildMap(input);
 
-        map.forEach((k, v) -> System.out.println(k + " -> " + v));
+        var cycles3 = findCycles(map);
 
-        return findBiggestEachOther(map).stream()
-                .sorted()
-                .collect(joining(","));
+        var histogram = map.keySet().stream()
+                .collect(groupingBy(k -> cycles3.stream().filter(s -> s.contains(k)).count()));
+
+        var max = histogram.keySet().stream().mapToLong(l -> l).max().orElseThrow();
+
+        return join(",", histogram.get(max));
     }
 
-    private Set<String> findBiggestEachOther(Map<String, Set<String>> map) {
-        var result = new HashMap<String, Set<String>>();
-
-        for (var e : map.entrySet()) {
-            var tmp = new HashSet<String>();
-
-
-            result.put(e.getKey(), tmp);
-        }
-
-        return null;
-    }
-
-    private boolean areConnected(Map<String, Set<String>> map, List<String> nodes) {
-        if (nodes.size() == 2) {
-            return map.get(nodes.get(0)).contains(nodes.get(1));
-        }
-
-        var allButFirst = nodes.subList(1, nodes.size());
-
-        if (map.get(nodes.getFirst()).containsAll(allButFirst)) {
-            return areConnected(map, allButFirst);
-        }
-
-        return false;
-    }
+//    private boolean areConnected(Map<String, Set<String>> map, List<String> nodes) {
+//        if (nodes.size() == 2) {
+//            return map.get(nodes.get(0)).contains(nodes.get(1));
+//        }
+//
+//        var allButFirst = nodes.subList(1, nodes.size());
+//
+//        if (map.get(nodes.getFirst()).containsAll(allButFirst)) {
+//            return areConnected(map, allButFirst);
+//        }
+//
+//        return false;
+//    }
 }

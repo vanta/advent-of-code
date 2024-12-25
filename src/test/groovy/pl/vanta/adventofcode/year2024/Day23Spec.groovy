@@ -35,7 +35,7 @@ class Day23Spec extends BaseSpec2024 {
     }
 
     @Override
-    Long getRealAnswer2() {
-        -1
+    String getRealAnswer2() {
+        'am,bv,ea,gh,is,iy,ml,nj,nl,no,om,tj,yv'
     }
 }
