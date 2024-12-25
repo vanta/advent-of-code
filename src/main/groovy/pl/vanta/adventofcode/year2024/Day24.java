@@ -1,6 +1,6 @@
 package pl.vanta.adventofcode.year2024;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import pl.vanta.adventofcode.ParserSolverGeneric;
 
 import static java.lang.Integer.parseInt;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
 
 public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
@@ -82,12 +83,34 @@ public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
 
     @Override
     public String solve2(Input input) {
-        var map = Map.of("x00", 1, "y00", 1);
+        var map = new TreeMap<String, Integer>();
 
-        int resultZ00 = evaluate(input.wires.get("z00"), input.wires, new HashMap<>(map));
-        int resultZ01 = evaluate(input.wires.get("z01"), input.wires, new HashMap<>(map));
+        int count = (int) input.wires.keySet().stream()
+                .filter(k -> k.startsWith("z"))
+                .count();
 
-        return "";
+        for (int i = 0; i < count; i++) {
+            map.put("x%02d".formatted(i), 0);
+            map.put("y%02d".formatted(i), 0);
+        }
+
+        var expected = 1;
+        var wrongGates = new ArrayList<String>();
+
+        for (int i = 0; i < count; i++) {
+            var newMap = new TreeMap<>(map);
+
+            newMap.put("x%02d".formatted(i), 1);
+            newMap.put("y%02d".formatted(i), 1);
+
+            int result = evaluate(input.wires.get("z%02d".formatted(i)), input.wires, newMap);
+
+            if (result != expected) {
+                wrongGates.add("z%02d".formatted(i));
+            }
+        }
+
+        return wrongGates.stream().sorted().collect(joining(","));
     }
 
     private enum Operation {
