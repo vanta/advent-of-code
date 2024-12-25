@@ -1,6 +1,5 @@
 package pl.vanta.adventofcode.year2024;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -11,7 +10,6 @@ import java.util.regex.Pattern;
 import pl.vanta.adventofcode.ParserSolverGeneric;
 
 import static java.lang.Integer.parseInt;
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
 
 public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
@@ -113,9 +111,9 @@ public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
 //            }
         }
 
-        print("mmk", "", input.wires);
-        print("hqh", "", input.wires);
-        print("vkq", "", input.wires);
+        print("z27", "", 3, input.wires);
+        print("z28", "", 3, input.wires);
+        print("z29", "", 3, input.wires);
 
         return "";
 
@@ -125,7 +123,11 @@ public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
         //z38 - hqh
     }
 
-    private void print(String wireOutput, String indent, Map<String, Wire> wires) {
+    private void print(String wireOutput, String indent, int depth, Map<String, Wire> wires) {
+        if (depth == 0) {
+            return;
+        }
+
         var wire = wires.get(wireOutput);
 
         System.out.println(indent + wire.input1 + " " + wire.op + " " + wire.input2 + " -> " + wire.output);
@@ -134,8 +136,8 @@ public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
             return;
         }
 
-        print(wire.input1, indent + "  ", wires);
-        print(wire.input2, indent + "  ", wires);
+        print(wire.input1, indent + "  ", depth - 1, wires);
+        print(wire.input2, indent + "  ", depth - 1, wires);
     }
 
     private enum Operation {
