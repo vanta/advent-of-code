@@ -94,23 +94,48 @@ public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
             map.put("y%02d".formatted(i), 0);
         }
 
-        var expected = 1;
-        var wrongGates = new ArrayList<String>();
-
+        int expected = 1;
         for (int i = 0; i < count; i++) {
             var newMap = new TreeMap<>(map);
 
             newMap.put("x%02d".formatted(i), 1);
-            newMap.put("y%02d".formatted(i), 1);
+            newMap.put("y%02d".formatted(i), 0);
 
             int result = evaluate(input.wires.get("z%02d".formatted(i)), input.wires, newMap);
-
+//            int resultNext = evaluate(input.wires.get("z%02d".formatted(i+1)), input.wires, newMap);
             if (result != expected) {
-                wrongGates.add("z%02d".formatted(i));
+//                print("z%02d".formatted(i), "", input.wires);
+                System.out.println("z%02d".formatted(i));
             }
+//            if (resultNext != 1) {
+//                //print("z%02d".formatted(i), "", input.wires);
+//                System.out.println("z%02d".formatted(i+1));
+//            }
         }
 
-        return wrongGates.stream().sorted().collect(joining(","));
+        print("mmk", "", input.wires);
+        print("hqh", "", input.wires);
+        print("vkq", "", input.wires);
+
+        return "";
+
+        //z11 - vkq,
+        //z24 - mmk,
+        //z28 - ,
+        //z38 - hqh
+    }
+
+    private void print(String wireOutput, String indent, Map<String, Wire> wires) {
+        var wire = wires.get(wireOutput);
+
+        System.out.println(indent + wire.input1 + " " + wire.op + " " + wire.input2 + " -> " + wire.output);
+
+        if (wire.input1.startsWith("x") || wire.input1.startsWith("y")) {
+            return;
+        }
+
+        print(wire.input1, indent + "  ", wires);
+        print(wire.input2, indent + "  ", wires);
     }
 
     private enum Operation {
