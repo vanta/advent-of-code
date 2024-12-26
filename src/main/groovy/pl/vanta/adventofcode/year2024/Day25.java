@@ -12,6 +12,8 @@ public class Day25 implements ParserSolver<Day25.Input, Integer> {
     @Override
     public Input parse(String lines) {
 
+
+        return new Input();
     }
 
     @Override
@@ -24,4 +26,7 @@ public class Day25 implements ParserSolver<Day25.Input, Integer> {
         return 1;
     }
 
+    public record Input() {
+
+    }
 }
