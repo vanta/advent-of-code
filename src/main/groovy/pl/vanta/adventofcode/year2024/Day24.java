@@ -111,9 +111,7 @@ public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
 //            }
         }
 
-        print("z27", "", 5, input.wires);
         print("z28", "", 5, input.wires);
-        print("z29", "", 5, input.wires);
 
         return "";
 
