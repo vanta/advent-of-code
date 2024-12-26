@@ -11,7 +11,7 @@ class Day25Spec extends BaseSpec2024 {
 
     @Override
     ParserSolverGeneric getParserSolver() {
-        new Day24()
+        new Day25()
     }
 
     @Override
@@ -29,7 +29,7 @@ class Day25Spec extends BaseSpec2024 {
     @Override
     List<Map> getTestData2() {
         [
-                [result: 'z00,z01,z02,z05'],
+                [result: 1],
         ]
     }
 
