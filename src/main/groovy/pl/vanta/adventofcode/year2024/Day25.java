@@ -4,6 +4,7 @@ import java.util.List;
 
 import pl.vanta.adventofcode.ParserSolver;
 
+import static com.google.common.collect.Lists.cartesianProduct;
 import static java.util.Arrays.stream;
 import static java.util.function.Predicate.not;
 
@@ -56,7 +57,22 @@ public class Day25 implements ParserSolver<Day25.Input, Integer> {
 
     @Override
     public Integer solve(Input input) {
-        return 1;
+        var result = cartesianProduct(input.locks, input.keys)
+                .stream()
+                .filter(p -> fits(p.get(0), p.get(1)))
+                .toList();
+
+        return result.size();
+    }
+
+    private boolean fits(int[] lock, int[] key) {
+        for (int i = 0; i < 5; i++) {
+            if (lock[i] + key[i] > 5) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
