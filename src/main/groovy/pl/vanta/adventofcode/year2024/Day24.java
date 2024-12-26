@@ -111,16 +111,17 @@ public class Day24 implements ParserSolverGeneric<Day24.Input, Long, String> {
 //            }
         }
 
-        print("z27", "", 3, input.wires);
-        print("z28", "", 3, input.wires);
-        print("z29", "", 3, input.wires);
+        print("z27", "", 5, input.wires);
+        print("z28", "", 5, input.wires);
+        print("z29", "", 5, input.wires);
 
         return "";
 
         //z11 - vkq,
         //z24 - mmk,
-        //z28 - ,
+        //pvb - qdq,
         //z38 - hqh
+        //hqh,mmk,pvb,qdq,vkq,z11,z24,z38
     }
 
     private void print(String wireOutput, String indent, int depth, Map<String, Wire> wires) {
