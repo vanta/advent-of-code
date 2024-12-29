@@ -160,8 +160,7 @@ public class Day9 implements ParserSolver<String, Long> {
     }
 
     private long checksum2(List<File> rearranged) {
-        int size = rearranged.stream().mapToInt(File::length).sum();
-        var result = new ArrayList<Integer>(size);
+        var result = new ArrayList<Integer>();
 
         for (File file : rearranged) {
             int val = file.id == -1 ? 0 : file.id;
