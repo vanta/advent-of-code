@@ -6,6 +6,7 @@ import java.util.List;
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.lang.Integer.parseInt;
+import static java.util.Arrays.stream;
 import static java.util.Collections.swap;
 
 public class Day9 implements ParserSolver<String, Long> {
@@ -160,19 +161,27 @@ public class Day9 implements ParserSolver<String, Long> {
     }
 
     private long checksum2(List<File> rearranged) {
-        long result = 0;
+        int size = rearranged.stream().mapToInt(File::length).sum();
+        int[] array = new int[size];
+        int index = 0;
 
-        var s = toString(rearranged);
+        for (int i = 0; i < rearranged.size(); i++) {
+            var file = rearranged.get(i);
 
-        for (int i = 0; i < s.length(); i++) {
-            var c = s.charAt(i);
+            int val = file.id == -1 ? 0 : file.id;
 
-            if (c != '.') {
-                result += i * parseInt(String.valueOf(c));
+            for (int j = 0; j < file.length; j++) {
+                array[index + j] = val;
             }
+
+            index += file.length;
         }
 
-        return result;
+        long sum = 0;
+        for (int j = 0; j < array.length; j++) {
+            sum += j * array[j];
+        }
+        return sum;
     }
 
     private String toString(List<File> list) {
