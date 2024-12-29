@@ -1,15 +1,13 @@
 package pl.vanta.adventofcode.year2024;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Collections.swap;
-import static java.util.stream.IntStream.*;
+import static java.util.stream.IntStream.generate;
 
 public class Day9 implements ParserSolver<String, Long> {
 
