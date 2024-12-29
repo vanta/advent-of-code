@@ -1,13 +1,13 @@
 package pl.vanta.adventofcode.year2024;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Collections.swap;
-import static java.util.stream.IntStream.range;
 
 public class Day9 implements ParserSolver<String, Long> {
 
@@ -175,10 +175,11 @@ public class Day9 implements ParserSolver<String, Long> {
             index += file.length;
         }
 
-        return range(0, array.length)
-                .filter(i -> array[i] != 0)
-                .mapToLong(i -> i * array[i])
-                .sum();
+        var list = Arrays.stream(array)
+                .boxed()
+                .toList();
+
+        return checksum(list);
     }
 
     private String toString(List<File> list) {
