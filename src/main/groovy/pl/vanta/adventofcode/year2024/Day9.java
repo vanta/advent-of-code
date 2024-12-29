@@ -1,7 +1,6 @@
 package pl.vanta.adventofcode.year2024;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import pl.vanta.adventofcode.ParserSolver;
@@ -162,24 +161,17 @@ public class Day9 implements ParserSolver<String, Long> {
 
     private long checksum2(List<File> rearranged) {
         int size = rearranged.stream().mapToInt(File::length).sum();
-        int[] array = new int[size];
-        int index = 0;
+        var result = new ArrayList<Integer>(size);
 
         for (File file : rearranged) {
             int val = file.id == -1 ? 0 : file.id;
 
             for (int j = 0; j < file.length; j++) {
-                array[index + j] = val;
+                result.add(val);
             }
-
-            index += file.length;
         }
 
-        var list = Arrays.stream(array)
-                .boxed()
-                .toList();
-
-        return checksum(list);
+        return checksum(result);
     }
 
     private String toString(List<File> list) {
