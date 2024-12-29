@@ -6,8 +6,8 @@ import java.util.List;
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.lang.Integer.parseInt;
-import static java.util.Arrays.stream;
 import static java.util.Collections.swap;
+import static java.util.stream.IntStream.range;
 
 public class Day9 implements ParserSolver<String, Long> {
 
@@ -165,9 +165,7 @@ public class Day9 implements ParserSolver<String, Long> {
         int[] array = new int[size];
         int index = 0;
 
-        for (int i = 0; i < rearranged.size(); i++) {
-            var file = rearranged.get(i);
-
+        for (File file : rearranged) {
             int val = file.id == -1 ? 0 : file.id;
 
             for (int j = 0; j < file.length; j++) {
@@ -177,11 +175,10 @@ public class Day9 implements ParserSolver<String, Long> {
             index += file.length;
         }
 
-        long sum = 0;
-        for (int j = 0; j < array.length; j++) {
-            sum += j * array[j];
-        }
-        return sum;
+        return range(0, array.length)
+                .filter(i -> array[i] != 0)
+                .mapToLong(i -> i * array[i])
+                .sum();
     }
 
     private String toString(List<File> list) {
