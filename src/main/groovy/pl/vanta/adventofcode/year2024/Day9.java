@@ -1,14 +1,11 @@
 package pl.vanta.adventofcode.year2024;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import pl.vanta.adventofcode.ParserSolver;
 
-import static java.lang.Character.*;
 import static java.lang.Character.getNumericValue;
-import static java.lang.Integer.parseInt;
 import static java.util.Collections.swap;
 import static java.util.stream.IntStream.generate;
 import static java.util.stream.IntStream.range;
@@ -34,6 +31,15 @@ public class Day9 implements ParserSolver<String, Long> {
         return checksum(rearranged);
     }
 
+    @Override
+    public Long solve2(String parsedInput) {
+        var mapped = map2(parsedInput);
+
+        var rearranged = rearrange2(mapped);
+
+        return checksum2(rearranged);
+    }
+
     private static List<Integer> map(String parsedInput) {
 //        return range(0, parsedInput.length())
 ////                .mapToObj(i -> {
@@ -49,11 +55,7 @@ public class Day9 implements ParserSolver<String, Long> {
             var v = getNumericValue(parsedInput.charAt(i));
 
             for (int j = 0; j < v; j++) {
-                if (i % 2 == 0) {
-                    result.add(i / 2);
-                } else {
-                    result.add(null);
-                }
+                result.add(i % 2 == 0 ? i / 2 : null);
             }
         }
 
@@ -97,15 +99,6 @@ public class Day9 implements ParserSolver<String, Long> {
                 .mapToLong(i -> i)
                 .boxed()
                 .reduce(0L, Long::sum);
-    }
-
-    @Override
-    public Long solve2(String parsedInput) {
-        var mapped = map2(parsedInput);
-
-        var rearranged = rearrange2(mapped);
-
-        return checksum2(rearranged);
     }
 
     private List<File> map2(String parsedInput) {
