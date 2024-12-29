@@ -46,8 +46,6 @@ public class Day12 implements ParserSolver<char[][], Integer> {
     }
 
     private Region check(Location location, Region region, char[][] parsedInput, Set<Location> visited) {
-        var sizeX = parsedInput.length;
-        var sizeY = parsedInput[0].length;
         var letter = parsedInput[location.x()][location.y()];
 
         visited.add(location);
