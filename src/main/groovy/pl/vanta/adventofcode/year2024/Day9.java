@@ -1,10 +1,12 @@
 package pl.vanta.adventofcode.year2024;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import pl.vanta.adventofcode.ParserSolver;
 
+import static java.lang.Character.*;
 import static java.lang.Character.getNumericValue;
 import static java.lang.Integer.parseInt;
 import static java.util.Collections.swap;
@@ -33,16 +35,22 @@ public class Day9 implements ParserSolver<String, Long> {
     }
 
     private static List<Integer> map(String parsedInput) {
+//        return range(0, parsedInput.length())
+////                .mapToObj(i -> {
+////                    new File(i % 2 == 0 ? i / 2 : -1, getNumericValue(parsedInput.charAt(i)))
+////                })
+//                .flatMap(i -> generate(() -> i % 2 == 0 ? i / 2 : -1).limit(getNumericValue(parsedInput.charAt(i))))
+//                .toList();
+//
+
         var result = new ArrayList<Integer>();
 
         for (int i = 0; i < parsedInput.length(); i++) {
-            var c = parsedInput.charAt(i);
-            var v = parseInt(String.valueOf(c));
-            var val = i / 2;
+            var v = getNumericValue(parsedInput.charAt(i));
 
             for (int j = 0; j < v; j++) {
-                if (val * 2 == i) {
-                    result.add(val);
+                if (i % 2 == 0) {
+                    result.add(i / 2);
                 } else {
                     result.add(null);
                 }
