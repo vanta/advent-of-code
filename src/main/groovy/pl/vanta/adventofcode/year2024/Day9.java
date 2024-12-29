@@ -8,6 +8,7 @@ import pl.vanta.adventofcode.ParserSolver;
 import static java.lang.Integer.parseInt;
 import static java.util.Collections.swap;
 import static java.util.stream.IntStream.generate;
+import static java.util.stream.IntStream.range;
 
 public class Day9 implements ParserSolver<String, Long> {
 
@@ -79,16 +80,14 @@ public class Day9 implements ParserSolver<String, Long> {
     }
 
     private long checksum(List<Integer> rearranged) {
-        long result = 0;
-
-        for (int i = 0; i < rearranged.size(); i++) {
-            var value = rearranged.get(i);
-            if (value != null) {
-                result += i * value;
-            }
-        }
-
-        return result;
+        return range(0, rearranged.size())
+                .map(i -> {
+                    var val = rearranged.get(i);
+                    return val == null ? 0 : i * val;
+                })
+                .mapToLong(i -> i)
+                .boxed()
+                .reduce(0L, Long::sum);
     }
 
     @Override
