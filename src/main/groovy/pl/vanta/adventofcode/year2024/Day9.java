@@ -1,12 +1,15 @@
 package pl.vanta.adventofcode.year2024;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Collections.swap;
+import static java.util.stream.IntStream.*;
 
 public class Day9 implements ParserSolver<String, Long> {
 
@@ -160,15 +163,10 @@ public class Day9 implements ParserSolver<String, Long> {
     }
 
     private long checksum2(List<File> rearranged) {
-        var result = new ArrayList<Integer>();
-
-        for (File file : rearranged) {
-            int val = file.id == -1 ? 0 : file.id;
-
-            for (int j = 0; j < file.length; j++) {
-                result.add(val);
-            }
-        }
+        var result = rearranged.stream()
+                .flatMapToInt(file -> generate(() -> file.id == -1 ? 0 : file.id).limit(file.length))
+                .boxed()
+                .toList();
 
         return checksum(result);
     }
