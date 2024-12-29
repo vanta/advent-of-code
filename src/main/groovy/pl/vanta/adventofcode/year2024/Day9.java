@@ -175,7 +175,7 @@ public class Day9 implements ParserSolver<String, Long> {
         return result;
     }
 
-    String toString(List<File> list) {
+    private String toString(List<File> list) {
         var sb = new StringBuilder();
 
         for (var file : list) {
