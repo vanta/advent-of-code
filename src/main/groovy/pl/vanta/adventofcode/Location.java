@@ -2,6 +2,8 @@ package pl.vanta.adventofcode;
 
 import java.util.Set;
 
+import static java.lang.Math.*;
+
 public record Location(int x, int y) {
     public Location up() {
         return new Location(x - 1, y);
@@ -62,5 +64,9 @@ public record Location(int x, int y) {
 
     public Location move(Offset offset) {
         return new Location(x + offset.x(), y + offset.y());
+    }
+
+    public int taxiDistance(Location other) {
+        return abs(x - other.x) + abs(y - other.y);
     }
 }

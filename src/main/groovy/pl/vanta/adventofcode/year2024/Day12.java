@@ -10,6 +10,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
 
+import static java.lang.Math.min;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.IntStream.range;
 import static pl.vanta.adventofcode.Utils.inBounds;
@@ -72,7 +76,9 @@ public class Day12 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve2(char[][] parsedInput) {
-        return -1;
+        return getRegions(parsedInput).stream()
+                .map(Region::price2)
+                .reduce(0, Integer::sum);
     }
 
     private record Region(AtomicInteger plots, List<Location> borders) {
@@ -82,6 +88,38 @@ public class Day12 implements ParserSolver<char[][], Integer> {
 
         int price() {
             return plots.get() * borders.size();
+        }
+
+        int price2() {
+            var groupedByX = borders.stream()
+                    .collect(groupingBy(Location::x));
+
+            var xs = groupedByX.values().stream()
+                    .map(locations -> locations.stream().map(Location::y).sorted().toList())
+                    .map(this::groupAndCount)
+                    .reduce(0, Integer::sum);
+
+
+            var groupedByY = borders.stream()
+                    .collect(groupingBy(Location::y));
+
+            var ys = groupedByY.values().stream()
+                    .map(locations -> locations.stream().map(Location::x).sorted().toList())
+                    .map(this::groupAndCount)
+                    .reduce(0, Integer::sum);
+
+
+            return plots.get() * min(xs, ys);
+        }
+
+        int groupAndCount(List<Integer> numbers) {
+            return range(0, numbers.size())
+                    .boxed()
+                    .collect(groupingBy(
+                            i -> numbers.get(i) - i,
+                            mapping(numbers::get, toList())
+                    ))
+                    .size();
         }
     }
 
