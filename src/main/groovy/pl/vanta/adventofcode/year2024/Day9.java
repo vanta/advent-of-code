@@ -167,7 +167,6 @@ public class Day9 implements ParserSolver<String, Long> {
         for (int i = 0; i < s.length(); i++) {
             var c = s.charAt(i);
 
-
             if (c != '.') {
                 result += i * parseInt(String.valueOf(c));
             }
