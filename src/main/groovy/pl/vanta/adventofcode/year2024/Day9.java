@@ -92,12 +92,104 @@ public class Day9 implements ParserSolver<String, Long> {
 
     @Override
     public Long solve2(String parsedInput) {
-        var mapped = map(parsedInput);
+        var mapped = map2(parsedInput);
 
-        var rearranged = rearrange(mapped);
+        var rearranged = rearrange2(mapped);
 
-        return checksum(rearranged);
-
+        return checksum2(rearranged);
     }
 
+    private List<File> map2(String parsedInput) {
+        var result = new ArrayList<File>();
+
+        for (int i = 0; i < parsedInput.length(); i++) {
+            var c = parsedInput.charAt(i);
+            var v = parseInt(String.valueOf(c));
+            var val = i / 2;
+
+            if (val * 2 == i) {
+                result.add(new File(val, v));
+            } else {
+                result.add(new File(-1, v));
+            }
+        }
+
+        return result;
+    }
+
+    private List<File> rearrange2(List<File> mapped) {
+        var result = new ArrayList<>(mapped);
+
+        for (int index = mapped.size() - 1; index >= 0; index--) {
+            var file = result.get(index);
+
+//            System.out.println("Checking: " + file);
+
+            if (file.id != -1) {
+                int indexEmpty = findFirstEmptySpace(result, file.length);
+
+                if (indexEmpty >= 0 && indexEmpty < index) {
+                    var empty = result.get(indexEmpty);
+
+                    if (empty.length == file.length) {
+                        result.set(index, empty);
+                        result.set(indexEmpty, file);
+                    } else {
+                        result.set(index, new File(-1, file.length));
+                        result.set(indexEmpty, file);
+                        result.add(indexEmpty + 1, new File(-1, empty.length - file.length));
+                        index++;
+                    }
+
+//                    System.out.println(toString(result));
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private int findFirstEmptySpace(List<File> mapped, int length) {
+        for (int i = 0; i < mapped.size(); i++) {
+            if (mapped.get(i).id == -1 && mapped.get(i).length >= length) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private long checksum2(List<File> rearranged) {
+        long result = 0;
+
+        var s = toString(rearranged);
+
+        for (int i = 0; i < s.length(); i++) {
+            var c = s.charAt(i);
+
+
+            if (c != '.') {
+                result += i * parseInt(String.valueOf(c));
+            }
+        }
+
+        return result;
+    }
+
+    String toString(List<File> list) {
+        var sb = new StringBuilder();
+
+        for (var file : list) {
+            if (file.id == -1) {
+                sb.append(".".repeat(file.length));
+            } else {
+                sb.append(String.valueOf(file.id).repeat(file.length));
+            }
+        }
+
+        return sb.toString();
+    }
+
+    public record File(int id, int length) {
+    }
 }
