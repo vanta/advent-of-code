@@ -5,6 +5,7 @@ import java.util.List;
 
 import pl.vanta.adventofcode.ParserSolver;
 
+import static java.lang.Character.getNumericValue;
 import static java.lang.Integer.parseInt;
 import static java.util.Collections.swap;
 import static java.util.stream.IntStream.generate;
@@ -100,21 +101,9 @@ public class Day9 implements ParserSolver<String, Long> {
     }
 
     private List<File> map2(String parsedInput) {
-        var result = new ArrayList<File>();
-
-        for (int i = 0; i < parsedInput.length(); i++) {
-            var c = parsedInput.charAt(i);
-            var v = parseInt(String.valueOf(c));
-            var val = i / 2;
-
-            if (val * 2 == i) {
-                result.add(new File(val, v));
-            } else {
-                result.add(new File(-1, v));
-            }
-        }
-
-        return result;
+        return range(0, parsedInput.length())
+                .mapToObj(i -> new File(i % 2 == 0 ? i / 2 : -1, getNumericValue(parsedInput.charAt(i))))
+                .toList();
     }
 
     private List<File> rearrange2(List<File> mapped) {
