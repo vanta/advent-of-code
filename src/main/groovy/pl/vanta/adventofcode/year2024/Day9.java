@@ -41,32 +41,17 @@ public class Day9 implements ParserSolver<String, Long> {
     }
 
     private static List<Integer> map(String parsedInput) {
-//        return range(0, parsedInput.length())
-////                .mapToObj(i -> {
-////                    new File(i % 2 == 0 ? i / 2 : -1, getNumericValue(parsedInput.charAt(i)))
-////                })
-//                .flatMap(i -> generate(() -> i % 2 == 0 ? i / 2 : -1).limit(getNumericValue(parsedInput.charAt(i))))
-//                .toList();
-//
-
-        var result = new ArrayList<Integer>();
-
-        for (int i = 0; i < parsedInput.length(); i++) {
-            var v = getNumericValue(parsedInput.charAt(i));
-
-            for (int j = 0; j < v; j++) {
-                result.add(i % 2 == 0 ? i / 2 : null);
-            }
-        }
-
-        return result;
+        return range(0, parsedInput.length())
+                .flatMap(i -> generate(() -> i % 2 == 0 ? i / 2 : -1).limit(getNumericValue(parsedInput.charAt(i))))
+                .boxed()
+                .toList();
     }
 
     private List<Integer> rearrange(List<Integer> mapped) {
         var result = new ArrayList<>(mapped);
 
         for (int i = 0; i < result.size(); i++) {
-            if (result.get(i) == null) {
+            if (result.get(i) == -1) {
                 var lastNumberIndex = findLastNumberIndex(result);
 
                 if (lastNumberIndex < i) {
@@ -82,7 +67,7 @@ public class Day9 implements ParserSolver<String, Long> {
 
     private int findLastNumberIndex(List<Integer> mapped) {
         for (int i = mapped.size() - 1; i >= 0; i--) {
-            if (mapped.get(i) != null) {
+            if (mapped.get(i) != -1) {
                 return i;
             }
         }
@@ -94,7 +79,7 @@ public class Day9 implements ParserSolver<String, Long> {
         return range(0, rearranged.size())
                 .map(i -> {
                     var val = rearranged.get(i);
-                    return val == null ? 0 : i * val;
+                    return val == -1 ? 0 : i * val;
                 })
                 .mapToLong(i -> i)
                 .boxed()
