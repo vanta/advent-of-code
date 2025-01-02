@@ -51,19 +51,13 @@ public class Day12 implements ParserSolver<char[][], Integer> {
         visited.add(location);
         region.plots.add(location);
 
-        location.neighbours().forEach(l -> process(l, region, parsedInput, visited, letter));
+        location.neighbours().stream()
+                .filter(l -> inBounds(l, parsedInput.length, parsedInput[0].length))
+                .filter(l -> parsedInput[l.x()][l.y()] == letter)
+                .filter(not(visited::contains))
+                .forEach(l -> check(l, region, parsedInput, visited));
 
         return region;
-    }
-
-    private void process(Location location, Region region, char[][] parsedInput, Set<Location> visited, char letter) {
-        if (inBounds(location, parsedInput.length, parsedInput[0].length)) {
-            if (parsedInput[location.x()][location.y()] == letter) {
-                if (!visited.contains(location)) {
-                    check(location, region, parsedInput, visited);
-                }
-            }
-        }
     }
 
     @Override
