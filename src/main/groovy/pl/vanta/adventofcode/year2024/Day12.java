@@ -46,14 +46,12 @@ public class Day12 implements ParserSolver<char[][], Integer> {
     }
 
     private Region check(Location location, Region region, char[][] parsedInput, Set<Location> visited) {
-        var letter = parsedInput[location.x()][location.y()];
-
         visited.add(location);
         region.plots.add(location);
 
         location.neighbours().stream()
                 .filter(l -> inBounds(l, parsedInput.length, parsedInput[0].length))
-                .filter(l -> parsedInput[l.x()][l.y()] == letter)
+                .filter(l -> parsedInput[l.x()][l.y()] == region.symbol)
                 .filter(not(visited::contains))
                 .forEach(l -> check(l, region, parsedInput, visited));
 
