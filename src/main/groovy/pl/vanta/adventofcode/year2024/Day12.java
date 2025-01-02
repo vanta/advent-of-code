@@ -89,22 +89,18 @@ public class Day12 implements ParserSolver<char[][], Integer> {
         int price2() {
             var corners = 0;
 
-            var toVisit = new HashSet<>(borders);
+            var toVisit = new ArrayList<>(borders);
 
             while (!toVisit.isEmpty()) {
-                var current = toVisit.iterator().next();
+                var current = toVisit.getFirst();
                 toVisit.remove(current);
 
-                corners += (int) toVisit.stream()
-                        .filter(l -> l.isDiagonalNeighbour(current))
+                corners += (int) borders.stream()
+                        .filter(l -> l.isDiagonalNeighbour(current) || (l.equals(current) && l != current))
                         .count();
             }
 
-            return plots.get() * completeToDivisibleByFour(corners);
+            return plots.get() * corners / 2;
         }
-    }
-
-    private static int completeToDivisibleByFour(int num) {
-        return num + (4 - (num % 4)) % 4;
     }
 }
