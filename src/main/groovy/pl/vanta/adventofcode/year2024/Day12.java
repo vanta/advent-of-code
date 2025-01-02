@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.tuple.Pair;
 import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
 
@@ -91,74 +92,30 @@ public class Day12 implements ParserSolver<char[][], Integer> {
         }
 
         private int cornersCount(Location l) {
-            var allNeighbours = l.allNeighbours().stream().filter(plots::contains).toList();
             var neighbours = l.neighbours().stream().filter(plots::contains).toList();
 
-            if (allNeighbours.size() == 1) {
-                return 2;
-            }
+            var pairs = List.of(
+                    Pair.of(l.left(), l.up()),
+                    Pair.of(l.up(), l.right()),
+                    Pair.of(l.right(), l.down()),
+                    Pair.of(l.down(), l.left())
+            );
 
-            if (allNeighbours.size() == 2) {
-                if (neighbours.size() == 2) {
-                    return ???;
-                }
-                if (neighbours.size() == 1) {
-                    return 2;
-                }
-            }
+            var corners = (int) pairs.stream()
+                    .filter(p ->
+                            !neighbours.contains(p.getLeft()) && !neighbours.contains(p.getRight())
+                                    || neighbours.contains(p.getLeft()) && neighbours.contains(p.getRight()) && !neighbours.contains(diag(l, p.getLeft(), p.getRight()))
+                    )
+                    .count();
 
-            if (allNeighbours.size() == 3) {
-                if (neighbours.size() == 3) {
-                    return 2;
-                }
-                if (neighbours.size() == 2) {
-                    return ???;
-                }
-                if (neighbours.size() == 1) {
-                    return 2;
-                }
-            }
+            return corners;
+        }
 
-            if (allNeighbours.size() == 4) {
-                if (neighbours.size() == 4) {
-                    return 4;
-                }
-                if (neighbours.size() == 1) {
-                    return 0;
-                }
-            }
+        private Location diag(Location location, Location left, Location right) {
+            var o1 = location.offset(left);
+            var o2 = location.offset(right);
 
-            if (allNeighbours.size() == 5) {
-                if (neighbours.size() == 4) {
-                    return 3;
-                }
-                if (neighbours.size() == 3) {
-                    return ???;
-                }
-                if (neighbours.size() == 2) {
-                    return 0;
-                }
-            }
-
-            if (allNeighbours.size() == 6) {
-                if (neighbours.size() == 4) {
-                    return 2;
-                }
-                if (neighbours.size() == 3) {
-                    return 1;
-                }
-                if (neighbours.size() == 2) {
-                    return 0;
-                }
-            }
-
-            if (allNeighbours.size() == 7) {
-                if (neighbours.size() == 4) {
-                    return 1;
-                }
-            }
-
-            return 0;
+            return location.move(o1.add(o2));
         }
     }
 }

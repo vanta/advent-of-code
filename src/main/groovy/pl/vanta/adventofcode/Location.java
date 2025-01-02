@@ -81,4 +81,8 @@ public record Location(int x, int y) {
     public boolean inLine(Location other) {
         return x == other.x || y == other.y;
     }
+
+    public Offset offset(Location other) {
+        return new Offset(other.x - x, other.y - y);
+    }
 }
