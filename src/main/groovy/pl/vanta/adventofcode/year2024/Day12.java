@@ -42,7 +42,7 @@ public class Day12 implements ParserSolver<char[][], Integer> {
         return range(0, parsedInput.length * parsedInput[0].length)
                 .mapToObj(i -> new Location(i / parsedInput.length, i % parsedInput.length))
                 .filter(not(visited::contains))
-                .map(l -> check(l, new Region(parsedInput[l.x()][l.y()]), parsedInput, visited));
+                .map(l -> check(l, new Region(parsedInput[l.x()][l.y()], new ArrayList<>()), parsedInput, visited));
     }
 
     private Region check(Location location, Region region, char[][] parsedInput, Set<Location> visited) {
@@ -69,10 +69,6 @@ public class Day12 implements ParserSolver<char[][], Integer> {
     }
 
     private record Region(char symbol, List<Location> plots) {
-        private Region(char symbol) {
-            this(symbol, new ArrayList<>());
-        }
-
         int price() {
             var perimeter = plots.stream()
                     .map(l -> (int) l.neighbours().stream().filter(not(plots::contains)).count())
