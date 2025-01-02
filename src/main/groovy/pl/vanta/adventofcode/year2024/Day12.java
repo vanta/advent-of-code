@@ -92,8 +92,6 @@ public class Day12 implements ParserSolver<char[][], Integer> {
         }
 
         private int cornersCount(Location l) {
-            var neighbours = l.neighbours().stream().filter(plots::contains).toList();
-
             var pairs = List.of(
                     Pair.of(l.left(), l.up()),
                     Pair.of(l.up(), l.right()),
@@ -103,8 +101,8 @@ public class Day12 implements ParserSolver<char[][], Integer> {
 
             var corners = (int) pairs.stream()
                     .filter(p ->
-                            !neighbours.contains(p.getLeft()) && !neighbours.contains(p.getRight())
-                                    || neighbours.contains(p.getLeft()) && neighbours.contains(p.getRight()) && !neighbours.contains(diag(l, p.getLeft(), p.getRight()))
+                            !plots.contains(p.getLeft()) && !plots.contains(p.getRight())
+                                    || plots.contains(p.getLeft()) && plots.contains(p.getRight()) && !plots.contains(diag(l, p.getLeft(), p.getRight()))
                     )
                     .count();
 
