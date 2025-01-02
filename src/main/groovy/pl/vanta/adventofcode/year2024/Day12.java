@@ -5,13 +5,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toSet;
 import static java.util.stream.IntStream.range;
 import static pl.vanta.adventofcode.Utils.inBounds;
 
@@ -31,26 +30,25 @@ public class Day12 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve(char[][] parsedInput) {
-        return getRegions(parsedInput).stream()
+        return getRegions(parsedInput)
                 .map(Region::price)
                 .reduce(0, Integer::sum);
     }
 
-    private Set<Region> getRegions(char[][] parsedInput) {
+    private Stream<Region> getRegions(char[][] parsedInput) {
         Set<Location> visited = new HashSet<>();
 
         return range(0, parsedInput.length * parsedInput[0].length)
                 .mapToObj(i -> new Location(i / parsedInput.length, i % parsedInput.length))
                 .filter(l -> !visited.contains(l))
-                .map(l -> check(l, new Region(parsedInput[l.x()][l.y()]), parsedInput, visited))
-                .collect(toSet());
+                .map(l -> check(l, new Region(parsedInput[l.x()][l.y()]), parsedInput, visited));
     }
 
     private Region check(Location location, Region region, char[][] parsedInput, Set<Location> visited) {
         var letter = parsedInput[location.x()][location.y()];
 
         visited.add(location);
-        region.plots.incrementAndGet();
+        region.plots.add(location);
 
         location.neighbours().forEach(l -> process(l, region, parsedInput, visited, letter));
 
@@ -73,7 +71,7 @@ public class Day12 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve2(char[][] parsedInput) {
-        return getRegions(parsedInput).stream()
+        return getRegions(parsedInput)
                 .sorted(comparing(Region::symbol))
                 .peek(r -> System.out.println("Checking region: " + r.symbol))
                 .map(Region::price2)
@@ -81,13 +79,13 @@ public class Day12 implements ParserSolver<char[][], Integer> {
                 .reduce(0, Integer::sum);
     }
 
-    private record Region(char symbol, AtomicInteger plots, List<Location> borders) {
+    private record Region(char symbol, List<Location> plots, List<Location> borders) {
         private Region(char symbol) {
-            this(symbol, new AtomicInteger(0), new ArrayList<>());
+            this(symbol, new ArrayList<>(), new ArrayList<>());
         }
 
         int price() {
-            return plots.get() * borders.size();
+            return plots.size() * borders.size();
         }
 
         int price2() {
@@ -104,7 +102,7 @@ public class Day12 implements ParserSolver<char[][], Integer> {
                         .count();
             }
 
-            return plots.get() * corners / 2;
+            return plots.size() * corners / 2;
         }
     }
 }
