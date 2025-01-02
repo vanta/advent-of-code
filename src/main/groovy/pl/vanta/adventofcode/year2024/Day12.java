@@ -12,7 +12,6 @@ import pl.vanta.adventofcode.ParserSolver;
 
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.IntStream.range;
-import static pl.vanta.adventofcode.Utils.generatePairs;
 import static pl.vanta.adventofcode.Utils.inBounds;
 
 public class Day12 implements ParserSolver<char[][], Integer> {
@@ -88,17 +87,20 @@ public class Day12 implements ParserSolver<char[][], Integer> {
         }
 
         int price2() {
-            var allPairs = generatePairs(borders.stream().distinct().toList());
+            var corners = 0;
 
-            var cornerPairs = allPairs.stream()
-                    .filter(p -> p.getLeft().taxiDistance(p.getRight()) == 2
-                            && p.getLeft().x() != p.getRight().x()
-                            && p.getLeft().y() != p.getRight().y())
-//                    .map(p -> Set.of(p.getLeft(), p.getRight()))
-//                    .distinct()
-                    .toList();
+            var toVisit = new HashSet<>(borders);
 
-            return plots.get() * completeToDivisibleByFour(cornerPairs.size());
+            while (!toVisit.isEmpty()) {
+                var current = toVisit.iterator().next();
+                toVisit.remove(current);
+
+                corners += (int) toVisit.stream()
+                        .filter(l -> l.isDiagonalNeighbour(current))
+                        .count();
+            }
+
+            return plots.get() * completeToDivisibleByFour(corners);
         }
     }
 

@@ -69,4 +69,8 @@ public record Location(int x, int y) {
     public int taxiDistance(Location other) {
         return abs(x - other.x) + abs(y - other.y);
     }
+
+    public boolean isDiagonalNeighbour(Location other) {
+        return abs(x - other.x) == 1 && abs(y - other.y) == 1;
+    }
 }
