@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.IntStream.range;
 import static pl.vanta.adventofcode.Utils.inBounds;
@@ -41,7 +42,7 @@ public class Day12 implements ParserSolver<char[][], Integer> {
         return range(0, parsedInput.length * parsedInput[0].length)
                 .mapToObj(i -> new Location(i / parsedInput.length, i % parsedInput.length))
                 .filter(l -> !visited.contains(l))
-                .map(l -> check(l, new Region(), parsedInput, visited))
+                .map(l -> check(l, new Region(parsedInput[l.x()][l.y()]), parsedInput, visited))
                 .collect(toSet());
     }
 
@@ -73,13 +74,16 @@ public class Day12 implements ParserSolver<char[][], Integer> {
     @Override
     public Integer solve2(char[][] parsedInput) {
         return getRegions(parsedInput).stream()
+                .sorted(comparing(Region::symbol))
+                .peek(r -> System.out.println("Checking region: " + r.symbol))
                 .map(Region::price2)
+                .peek(p -> System.out.println("Price: " + p))
                 .reduce(0, Integer::sum);
     }
 
-    private record Region(AtomicInteger plots, List<Location> borders) {
-        private Region() {
-            this(new AtomicInteger(0), new ArrayList<>());
+    private record Region(char symbol, AtomicInteger plots, List<Location> borders) {
+        private Region(char symbol) {
+            this(symbol, new AtomicInteger(0), new ArrayList<>());
         }
 
         int price() {
