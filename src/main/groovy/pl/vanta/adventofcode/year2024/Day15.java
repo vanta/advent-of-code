@@ -15,6 +15,8 @@ public class Day15 implements ParserSolver<Day15.Input, Integer> {
     private static final char BOX = 'O';
     private static final char WALL = '#';
     private static final char EMPTY = '.';
+    private static final char BOX_L = '[';
+    private static final char BOX_R = ']';
 
     @Override
     public int getDayNumber() {
@@ -126,8 +128,8 @@ public class Day15 implements ParserSolver<Day15.Input, Integer> {
                     newMap[i][j * 2] = EMPTY;
                     newMap[i][j * 2 + 1] = EMPTY;
                 } else if (moves[i][j] == BOX) {
-                    newMap[i][j * 2] = '[';
-                    newMap[i][j * 2 + 1] = ']';
+                    newMap[i][j * 2] = BOX_L;
+                    newMap[i][j * 2 + 1] = BOX_R;
                 } else if (moves[i][j] == ROBOT) {
                     newMap[i][j * 2] = ROBOT;
                     newMap[i][j * 2 + 1] = EMPTY;
