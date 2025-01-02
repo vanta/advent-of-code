@@ -25,6 +25,10 @@ public record Location(int x, int y) {
         return Set.of(up(), down(), left(), right());
     }
 
+    public Set<Location> allNeighbours() {
+        return Set.of(up(), down(), left(), right(), up().left(), up().right(), down().left(), down().right());
+    }
+
     public Location move(int dx, int dy) {
         return new Location(x + dx, y + dy);
     }
@@ -72,5 +76,9 @@ public record Location(int x, int y) {
 
     public boolean isDiagonalNeighbour(Location other) {
         return abs(x - other.x) == 1 && abs(y - other.y) == 1;
+    }
+
+    public boolean inLine(Location other) {
+        return x == other.x || y == other.y;
     }
 }

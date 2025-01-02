@@ -71,27 +71,94 @@ public class Day12 implements ParserSolver<char[][], Integer> {
     private record Region(char symbol, List<Location> plots) {
         int price() {
             var perimeter = plots.stream()
-                    .map(l -> (int) l.neighbours().stream().filter(not(plots::contains)).count())
+                    .map(this::neighboursCount)
+                    .map(i -> 4 - i)
                     .reduce(0, Integer::sum);
 
             return perimeter * plots.size();
         }
 
         int price2() {
-            var corners = 0;
+            var corners = plots.stream()
+                    .map(this::cornersCount)
+                    .reduce(0, Integer::sum);
 
-//            var toVisit = new ArrayList<>(borders);
-//
-//            while (!toVisit.isEmpty()) {
-//                var current = toVisit.getFirst();
-//                toVisit.remove(current);
-//
-//                corners += (int) borders.stream()
-//                        .filter(l -> l.isDiagonalNeighbour(current) || (l.equals(current) && l != current))
-//                        .count();
-//            }
+            return corners * plots.size();
+        }
 
-            return plots.size() * corners / 2;
+        private int neighboursCount(Location l) {
+            return (int) l.neighbours().stream().filter(plots::contains).count();
+        }
+
+        private int cornersCount(Location l) {
+            var allNeighbours = l.allNeighbours().stream().filter(plots::contains).toList();
+            var neighbours = l.neighbours().stream().filter(plots::contains).toList();
+
+            if (allNeighbours.size() == 1) {
+                return 2;
+            }
+
+            if (allNeighbours.size() == 2) {
+                if (neighbours.size() == 2) {
+                    return ???;
+                }
+                if (neighbours.size() == 1) {
+                    return 2;
+                }
+            }
+
+            if (allNeighbours.size() == 3) {
+                if (neighbours.size() == 3) {
+                    return 2;
+                }
+                if (neighbours.size() == 2) {
+                    return ???;
+                }
+                if (neighbours.size() == 1) {
+                    return 2;
+                }
+            }
+
+            if (allNeighbours.size() == 4) {
+                if (neighbours.size() == 4) {
+                    return 4;
+                }
+                if (neighbours.size() == 1) {
+                    return 0;
+                }
+            }
+
+            if (allNeighbours.size() == 5) {
+                if (neighbours.size() == 4) {
+                    return 3;
+                }
+                if (neighbours.size() == 3) {
+                    return ???;
+                }
+                if (neighbours.size() == 2) {
+                    return 0;
+                }
+            }
+
+            if (allNeighbours.size() == 6) {
+                if (neighbours.size() == 4) {
+                    return 2;
+                }
+                if (neighbours.size() == 3) {
+                    return 1;
+                }
+                if (neighbours.size() == 2) {
+                    return 0;
+                }
+            }
+
+            if (allNeighbours.size() == 7) {
+                if (neighbours.size() == 4) {
+                    return 1;
+                }
+            }
+
+            return 0;
         }
     }
 }
