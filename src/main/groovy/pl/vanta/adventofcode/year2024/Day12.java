@@ -1,7 +1,6 @@
 package pl.vanta.adventofcode.year2024;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,7 +9,9 @@ import java.util.stream.Stream;
 import pl.vanta.adventofcode.Location;
 import pl.vanta.adventofcode.ParserSolver;
 
+import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
+import static java.util.function.Predicate.not;
 import static java.util.stream.IntStream.range;
 import static pl.vanta.adventofcode.Utils.inBounds;
 
@@ -23,7 +24,7 @@ public class Day12 implements ParserSolver<char[][], Integer> {
 
     @Override
     public char[][] parse(String lines) {
-        return Arrays.stream(lines.split("\n"))
+        return stream(lines.split("\n"))
                 .map(String::toCharArray)
                 .toArray(char[][]::new);
     }
@@ -40,7 +41,7 @@ public class Day12 implements ParserSolver<char[][], Integer> {
 
         return range(0, parsedInput.length * parsedInput[0].length)
                 .mapToObj(i -> new Location(i / parsedInput.length, i % parsedInput.length))
-                .filter(l -> !visited.contains(l))
+                .filter(not(visited::contains))
                 .map(l -> check(l, new Region(parsedInput[l.x()][l.y()]), parsedInput, visited));
     }
 
@@ -61,11 +62,7 @@ public class Day12 implements ParserSolver<char[][], Integer> {
                 if (!visited.contains(location)) {
                     check(location, region, parsedInput, visited);
                 }
-            } else {
-                region.borders.add(location);
             }
-        } else {
-            region.borders.add(location);
         }
     }
 
@@ -79,28 +76,32 @@ public class Day12 implements ParserSolver<char[][], Integer> {
                 .reduce(0, Integer::sum);
     }
 
-    private record Region(char symbol, List<Location> plots, List<Location> borders) {
+    private record Region(char symbol, List<Location> plots) {
         private Region(char symbol) {
-            this(symbol, new ArrayList<>(), new ArrayList<>());
+            this(symbol, new ArrayList<>());
         }
 
         int price() {
-            return plots.size() * borders.size();
+            var perimeter = plots.stream()
+                    .map(l -> (int) l.neighbours().stream().filter(not(plots::contains)).count())
+                    .reduce(0, Integer::sum);
+
+            return perimeter * plots.size();
         }
 
         int price2() {
             var corners = 0;
 
-            var toVisit = new ArrayList<>(borders);
-
-            while (!toVisit.isEmpty()) {
-                var current = toVisit.getFirst();
-                toVisit.remove(current);
-
-                corners += (int) borders.stream()
-                        .filter(l -> l.isDiagonalNeighbour(current) || (l.equals(current) && l != current))
-                        .count();
-            }
+//            var toVisit = new ArrayList<>(borders);
+//
+//            while (!toVisit.isEmpty()) {
+//                var current = toVisit.getFirst();
+//                toVisit.remove(current);
+//
+//                corners += (int) borders.stream()
+//                        .filter(l -> l.isDiagonalNeighbour(current) || (l.equals(current) && l != current))
+//                        .count();
+//            }
 
             return plots.size() * corners / 2;
         }
