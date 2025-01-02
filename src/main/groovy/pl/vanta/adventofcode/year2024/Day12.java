@@ -63,9 +63,7 @@ public class Day12 implements ParserSolver<char[][], Integer> {
     public Integer solve2(char[][] parsedInput) {
         return getRegions(parsedInput)
                 .sorted(comparing(Region::symbol))
-                .peek(r -> System.out.println("Checking region: " + r.symbol))
                 .map(Region::price2)
-                .peek(p -> System.out.println("Price: " + p))
                 .reduce(0, Integer::sum);
     }
 
@@ -99,14 +97,12 @@ public class Day12 implements ParserSolver<char[][], Integer> {
                     Pair.of(l.down(), l.left())
             );
 
-            var corners = (int) pairs.stream()
+            return (int) pairs.stream()
                     .filter(p ->
                             !plots.contains(p.getLeft()) && !plots.contains(p.getRight())
                                     || plots.contains(p.getLeft()) && plots.contains(p.getRight()) && !plots.contains(diag(l, p.getLeft(), p.getRight()))
                     )
                     .count();
-
-            return corners;
         }
 
         private Location diag(Location location, Location left, Location right) {
