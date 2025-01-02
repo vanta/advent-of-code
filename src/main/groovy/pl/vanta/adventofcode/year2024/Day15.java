@@ -46,8 +46,8 @@ public class Day15 implements ParserSolver<Day15.Input, Integer> {
         var position = findRobot(input.map);
 
         for (var move : input.moves.toCharArray()) {
-            print(input.map, position);
-            System.out.println("Move: " + move);
+//            print(input.map, position);
+//            System.out.println("Move: " + move);
             var nexPos = position.move(move);
 
             //wall
@@ -92,7 +92,7 @@ public class Day15 implements ParserSolver<Day15.Input, Integer> {
         var result = new ArrayList<Location>();
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[i].length; j++) {
-                if(map[i][j] == BOX) {
+                if (map[i][j] == BOX) {
                     result.add(new Location(i, j));
                 }
             }
@@ -102,8 +102,40 @@ public class Day15 implements ParserSolver<Day15.Input, Integer> {
     }
 
     @Override
-    public Integer solve2(Day15.Input parsedInput) {
+    public Integer solve2(Day15.Input input) {
+        var newMap = inflate(input.map);
+
+        var position = findRobot(newMap);
+
+        print(newMap, position);
+
+        var newInput = new Input(newMap, input.moves);
+
         return -1;
+    }
+
+    private char[][] inflate(char[][] moves) {
+        char[][] newMap = new char[moves.length][moves[0].length * 2];
+
+        for (int i = 0; i < moves.length; i++) {
+            for (int j = 0; j < moves[i].length; j++) {
+                if (moves[i][j] == WALL) {
+                    newMap[i][j * 2] = WALL;
+                    newMap[i][j * 2 + 1] = WALL;
+                } else if (moves[i][j] == EMPTY) {
+                    newMap[i][j * 2] = EMPTY;
+                    newMap[i][j * 2 + 1] = EMPTY;
+                } else if (moves[i][j] == BOX) {
+                    newMap[i][j * 2] = '[';
+                    newMap[i][j * 2 + 1] = ']';
+                } else if (moves[i][j] == ROBOT) {
+                    newMap[i][j * 2] = ROBOT;
+                    newMap[i][j * 2 + 1] = EMPTY;
+                }
+            }
+        }
+
+        return newMap;
     }
 
     private Location findRobot(char[][] map) {
@@ -111,7 +143,7 @@ public class Day15 implements ParserSolver<Day15.Input, Integer> {
             for (int j = 0; j < map[i].length; j++) {
                 if (map[i][j] == ROBOT) {
                     map[i][j] = EMPTY;
-                    return new Location(j, i);
+                    return new Location(i, j);
                 }
             }
         }
