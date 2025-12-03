@@ -21,7 +21,7 @@ class Day1Spec extends BaseSpec {
 
     @Override
     Integer getExampleAnswer2() {
-        -1
+        6
     }
 
     @Override
