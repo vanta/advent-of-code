@@ -22,21 +22,9 @@ public class Day1 extends BaseDay<List<Integer>, Integer, Integer> {
     @Override
     public Integer solve(List<Integer> parsedInput) {
         return (int) parsedInput.stream()
-                .gather(Gatherers.scan(() -> 50, Day1::rotate))
+                .gather(Gatherers.scan(() -> 50, (a, b) -> (a + b) % 100))
                 .filter(i -> i == 0)
                 .count();
-    }
-
-    private static int rotate(Integer a, Integer b) {
-        var sum = a + b;
-
-        if (sum >= 100) {
-            return sum - 100;
-        } else if (sum < 0) {
-            return sum + 100;
-        } else {
-            return sum;
-        }
     }
 
     @Override
