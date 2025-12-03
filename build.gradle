@@ -5,8 +5,11 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 25
-targetCompatibility = 25
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
 
 dependencies {
     implementation 'org.apache.groovy:groovy:4.0.29'
