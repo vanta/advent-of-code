@@ -13,20 +13,20 @@ abstract class BaseSpec extends Specification {
 
     def 'should solve example data'() {
         expect:
-        parserSolver.solve(parserSolver.parse(parserSolver.getClass().getResource("/2024/example-day${parserSolver.getDayNumber()}.txt").text)) == this.getExampleAnswer1()
+        parserSolver.solve(parserSolver.parse(parserSolver.getClass().getResource("/${parserSolver.getYearNumber()}/example-day${parserSolver.getDayNumber()}.txt").text)) == this.getExampleAnswer1()
     }
 
     def 'should solve real data'() {
         expect:
-        parserSolver.solve(parserSolver.parse(parserSolver.getClass().getResource("/2024/day${parserSolver.getDayNumber()}.txt").text)) == this.getRealAnswer1()
+        parserSolver.solve(parserSolver.parse(parserSolver.getClass().getResource("/${parserSolver.getYearNumber()}/day${parserSolver.getDayNumber()}.txt").text)) == this.getRealAnswer1()
     }
 
     def 'should solve example data - part2'() {
         setup:
-        def resource = parserSolver.getClass().getResource("/2024/example-day${parserSolver.getDayNumber()}-part-two.txt")
+        def resource = parserSolver.getClass().getResource("/${parserSolver.getYearNumber()}/example-day${parserSolver.getDayNumber()}-part-two.txt")
 
         if(!resource) {
-            resource = parserSolver.getClass().getResource("/2024/example-day${parserSolver.getDayNumber()}.txt")
+            resource = parserSolver.getClass().getResource("/${parserSolver.getYearNumber()}/example-day${parserSolver.getDayNumber()}.txt")
         }
 
         expect:
@@ -35,6 +35,6 @@ abstract class BaseSpec extends Specification {
 
     def 'should solve real data - part2'() {
         expect:
-        parserSolver.solve2(parserSolver.parse2(parserSolver.getClass().getResource("/2024/day${parserSolver.getDayNumber()}.txt").text)) == this.getRealAnswer2()
+        parserSolver.solve2(parserSolver.parse2(parserSolver.getClass().getResource("/${parserSolver.getYearNumber()}/day${parserSolver.getDayNumber()}.txt").text)) == this.getRealAnswer2()
     }
 }

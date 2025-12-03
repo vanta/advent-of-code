@@ -1,6 +1,10 @@
 package pl.vanta.adventofcode;
 
 public interface ParserSolverGeneric<T, U, V> {
+    default int getYearNumber() {
+        return 2024;
+    }
+
     int getDayNumber();
 
     T parse(String lines);
