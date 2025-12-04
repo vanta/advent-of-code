@@ -3,9 +3,12 @@ package pl.vanta.adventofcode.year2025;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static java.lang.Integer.parseInt;
+import org.apache.commons.math3.util.Combinations;
 
-public class Day3 extends BaseDay<List<String>, Integer> {
+import static java.lang.Integer.parseInt;
+import static java.util.stream.StreamSupport.stream;
+
+public class Day3 extends BaseDay<List<String>, Long> {
     @Override
     public int getDayNumber() {
         return 3;
@@ -18,9 +21,9 @@ public class Day3 extends BaseDay<List<String>, Integer> {
     }
 
     @Override
-    public Integer solve(List<String> parsedInput) {
+    public Long solve(List<String> parsedInput) {
         return parsedInput.stream()
-                .mapToInt(Day3::maxJoltage)
+                .mapToLong(Day3::maxJoltage)
                 .sum();
     }
 
@@ -40,8 +43,34 @@ public class Day3 extends BaseDay<List<String>, Integer> {
         return max;
     }
 
+    private static long maxJoltage2(String s) {
+        return combinations(s.length(), 12).stream()
+                .map(c -> chooseChars(s, c))
+                .mapToLong(Long::parseLong)
+                .max()
+                .orElseThrow();
+    }
+
+    private static String chooseChars(String s, int[] indices) {
+        var sb = new StringBuilder();
+
+        for (int index : indices) {
+            sb.append(s.charAt(index));
+        }
+
+        return sb.toString();
+    }
+
+    private static List<int[]> combinations(int n, int k) {
+        return stream(new Combinations(n, k).spliterator(), false)
+                .toList();
+    }
+
     @Override
-    public Integer solve2(List<String> parsedInput) {
-        return 0;
+    public Long solve2(List<String> parsedInput) {
+        return parsedInput.stream()
+                .mapToLong(Day3::maxJoltage2)
+                .sum();
+
     }
 }

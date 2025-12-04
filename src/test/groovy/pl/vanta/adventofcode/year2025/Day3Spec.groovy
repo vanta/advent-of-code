@@ -34,7 +34,7 @@ class Day3Spec extends BaseSpec2024 {
     @Override
     List<Map> getTestData2() {
         [
-                [result: 11],
+                [result: 3121910778619],
         ]
     }
 }
