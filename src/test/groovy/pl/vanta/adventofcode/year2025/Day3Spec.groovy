@@ -21,7 +21,7 @@ class Day3Spec extends BaseSpec2024 {
 
     @Override
     Long getRealAnswer2() {
-        11
+        167384358365132
     }
 
     @Override

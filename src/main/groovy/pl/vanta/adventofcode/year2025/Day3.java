@@ -3,62 +3,51 @@ package pl.vanta.adventofcode.year2025;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.apache.commons.math3.util.Combinations;
-
-import static java.lang.Integer.parseInt;
-import static java.util.stream.StreamSupport.stream;
-
-public class Day3 extends BaseDay<List<String>, Long> {
+public class Day3 extends BaseDay<List<int[]>, Long> {
     @Override
     public int getDayNumber() {
         return 3;
     }
 
     @Override
-    public List<String> parse(String lines) {
+    public List<int[]> parse(String lines) {
         return Stream.of(lines.trim().split("\n"))
+                .map(s -> s.chars().map(c -> c - '0').toArray())
                 .toList();
     }
 
     @Override
-    public Long solve(List<String> parsedInput) {
+    public Long solve(List<int[]> parsedInput) {
         return parsedInput.stream()
-                .mapToLong(Day3::maxJoltage)
+                .mapToLong(s -> solve(s, 2))
                 .sum();
     }
 
-    private static long maxJoltage(String s) {
-        return combinations(s.length(), 2).stream()
-                .map(c -> chooseChars(s, c))
-                .mapToLong(Long::parseLong)
-                .max()
-                .orElseThrow();
+    @Override
+    public Long solve2(List<int[]> parsedInput) {
+        return parsedInput.stream()
+                .mapToLong(s -> solve(s, 12))
+                .sum();
     }
 
-    private static long maxJoltage2(String s) {
-        return 0;
-    }
-
-    private static String chooseChars(String s, int[] indices) {
-        var sb = new StringBuilder();
-
-        for (int index : indices) {
-            sb.append(s.charAt(index));
+    private static long solve(int[] digits, int len) {
+        var result = new StringBuilder();
+        int maxIndex = -1;
+        for (int i = 0; i < len; i++) {
+            maxIndex = findMaxIndex(digits, maxIndex + 1, len - i - 1);
+            result.append(digits[maxIndex]);
         }
 
-        return sb.toString();
+        return Long.parseLong(result.toString());
     }
 
-    private static List<int[]> combinations(int n, int k) {
-        return stream(new Combinations(n, k).spliterator(), false)
-                .toList();
-    }
-
-    @Override
-    public Long solve2(List<String> parsedInput) {
-        return parsedInput.stream()
-                .mapToLong(Day3::maxJoltage2)
-                .sum();
-
+    private static int findMaxIndex(int[] digits, int start, int margin) {
+        int max = start;
+        for (int i = start; i < digits.length - margin; i++) {
+            if (digits[i] > digits[max]) {
+                max = i;
+            }
+        }
+        return max;
     }
 }
