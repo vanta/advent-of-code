@@ -27,28 +27,16 @@ public class Day3 extends BaseDay<List<String>, Long> {
                 .sum();
     }
 
-    private static int maxJoltage(String s) {
-        int max = 0;
-
-        for (int i = 0; i < s.length() - 1; i++) {
-            for (int j = i + 1; j < s.length(); j++) {
-                var joltage = parseInt("" + s.charAt(i) + s.charAt(j));
-
-                if (joltage > max) {
-                    max = joltage;
-                }
-            }
-        }
-
-        return max;
-    }
-
-    private static long maxJoltage2(String s) {
-        return combinations(s.length(), 12).stream()
+    private static long maxJoltage(String s) {
+        return combinations(s.length(), 2).stream()
                 .map(c -> chooseChars(s, c))
                 .mapToLong(Long::parseLong)
                 .max()
                 .orElseThrow();
+    }
+
+    private static long maxJoltage2(String s) {
+        return 0;
     }
 
     private static String chooseChars(String s, int[] indices) {
