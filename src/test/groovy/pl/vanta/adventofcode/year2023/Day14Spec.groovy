@@ -1,10 +1,10 @@
 package pl.vanta.adventofcode.year2023
 
 
-import pl.vanta.adventofcode.BaseSpecNew
+import pl.vanta.adventofcode.BaseSpec2023
 import pl.vanta.adventofcode.ParserSolver
 
-class Day14Spec extends BaseSpecNew {
+class Day14Spec extends BaseSpec2023 {
     @Override
     ParserSolver getParserSolver() {
         new Day14()

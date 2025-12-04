@@ -2,7 +2,7 @@ package pl.vanta.adventofcode
 
 import spock.lang.Specification
 
-abstract class BaseSpecNew extends Specification {
+abstract class BaseSpec2023 extends Specification {
     abstract ParserSolver getParserSolver()
     abstract Object getRealAnswer1()
     abstract Object getRealAnswer2()

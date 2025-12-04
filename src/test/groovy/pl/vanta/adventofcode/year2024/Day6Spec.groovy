@@ -1,8 +1,6 @@
 package pl.vanta.adventofcode.year2024
 
-import pl.vanta.adventofcode.BaseSpec
 import pl.vanta.adventofcode.BaseSpec2024
-import pl.vanta.adventofcode.BaseSpecNew
 import pl.vanta.adventofcode.ParserSolver
 
 class Day6Spec extends BaseSpec2024 {
