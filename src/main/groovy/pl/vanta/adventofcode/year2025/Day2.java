@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.LongRange;
-import org.apache.commons.lang3.StringUtils;
 
 import static java.lang.Long.parseLong;
 import static java.util.stream.LongStream.range;
+import static org.apache.commons.lang3.StringUtils.repeat;
 
 public class Day2 extends BaseDay<List<LongRange>, Long> {
     @Override
@@ -50,13 +50,11 @@ public class Day2 extends BaseDay<List<LongRange>, Long> {
     private boolean invalid2(Long number) {
         var s = String.valueOf(number);
 
-        for(int i = 1; i <= s.length() / 2; i++) {
+        for (int i = 1; i <= s.length() / 2; i++) {
             var start = s.substring(0, i);
             var len = s.length() / start.length();
 
-            var newString = StringUtils.repeat(start, len);
-
-            if(newString.equals(s)) {
+            if (repeat(start, len).equals(s)) {
                 return true;
             }
         }
