@@ -4,33 +4,35 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import groovy.lang.IntRange;
+import org.apache.commons.lang3.LongRange;
 
 import static java.lang.Integer.parseInt;
+import static java.lang.Long.*;
 
-public class Day2 extends BaseDay<List<IntRange>, Integer> {
+public class Day2 extends BaseDay<List<LongRange>, Long> {
     @Override
     public int getDayNumber() {
         return 2;
     }
 
     @Override
-    public List<IntRange> parse(String lines) {
+    public List<LongRange> parse(String lines) {
         return Stream.of(lines.split(","))
                 .map(s -> s.split("-"))
-                .map(a -> new IntRange(parseInt(a[0]), parseInt(a[1])))
+                .map(a -> LongRange.of(parseLong(a[0]), parseLong(a[1])))
                 .toList();
     }
 
     @Override
-    public Integer solve(List<IntRange> parsedInput) {
+    public Long solve(List<LongRange> parsedInput) {
 
 
-        return 1;
+        return 1L;
     }
 
     @Override
-    public Integer solve2(List<IntRange> parsedInput) {
+    public Long solve2(List<LongRange> parsedInput) {
 
-        return 1;
+        return 1L;
     }
 }
