@@ -32,12 +32,21 @@ public class Day2 extends BaseDay<List<LongRange>, Long> {
 
     private List<Long> findRepeats(LongRange range) {
         return range(range.getMinimum(), range.getMaximum() + 1)
-                .filter(this::repeats)
+                .mapToObj(String::valueOf)
+                .filter(s -> s.length() % 2 == 0)
+                .filter(s -> s.substring(0, s.length() / 2).equals(s.substring(s.length() / 2)))
+                .map(Long::parseLong)
+                .toList();
+    }
+
+    private List<Long> findRepeats2(LongRange range) {
+        return range(range.getMinimum(), range.getMaximum() + 1)
+                .filter(this::repeats2)
                 .boxed()
                 .toList();
     }
 
-    private boolean repeats(Long number) {
+    private boolean repeats2(Long number) {
         var s = String.valueOf(number);
         if (s.length() % 2 == 0) {
             return s.substring(0, s.length() / 2).equals(s.substring(s.length() / 2));
@@ -47,7 +56,9 @@ public class Day2 extends BaseDay<List<LongRange>, Long> {
 
     @Override
     public Long solve2(List<LongRange> parsedInput) {
-
-        return 1L;
+        return parsedInput.stream()
+                .map(this::findRepeats2)
+                .flatMap(List::stream)
+                .reduce(0L, Long::sum);
     }
 }
