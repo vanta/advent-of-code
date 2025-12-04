@@ -1,5 +1,6 @@
 package pl.vanta.adventofcode.year2025;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -30,20 +31,23 @@ public class Day2 extends BaseDay<List<LongRange>, Long> {
     }
 
     private List<Long> findRepeats(LongRange range) {
-        var result = new java.util.ArrayList<Long>();
+        var result = new ArrayList<Long>();
 
         for (long i = range.getMinimum(); i <= range.getMaximum(); i++) {
-            var s = String.valueOf(i);
-            if (s.length() % 2 == 0) {
-                var h1 = s.substring(0, s.length() / 2);
-                var h2 = s.substring(s.length() / 2);
-                if(h1.equals(h2)){
-                    result.add(i);
-                }
+            if (repeats(i)) {
+                result.add(i);
             }
         }
 
         return result;
+    }
+
+    private boolean repeats(Long number) {
+        var s = String.valueOf(number);
+        if (s.length() % 2 == 0) {
+            return s.substring(0, s.length() / 2).equals(s.substring(s.length() / 2));
+        }
+        return false;
     }
 
     @Override
