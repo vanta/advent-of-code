@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.LongRange;
+import org.apache.commons.lang3.StringUtils;
 
 import static java.lang.Long.parseLong;
 import static java.util.stream.LongStream.range;
@@ -41,16 +42,25 @@ public class Day2 extends BaseDay<List<LongRange>, Long> {
 
     private List<Long> findRepeats2(LongRange range) {
         return range(range.getMinimum(), range.getMaximum() + 1)
-                .filter(this::repeats2)
+                .filter(this::invalid2)
                 .boxed()
                 .toList();
     }
 
-    private boolean repeats2(Long number) {
+    private boolean invalid2(Long number) {
         var s = String.valueOf(number);
-        if (s.length() % 2 == 0) {
-            return s.substring(0, s.length() / 2).equals(s.substring(s.length() / 2));
+
+        for(int i = 1; i <= s.length() / 2; i++) {
+            var start = s.substring(0, i);
+            var len = s.length() / start.length();
+
+            var newString = StringUtils.repeat(start, len);
+
+            if(newString.equals(s)) {
+                return true;
+            }
         }
+
         return false;
     }
 
