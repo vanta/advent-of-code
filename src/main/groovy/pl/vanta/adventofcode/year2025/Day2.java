@@ -1,12 +1,12 @@
 package pl.vanta.adventofcode.year2025;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.LongRange;
 
 import static java.lang.Long.parseLong;
+import static java.util.stream.LongStream.range;
 
 public class Day2 extends BaseDay<List<LongRange>, Long> {
     @Override
@@ -31,15 +31,10 @@ public class Day2 extends BaseDay<List<LongRange>, Long> {
     }
 
     private List<Long> findRepeats(LongRange range) {
-        var result = new ArrayList<Long>();
-
-        for (long i = range.getMinimum(); i <= range.getMaximum(); i++) {
-            if (repeats(i)) {
-                result.add(i);
-            }
-        }
-
-        return result;
+        return range(range.getMinimum(), range.getMaximum() + 1)
+                .filter(this::repeats)
+                .boxed()
+                .toList();
     }
 
     private boolean repeats(Long number) {
