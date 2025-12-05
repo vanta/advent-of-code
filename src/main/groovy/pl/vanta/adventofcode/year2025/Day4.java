@@ -1,6 +1,7 @@
 package pl.vanta.adventofcode.year2025;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -20,7 +21,32 @@ public class Day4 extends BaseDay<char[][], Integer> {
 
     @Override
     public Integer solve(char[][] parsedInput) {
-        var toBeRemoved = new ArrayList<>();
+        return getToBeRemoved(parsedInput).size();
+    }
+
+    @Override
+    public Integer solve2(char[][] parsedInput) {
+        var end = false;
+        var removed = 0;
+
+        while (!end) {
+            var toBeRemoved = getToBeRemoved(parsedInput);
+            if (toBeRemoved.isEmpty()) {
+                end = true;
+            }
+
+            toBeRemoved.forEach(pair ->
+                    parsedInput[pair.getLeft()][pair.getRight()] = '.'
+            );
+
+            removed += toBeRemoved.size();
+        }
+
+        return removed;
+    }
+
+    private Set<Pair<Integer, Integer>> getToBeRemoved(char[][] parsedInput) {
+        var toBeRemoved = new HashSet<Pair<Integer, Integer>>();
 
         for (int i = 0; i < parsedInput.length; i++) {
             for (int j = 0; j < parsedInput[i].length; j++) {
@@ -31,13 +57,7 @@ public class Day4 extends BaseDay<char[][], Integer> {
                 }
             }
         }
-
-        return toBeRemoved.size();
-    }
-
-    @Override
-    public Integer solve2(char[][] parsedInput) {
-        return 0;
+        return toBeRemoved;
     }
 
     private int countNeighbors(char[][] parsedInput, int i, int j) {
