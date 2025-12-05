@@ -1,6 +1,5 @@
 package pl.vanta.adventofcode.year2025;
 
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.LongRange;
@@ -17,11 +16,11 @@ public class Day5 extends BaseDay<Day5.Input, Long> {
 
     @Override
     public Day5.Input parse(String input) {
-        List<String> lines = input.lines()
+        var lines = input.lines()
                 .map(String::trim)
                 .toList();
 
-        int blankIndex = lines.indexOf("");
+        var blankIndex = lines.indexOf("");
 
         var ranges = lines.subList(0, blankIndex).stream()
                 .map(s -> s.split("-"))
