@@ -1,10 +1,13 @@
 package pl.vanta.adventofcode.year2025;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
+
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.IntStream.range;
+import static pl.vanta.adventofcode.Gatherers.cartesian;
 
 public class Day4 extends BaseDay<char[][], Integer> {
     @Override
@@ -46,18 +49,13 @@ public class Day4 extends BaseDay<char[][], Integer> {
     }
 
     private Set<Pair<Integer, Integer>> getToBeRemoved(char[][] parsedInput) {
-        var toBeRemoved = new HashSet<Pair<Integer, Integer>>();
+        var si = range(0, parsedInput.length).boxed();
+        var sj = range(0, parsedInput.length).boxed();
 
-        for (int i = 0; i < parsedInput.length; i++) {
-            for (int j = 0; j < parsedInput[i].length; j++) {
-                if (parsedInput[i][j] == '@') {
-                    if (countNeighbors(parsedInput, i, j) < 4) {
-                        toBeRemoved.add(Pair.of(i, j));
-                    }
-                }
-            }
-        }
-        return toBeRemoved;
+        return si.gather(cartesian(sj, Pair::of))
+                .filter(pair -> parsedInput[pair.getLeft()][pair.getRight()] == '@')
+                .filter(pair -> countNeighbors(parsedInput, pair.getLeft(), pair.getRight()) < 4)
+                .collect(toSet());
     }
 
     private int countNeighbors(char[][] parsedInput, int i, int j) {
@@ -70,8 +68,7 @@ public class Day4 extends BaseDay<char[][], Integer> {
         if (i > 0 && j > 0 && parsedInput[i - 1][j - 1] == '@') result++; // up-left
         if (i > 0 && j < parsedInput[i].length - 1 && parsedInput[i - 1][j + 1] == '@') result++; // up-right
         if (i < parsedInput.length - 1 && j > 0 && parsedInput[i + 1][j - 1] == '@') result++; // down-left
-        if (i < parsedInput.length - 1 && j < parsedInput[i].length - 1 && parsedInput[i + 1][j + 1] == '@')
-            result++; // down-right
+        if (i < parsedInput.length - 1 && j < parsedInput[i].length - 1 && parsedInput[i + 1][j + 1] == '@') result++; // down-right
 
         return result;
     }
