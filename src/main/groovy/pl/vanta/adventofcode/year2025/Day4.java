@@ -29,7 +29,7 @@ public class Day4 extends BaseDay<char[][], Integer> {
         var end = false;
         var removed = 0;
 
-        while (!end) {
+        do {
             var toBeRemoved = getToBeRemoved(parsedInput);
             if (toBeRemoved.isEmpty()) {
                 end = true;
@@ -40,7 +40,7 @@ public class Day4 extends BaseDay<char[][], Integer> {
             );
 
             removed += toBeRemoved.size();
-        }
+        } while (!end);
 
         return removed;
     }
