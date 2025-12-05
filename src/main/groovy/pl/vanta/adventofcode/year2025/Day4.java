@@ -1,6 +1,9 @@
 package pl.vanta.adventofcode.year2025;
 
+import java.util.ArrayList;
 import java.util.stream.Stream;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 public class Day4 extends BaseDay<char[][], Integer> {
     @Override
@@ -17,19 +20,24 @@ public class Day4 extends BaseDay<char[][], Integer> {
 
     @Override
     public Integer solve(char[][] parsedInput) {
-        var result = 0;
+        var toBeRemoved = new ArrayList<>();
 
         for (int i = 0; i < parsedInput.length; i++) {
             for (int j = 0; j < parsedInput[i].length; j++) {
                 if (parsedInput[i][j] == '@') {
                     if (countNeighbors(parsedInput, i, j) < 4) {
-                        result++;
+                        toBeRemoved.add(Pair.of(i, j));
                     }
                 }
             }
         }
 
-        return result;
+        return toBeRemoved.size();
+    }
+
+    @Override
+    public Integer solve2(char[][] parsedInput) {
+        return 0;
     }
 
     private int countNeighbors(char[][] parsedInput, int i, int j) {
@@ -42,14 +50,10 @@ public class Day4 extends BaseDay<char[][], Integer> {
         if (i > 0 && j > 0 && parsedInput[i - 1][j - 1] == '@') result++; // up-left
         if (i > 0 && j < parsedInput[i].length - 1 && parsedInput[i - 1][j + 1] == '@') result++; // up-right
         if (i < parsedInput.length - 1 && j > 0 && parsedInput[i + 1][j - 1] == '@') result++; // down-left
-        if (i < parsedInput.length - 1 && j < parsedInput[i].length - 1 && parsedInput[i + 1][j + 1] == '@') result++; // down-right
+        if (i < parsedInput.length - 1 && j < parsedInput[i].length - 1 && parsedInput[i + 1][j + 1] == '@')
+            result++; // down-right
 
         return result;
-    }
-
-    @Override
-    public Integer solve2(char[][] parsedInput) {
-        return 0;
     }
 
 }
