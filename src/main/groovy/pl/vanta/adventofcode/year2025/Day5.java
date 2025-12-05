@@ -7,8 +7,9 @@ import org.apache.commons.lang3.LongRange;
 
 import static java.lang.Long.parseLong;
 import static java.util.stream.Collectors.toSet;
+import static java.util.stream.LongStream.range;
 
-public class Day5 extends BaseDay<Day5.Input, Integer> {
+public class Day5 extends BaseDay<Day5.Input, Long> {
     @Override
     public int getDayNumber() {
         return 5;
@@ -36,16 +37,18 @@ public class Day5 extends BaseDay<Day5.Input, Integer> {
     }
 
     @Override
-    public Integer solve(Day5.Input parsedInput) {
-        return (int) parsedInput.ids.stream()
+    public Long solve(Day5.Input parsedInput) {
+        return parsedInput.ids.stream()
                 .filter(id -> parsedInput.ranges.stream().anyMatch(r -> r.contains(id)))
                 .count();
     }
 
     @Override
-    public Integer solve2(Day5.Input parsedInput) {
-
-        return 0;
+    public Long solve2(Day5.Input parsedInput) {
+        return parsedInput.ranges.stream()
+                .flatMap(r -> range(r.getMinimum(), r.getMaximum() + 1).boxed())
+                .distinct()
+                .count();
     }
 
     public record Input(Set<LongRange> ranges, Set<Long> ids) {
