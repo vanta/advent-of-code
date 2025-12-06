@@ -30,7 +30,30 @@ public class Day6 extends BaseDay<Day6.Input, Long> {
 
     @Override
     public Long solve(Day6.Input parsedInput) {
-        return 0L;
+        int rows = parsedInput.numbers.size();
+        int cols = parsedInput.operations.size();
+
+        long allResults = 0;
+
+        for (int j = 0; j < cols; j++) {
+            var op = parsedInput.operations.get(j);
+            long result = op == '+' ? 0 : 1;;
+
+            for (int i = 0; i < rows; i++) {
+                var val = parsedInput.numbers.get(i).get(j);
+
+                result = switch (op) {
+                    case '+' -> result + val;
+                    case '*' -> result * val;
+                    default -> throw new IllegalArgumentException("Unknown operation: " + op);
+                };
+            }
+
+            allResults += result;
+
+        }
+
+        return allResults;
     }
 
     @Override
