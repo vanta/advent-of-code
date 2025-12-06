@@ -37,7 +37,7 @@ public class Day6 extends BaseDay<Day6.Input, Long> {
 
         for (int j = 0; j < cols; j++) {
             var op = parsedInput.operations.get(j);
-            long result = op == '+' ? 0 : 1;;
+            long result = op == '+' ? 0 : 1;
 
             for (int i = 0; i < rows; i++) {
                 var val = parsedInput.numbers.get(i).get(j);
@@ -50,7 +50,6 @@ public class Day6 extends BaseDay<Day6.Input, Long> {
             }
 
             allResults += result;
-
         }
 
         return allResults;

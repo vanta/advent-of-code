@@ -16,7 +16,7 @@ class Day6Spec extends BaseSpec2024 {
 
     @Override
     Long getRealAnswer1() {
-        -1
+        4309240495780
     }
 
     @Override
@@ -34,7 +34,7 @@ class Day6Spec extends BaseSpec2024 {
     @Override
     List<Map> getTestData2() {
         [
-                [result: -1],
+                [result: 3263827],
         ]
     }
 }
