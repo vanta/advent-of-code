@@ -3,13 +3,13 @@ package pl.vanta.adventofcode.year2025;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Gatherers;
 
 import org.apache.commons.lang3.LongRange;
 import org.apache.commons.lang3.Range;
 
 import static java.lang.Long.parseLong;
-import static java.lang.Math.*;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.util.Comparator.comparingLong;
 import static java.util.stream.Collectors.toSet;
 
@@ -57,17 +57,17 @@ public class Day5 extends BaseDay<Day5.Input, Long> {
         do {
             currentRanges = new ArrayList<>(newRanges);
             newRanges.clear();
-            for(int i = 0; i < currentRanges.size(); i++) {
+            for (int i = 0; i < currentRanges.size(); i++) {
                 merged = false;
-                for(int j = i + 1; j < currentRanges.size(); j++) {
-                    if(overlap(currentRanges.get(i), currentRanges.get(j))) {
+                for (int j = i + 1; j < currentRanges.size(); j++) {
+                    if (overlap(currentRanges.get(i), currentRanges.get(j))) {
                         newRanges.add(merge(currentRanges.get(i), currentRanges.get(j)));
                         merged = true;
                         i += 1;
                         break;
                     }
                 }
-                if(!merged) {
+                if (!merged) {
                     newRanges.add(currentRanges.get(i));
                 }
             }
