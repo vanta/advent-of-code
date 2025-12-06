@@ -65,8 +65,6 @@ public class Day6 extends BaseDay<Set<Day6.Column>, Long> {
                 .reduce(0L, Long::sum);
     }
 
-    public record Column(List<Long> numbers,
-                         Long identity,
-                         BinaryOperator<Long> function) {
+    public record Column(List<Long> numbers, Long identity, BinaryOperator<Long> function) {
     }
 }
