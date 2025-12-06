@@ -1,23 +1,26 @@
 package pl.vanta.adventofcode.year2025;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.BinaryOperator;
 
-public class Day6 extends BaseDay<Day6.Input, Long> {
+public class Day6 extends BaseDay<Set<Day6.Column>, Long> {
     @Override
     public int getDayNumber() {
         return 6;
     }
 
     @Override
-    public Day6.Input parse(String input) {
+    public Set<Day6.Column> parse(String input) {
         var lines = input.lines()
                 .map(String::trim)
                 .toList();
 
         var numbers = lines.subList(0, lines.size() - 1).stream()
                 .map(line -> Arrays.stream(line.split("\\s+"))
-                        .map(Integer::parseInt)
+                        .map(Long::parseLong)
                         .toList())
                 .toList();
 
@@ -25,41 +28,45 @@ public class Day6 extends BaseDay<Day6.Input, Long> {
                 .map(s -> s.charAt(0))
                 .toList();
 
-        return new Input(numbers, operations);
-    }
+        var result = new HashSet<Day6.Column>();
 
-    @Override
-    public Long solve(Day6.Input parsedInput) {
-        int rows = parsedInput.numbers.size();
-        int cols = parsedInput.operations.size();
+        for (int i = 0; i < operations.size(); i++) {
+            var nums = getColumn(numbers, i);
 
-        long allResults = 0;
+            var column = switch (operations.get(i)) {
+                case '+' -> new Column(nums, 0L, Long::sum);
+                case '*' -> new Column(nums, 1L, (a, b) -> a * b);
+                default -> throw new IllegalArgumentException("Unknown operation");
+            };
 
-        for (int j = 0; j < cols; j++) {
-            var op = parsedInput.operations.get(j);
-            long result = op == '+' ? 0 : 1;
-
-            for (int i = 0; i < rows; i++) {
-                var val = parsedInput.numbers.get(i).get(j);
-
-                result = switch (op) {
-                    case '+' -> result + val;
-                    case '*' -> result * val;
-                    default -> throw new IllegalArgumentException("Unknown operation: " + op);
-                };
-            }
-
-            allResults += result;
+            result.add(column);
         }
 
-        return allResults;
+        return result;
+    }
+
+    private static List<Long> getColumn(List<List<Long>> numbers, int i) {
+        return numbers.stream()
+                .map(row -> row.get(i))
+                .toList();
     }
 
     @Override
-    public Long solve2(Day6.Input parsedInput) {
-        return 0L;
+    public Long solve(Set<Day6.Column> parsedInput) {
+        return parsedInput.stream()
+                .map(c -> c.numbers.stream().reduce(c.identity, c.function))
+                .reduce(0L, Long::sum);
     }
 
-    public record Input(List<List<Integer>> numbers, List<Character> operations) {
+    @Override
+    public Long solve2(Set<Day6.Column> parsedInput) {
+        return parsedInput.stream()
+                .map(c -> c.numbers.stream().reduce(c.identity, c.function))
+                .reduce(0L, Long::sum);
+    }
+
+    public record Column(List<Long> numbers,
+                         Long identity,
+                         BinaryOperator<Long> function) {
     }
 }
