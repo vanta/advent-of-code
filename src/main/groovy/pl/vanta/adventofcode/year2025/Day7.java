@@ -6,6 +6,7 @@ import java.util.Set;
 
 import pl.vanta.adventofcode.Utils;
 
+import static com.google.common.collect.Sets.union;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
 import static pl.vanta.adventofcode.Utils.indexesOf;
@@ -56,20 +57,16 @@ public class Day7 extends BaseDay<List<String>, Integer> {
             return Set.of(path.stream().map(String::valueOf).collect(joining()));
         }
 
-        var line = list.getFirst();
-        var paths = new HashSet<String>();
-        var indexes = indexesOf(line, '^');
         var sublist = list.subList(1, list.size());
-
         var index = path.getLast();
 
-        if (indexes.contains(index)) {
-            paths.addAll(move(sublist, Utils.add(path, index - 1)));
-            paths.addAll(move(sublist, Utils.add(path, index + 1)));
+        if (indexesOf(list.getFirst(), '^').contains(index)) {
+            return union(
+                    move(sublist, Utils.add(path, index - 1)),
+                    move(sublist, Utils.add(path, index + 1))
+            );
         } else {
-            paths.addAll(move(sublist, Utils.add(path, index)));
+            return move(sublist, Utils.add(path, index));
         }
-
-        return paths;
     }
 }
