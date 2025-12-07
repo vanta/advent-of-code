@@ -130,4 +130,10 @@ public class Utils {
         
         return result;
     }
+
+    public static <T> List<T> add(List<T> list, T element) {
+        var newList = new ArrayList<>(list);
+        newList.add(element);
+        return newList;
+    }
 }
