@@ -91,7 +91,7 @@ public class Utils {
         return groups;
     }
 
-    public static char[][] transpose(char[][] input) {
+    public static char[][] transposeClockwise(char[][] input) {
         var result = new char[input[0].length][input.length];
 
         for (int i = 0; i < input.length; i++) {
@@ -100,6 +100,17 @@ public class Utils {
             }
         }
 
+        return result;
+    }
+
+    public static char[][] transposeCounterClockwise(char[][] input) {
+        var result = new char[input[0].length][input.length];
+
+        for (int i = 0; i < input.length; i++) {
+            for (int j = 0; j < input[i].length; j++) {
+                result[input[0].length - j - 1][i] = input[i][j];
+            }
+        }
         return result;
     }
 

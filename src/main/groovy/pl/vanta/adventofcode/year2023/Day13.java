@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 import pl.vanta.adventofcode.ParserSolver;
 
 import static java.lang.Math.min;
-import static pl.vanta.adventofcode.Utils.transpose;
+import static pl.vanta.adventofcode.Utils.transposeClockwise;
 
 public class Day13 implements ParserSolver<List<char[][]>, Integer> {
 
@@ -51,7 +51,7 @@ public class Day13 implements ParserSolver<List<char[][]>, Integer> {
         if (rows > 0) {
             return 100 * rows;
         } else {
-            return getRows(transpose(s), differentBy);
+            return getRows(transposeClockwise(s), differentBy);
         }
     }
 

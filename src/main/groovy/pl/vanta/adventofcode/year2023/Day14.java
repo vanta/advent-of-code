@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static pl.vanta.adventofcode.Utils.transpose;
+import static pl.vanta.adventofcode.Utils.transposeClockwise;
 
 public class Day14 implements ParserSolver<char[][], Integer> {
     private static final int CYCLES = 1_000_000_000;
@@ -25,7 +25,7 @@ public class Day14 implements ParserSolver<char[][], Integer> {
 
     @Override
     public Integer solve(char[][] parsedInput) {
-        return count(tiltUp(transpose(transpose(transpose(transpose(parsedInput))))));
+        return count(tiltUp(transposeClockwise(transposeClockwise(transposeClockwise(transposeClockwise(parsedInput))))));
     }
 
     @Override
@@ -47,7 +47,7 @@ public class Day14 implements ParserSolver<char[][], Integer> {
                 cache.put(key, i);
             }
 
-            parsedInput = transpose(tiltUp(transpose(tiltUp(transpose(tiltUp(transpose(tiltUp(parsedInput))))))));
+            parsedInput = transposeClockwise(tiltUp(transposeClockwise(tiltUp(transposeClockwise(tiltUp(transposeClockwise(tiltUp(parsedInput))))))));
         }
 
         return parsedInput;
