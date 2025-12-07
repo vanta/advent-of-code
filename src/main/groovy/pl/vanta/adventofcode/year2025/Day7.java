@@ -49,7 +49,6 @@ public class Day7 extends BaseDay<List<String>, Integer> {
 
     private static Set<String> move(List<String> list, String path, int index) {
         if (list.isEmpty()) {
-//            System.out.println(path);
             return Set.of(path);
         }
 
