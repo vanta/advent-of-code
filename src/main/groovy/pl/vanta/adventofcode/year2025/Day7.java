@@ -1,7 +1,5 @@
 package pl.vanta.adventofcode.year2025;
 
-import java.util.BitSet;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,7 +26,7 @@ public class Day7 extends BaseDay<List<String>, Integer> {
 
         var beams = new boolean[parsedInput.getFirst().length()];
         beams[parsedInput.getFirst().indexOf('S')] = true;
-        
+
         for (String line : parsedInput.subList(1, parsedInput.size())) {
             for (int i = 0; i < line.length(); i++) {
                 if (beams[i] && line.charAt(i) == '^') {
