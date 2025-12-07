@@ -1,5 +1,6 @@
 package pl.vanta.adventofcode.year2025;
 
+import java.util.BitSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,16 +25,17 @@ public class Day7 extends BaseDay<List<String>, Integer> {
     @Override
     public Integer solve(List<String> parsedInput) {
         int splits = 0;
-        var beams = new HashSet<Integer>();
-        beams.add(parsedInput.getFirst().indexOf('S'));
 
+        var beams = new boolean[parsedInput.getFirst().length()];
+        beams[parsedInput.getFirst().indexOf('S')] = true;
+        
         for (String line : parsedInput.subList(1, parsedInput.size())) {
-            for (int index : indexesOf(line, '^')) {
-                if (beams.contains(index)) {
+            for (int i = 0; i < line.length(); i++) {
+                if (beams[i] && line.charAt(i) == '^') {
                     splits++;
-                    beams.remove(index);
-                    beams.add(index - 1);
-                    beams.add(index + 1);
+                    beams[i] = false;
+                    beams[i - 1] = true;
+                    beams[i + 1] = true;
                 }
             }
         }
@@ -49,6 +51,7 @@ public class Day7 extends BaseDay<List<String>, Integer> {
 
     private static Set<String> move(List<String> list, String path, int index) {
         if (list.isEmpty()) {
+//            System.out.println(path);
             return Set.of(path);
         }
 
