@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import pl.vanta.adventofcode.Utils;
+import static pl.vanta.adventofcode.Utils.indexesOf;
 
 public class Day7 extends BaseDay<List<String>, Integer> {
     @Override
@@ -24,11 +24,10 @@ public class Day7 extends BaseDay<List<String>, Integer> {
         int splits = 0;
         var beams = new HashSet<Integer>();
         beams.add(start);
-        
-        for(String line : parsedInput.subList(1, parsedInput.size())) {
-            var indexes = Utils.indexesOf(line, '^');
-            for(int index : indexes) {
-                if(beams.contains(index)) {
+
+        for (String line : parsedInput.subList(1, parsedInput.size())) {
+            for (int index : indexesOf(line, '^')) {
+                if (beams.contains(index)) {
                     splits++;
                     beams.remove(index);
                     beams.add(index - 1);
@@ -36,7 +35,7 @@ public class Day7 extends BaseDay<List<String>, Integer> {
                 }
             }
         }
-        
+
         return splits;
     }
 
