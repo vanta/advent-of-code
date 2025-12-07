@@ -7,7 +7,7 @@ import static com.google.common.collect.Sets.union;
 import static java.util.Arrays.stream;
 import static pl.vanta.adventofcode.Utils.indexesOf;
 
-public class Day7 extends BaseDay<List<String>, Integer> {
+public class Day7 extends BaseDay<List<String>, Long> {
     @Override
     public int getDayNumber() {
         return 7;
@@ -21,8 +21,8 @@ public class Day7 extends BaseDay<List<String>, Integer> {
     }
 
     @Override
-    public Integer solve(List<String> parsedInput) {
-        int splits = 0;
+    public Long solve(List<String> parsedInput) {
+        var splits = 0L;
 
         var beams = new boolean[parsedInput.getFirst().length()];
         beams[parsedInput.getFirst().indexOf('S')] = true;
@@ -42,9 +42,21 @@ public class Day7 extends BaseDay<List<String>, Integer> {
     }
 
     @Override
-    public Integer solve2(List<String> parsedInput) {
-        var start = parsedInput.getFirst().indexOf('S');
-        return move(parsedInput.subList(1, parsedInput.size()), String.valueOf(start), start).size();
+    public Long solve2(List<String> parsedInput) {
+        var beams = new long[parsedInput.getFirst().length()];
+        beams[parsedInput.getFirst().indexOf('S')] = 1L;
+
+        for (String line : parsedInput.subList(1, parsedInput.size())) {
+            for (int i = 0; i < line.length(); i++) {
+                if (beams[i] > 0 && line.charAt(i) == '^') {
+                    beams[i - 1] += beams[i];
+                    beams[i + 1] += beams[i];
+                    beams[i] = 0;
+                }
+            }
+        }
+
+        return stream(beams).sum();
     }
 
     private static Set<String> move(List<String> list, String path, int index) {
