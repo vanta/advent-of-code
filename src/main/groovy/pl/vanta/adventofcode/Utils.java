@@ -2,12 +2,15 @@ package pl.vanta.adventofcode;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import static java.lang.System.in;
 import static java.lang.System.out;
 
 public class Utils {
@@ -114,4 +117,17 @@ public class Utils {
         return result;
     }
 
+    public static Set<Integer> indexesOf(String s, char target) {
+        var result = new HashSet<Integer>();
+        int index = 0;
+        do {
+            index = s.indexOf(target, index+1);
+            if(index != -1) {
+                result.add(index);
+            }
+            
+        } while (index != -1);
+        
+        return result;
+    }
 }
