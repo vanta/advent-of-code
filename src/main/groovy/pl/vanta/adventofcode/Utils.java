@@ -90,4 +90,17 @@ public class Utils {
 
         return groups;
     }
+
+    public static char[][] transpose(char[][] input) {
+        var result = new char[input[0].length][input.length];
+
+        for (int i = 0; i < input.length; i++) {
+            for (int j = 0; j < input[i].length; j++) {
+                result[j][input.length - i - 1] = input[i][j];
+            }
+        }
+
+        return result;
+    }
+
 }

@@ -6,8 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static pl.vanta.adventofcode.Utils.transpose;
+
 public class Day14 implements ParserSolver<char[][], Integer> {
-    public static final int CYCLES = 1_000_000_000;
+    private static final int CYCLES = 1_000_000_000;
 
     @Override
     public int getDayNumber() {
@@ -114,15 +116,4 @@ public class Day14 implements ParserSolver<char[][], Integer> {
         System.out.println("=======================");
     }
 
-    private char[][] transpose(char[][] input) {
-        var result = new char[input[0].length][input.length];
-
-        for (int i = 0; i < input.length; i++) {
-            for (int j = 0; j < input[i].length; j++) {
-                result[j][input.length - i - 1] = input[i][j];
-            }
-        }
-
-        return result;
-    }
 }

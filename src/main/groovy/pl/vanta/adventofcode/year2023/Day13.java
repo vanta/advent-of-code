@@ -1,12 +1,13 @@
 package pl.vanta.adventofcode.year2023;
 
-import pl.vanta.adventofcode.ParserSolver;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+import pl.vanta.adventofcode.ParserSolver;
+
 import static java.lang.Math.min;
+import static pl.vanta.adventofcode.Utils.transpose;
 
 public class Day13 implements ParserSolver<List<char[][]>, Integer> {
 
@@ -89,18 +90,6 @@ public class Day13 implements ParserSolver<List<char[][]>, Integer> {
         }
 
         return counter;
-    }
-
-    private static char[][] transpose(char[][] array) {
-        var result = new char[array[0].length][array.length];
-
-        for (int i = 0; i < array.length; i++) {
-            for (int j = 0; j < array[i].length; j++) {
-                result[j][i] = array[i][j];
-            }
-        }
-
-        return result;
     }
 
     private static void print(char[][] array) {
