@@ -31,6 +31,7 @@ public class Day6 extends BaseDay<char[][], Long> {
         for (char[] row : transposeCounterClockwise(parsedInput)) {
             var str = new String(Arrays.copyOf(row, row.length - 1)).trim();
             if(str.isEmpty()) {
+                tempNumbers.clear();
                 continue;
             }
             tempNumbers.add(Long.valueOf(str));
@@ -38,10 +39,8 @@ public class Day6 extends BaseDay<char[][], Long> {
             
             if (op == '+') {
                 result.add(tempNumbers.stream().reduce(0L, Long::sum));
-                tempNumbers.clear();
             } else if (op == '*') {
                 result.add(tempNumbers.stream().reduce(1L, (a, b) -> a * b));
-                tempNumbers.clear();
             }
         }
 
