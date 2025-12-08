@@ -94,7 +94,7 @@ public class Day8 extends BaseDay<List<Day8.Box>, Long> {
         return dx * dx + dy * dy + dz * dz;
     }
 
-    public record Box(int x, int y, int z) {
+    public record Box(long x, long y, long z) {
     }
 
     public record Connection(Box b1, Box b2, long dist) {
