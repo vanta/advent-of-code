@@ -6,6 +6,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.abs;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.util.Arrays.stream;
 
 public class Day9 extends BaseDay<List<Pair<Integer, Integer>>, Long> {
@@ -43,7 +45,45 @@ public class Day9 extends BaseDay<List<Pair<Integer, Integer>>, Long> {
 
     @Override
     public Long solve2(List<Pair<Integer, Integer>> parsedInput) {
-        return 0L;
+        long max = -1;
+
+        for (int i = 0; i < parsedInput.size(); i++) {
+            var j1 = parsedInput.get(i);
+            for (int j = i + 1; j < parsedInput.size(); j++) {
+                var j2 = parsedInput.get(j);
+
+                long area = (long) abs(1 + j1.getLeft() - j2.getLeft()) * abs(1 + j1.getRight() - j2.getRight());
+                if (area > max && contains(parsedInput, j1.getLeft(), j2.getRight()) && contains(parsedInput, j2.getLeft(), j1.getRight())) {
+                    max = area;
+                }
+            }
+        }
+
+        return max;
+    }
+
+    private static boolean contains(List<Pair<Integer, Integer>> poly, int px, int py) {
+        boolean inside = false;
+        int n = poly.size();
+
+        for (int i = 0; i < n; i++) {
+            var a = poly.get(i);
+            var b = poly.get((i + 1) % n);
+
+            // Only consider vertical edges
+            if (a.getLeft().equals(b.getLeft())) {
+                int x = a.getLeft();
+
+                int yMin = min(a.getRight(), b.getRight());
+                int yMax = max(a.getRight(), b.getRight());
+
+                // Does the ray intersect this vertical edge?
+                if (py >= yMin && py < yMax && px < x) {
+                    inside = !inside;
+                }
+            }
+        }
+        return inside;
     }
 
 }
