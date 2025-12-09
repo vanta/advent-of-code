@@ -5,9 +5,10 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 
 import static java.lang.Integer.parseInt;
+import static java.lang.Math.abs;
 import static java.util.Arrays.stream;
 
-public class Day9 extends BaseDay<List<Pair<Integer, Integer>>, Integer> {
+public class Day9 extends BaseDay<List<Pair<Integer, Integer>>, Long> {
     @Override
     public int getDayNumber() {
         return 9;
@@ -22,15 +23,27 @@ public class Day9 extends BaseDay<List<Pair<Integer, Integer>>, Integer> {
     }
 
     @Override
-    public Integer solve(List<Pair<Integer, Integer>> parsedInput) {
+    public Long solve(List<Pair<Integer, Integer>> parsedInput) {
+        long max = -1;
 
-        return 0;
+        for (int i = 0; i < parsedInput.size(); i++) {
+            var j1 = parsedInput.get(i);
+            for (int j = i + 1; j < parsedInput.size(); j++) {
+                var j2 = parsedInput.get(j);
+
+                long area = (long) abs(1 + j1.getLeft() - j2.getLeft()) * abs(1 + j1.getRight() - j2.getRight());
+                if (area > max) {
+                    max = area;
+                }
+            }
+        }
+
+        return max;
     }
 
-
     @Override
-    public Integer solve2(List<Pair<Integer, Integer>> parsedInput) {
-        return 0;
+    public Long solve2(List<Pair<Integer, Integer>> parsedInput) {
+        return 0L;
     }
 
 }
