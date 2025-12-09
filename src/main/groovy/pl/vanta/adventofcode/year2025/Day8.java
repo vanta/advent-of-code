@@ -28,27 +28,9 @@ public class Day8 extends BaseDay<List<Day8.Box>, Long> {
     @Override
     public Long solve(List<Day8.Box> parsedInput) {
         var limit = 1000; //1000 for real data
-        var allConnections = new ArrayList<Connection>();
+        var connections = getConnections(parsedInput, limit);
 
-        //generating all connections
-        for (int i = 0; i < parsedInput.size(); i++) {
-            var j1 = parsedInput.get(i);
-            for (int j = i + 1; j < parsedInput.size(); j++) {
-                var j2 = parsedInput.get(j);
-                allConnections.add(new Connection(j1, j2, distance(j1, j2)));
-            }
-        }
-
-        //cut to limit of closest connections
-        var connections = allConnections.stream()
-                .sorted(comparing(Connection::dist))
-                .limit(limit)
-                .toList();
-
-        List<Set<Box>> circuits = parsedInput.stream()
-                .map(b -> new HashSet<>(Set.of(b)))
-                .map(s -> (Set<Box>) s)
-                .collect(toList());
+        var circuits = flatten(parsedInput);
 
         for (var conn : connections) {
             List<Set<Box>> combined = new ArrayList<>();
@@ -78,11 +60,65 @@ public class Day8 extends BaseDay<List<Day8.Box>, Long> {
                 .reduce(1, (a, b) -> a * b);
     }
 
+    private static List<Set<Box>> flatten(List<Box> parsedInput) {
+        return parsedInput.stream()
+                .map(b -> new HashSet<>(Set.of(b)))
+                .map(s -> (Set<Box>) s)
+                .collect(toList());
+    }
+
+    private static List<Connection> getConnections(List<Box> parsedInput, int limit) {
+        var allConnections = new ArrayList<Connection>();
+
+        //generating all connections
+        for (int i = 0; i < parsedInput.size(); i++) {
+            var j1 = parsedInput.get(i);
+            for (int j = i + 1; j < parsedInput.size(); j++) {
+                var j2 = parsedInput.get(j);
+                allConnections.add(new Connection(j1, j2, distance(j1, j2)));
+            }
+        }
+
+        //cut to limit of closest connections
+        return allConnections.stream()
+                .sorted(comparing(Connection::dist))
+                .limit(limit)
+                .toList();
+    }
+
     @Override
     public Long solve2(List<Day8.Box> parsedInput) {
+        var limit = 10_000;
+        var connections = getConnections(parsedInput, limit);
 
+        var circuits = flatten(parsedInput);
 
-        return 0L;
+        for (var conn : connections) {
+            List<Set<Box>> combined = new ArrayList<>();
+
+            for (var circuit : circuits) {
+                if (circuit.contains(conn.b1) || circuit.contains(conn.b2)) {
+                    circuit.add(conn.b1);
+                    circuit.add(conn.b2);
+                    combined.add(circuit);
+                }
+            }
+
+            if (combined.size() > 1) {
+                var total = new HashSet<Box>();
+                for (var circuit : combined) {
+                    circuits.remove(circuit);
+                    total.addAll(circuit);
+                }
+                circuits.add(total);
+            }
+
+            if (circuits.size() == 1 && circuits.getFirst().size() == parsedInput.size()) {
+                return conn.b1.x * conn.b2.x;
+            }
+        }
+
+        throw new IllegalArgumentException("No pair of junction boxes leads to 1 big circuit");
     }
 
     private static long distance(Day8.Box p1, Day8.Box p2) {
