@@ -10,7 +10,6 @@ import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.reverseOrder;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 
 public class Day8 extends BaseDay<List<Day8.Box>, Long> {
     @Override
