@@ -70,6 +70,10 @@ public class Day9 extends BaseDay<List<Pair<Integer, Integer>>, Long> {
             var a = poly.get(i);
             var b = poly.get((i + 1) % n);
 
+            if(px == a.getLeft() && py == a.getRight() || px == b.getLeft() && py == b.getRight()) {
+                return true;
+            }
+            
             // Only consider vertical edges
             if (a.getLeft().equals(b.getLeft())) {
                 int x = a.getLeft();
