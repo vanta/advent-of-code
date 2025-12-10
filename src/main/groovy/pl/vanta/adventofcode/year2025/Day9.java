@@ -1,5 +1,6 @@
 package pl.vanta.adventofcode.year2025;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,7 +48,9 @@ public class Day9 extends BaseDay<List<Pair<Integer, Integer>>, Long> {
 
     @Override
     public Long solve2(List<Pair<Integer, Integer>> parsedInput) {
-        long max = -1;
+        draw(parsedInput);
+        
+        long max = 0;
         var cache = new HashSet<Pair<Integer, Integer>>();
 
         for (int i = 0; i < parsedInput.size(); i++) {
@@ -55,7 +58,7 @@ public class Day9 extends BaseDay<List<Pair<Integer, Integer>>, Long> {
             for (int j = i + 1; j < parsedInput.size(); j++) {
                 var j2 = parsedInput.get(j);
 
-                long area = (long) abs(1 + j1.getLeft() - j2.getLeft()) * abs(1 + j1.getRight() - j2.getRight());
+                long area = (1L + abs(j1.getLeft() - j2.getLeft())) * (1L + abs(j1.getRight() - j2.getRight()));
                 if (area > max) {
                     var all = allRectanglePerimeterPoints(
                             Pair.of(j1.getLeft(), j1.getRight()),
@@ -67,6 +70,10 @@ public class Day9 extends BaseDay<List<Pair<Integer, Integer>>, Long> {
                 }
             }
         }
+        
+        System.out.println("Max area: " + max);
+        System.out.println("---------------------------------------------");
+        
         return max;
     }
 
@@ -152,5 +159,23 @@ public class Day9 extends BaseDay<List<Pair<Integer, Integer>>, Long> {
         }
         
         return false;
+    }
+    
+    private void draw(Collection<Pair<Integer, Integer>> points) {
+        int minX = points.stream().mapToInt(Pair::getLeft).min().orElse(0);
+        int maxX = points.stream().mapToInt(Pair::getLeft).max().orElse(0);
+        int minY = points.stream().mapToInt(Pair::getRight).min().orElse(0);
+        int maxY = points.stream().mapToInt(Pair::getRight).max().orElse(0);
+
+        for (int y = minY; y <= maxY; y++) {
+            for (int x = minX; x <= maxX; x++) {
+                if (points.contains(Pair.of(x, y))) {
+                    System.out.print("#");
+                } else {
+                    System.out.print(".");
+                }
+            }
+            System.out.println();
+        }
     }
 }
