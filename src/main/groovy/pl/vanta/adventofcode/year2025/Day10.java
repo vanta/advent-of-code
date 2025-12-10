@@ -1,10 +1,14 @@
 package pl.vanta.adventofcode.year2025;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import static java.util.Arrays.stream;
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.IntStream.range;
 
 public class Day10 extends BaseDay<List<Day10.Machine>, Integer> {
     @Override
@@ -27,19 +31,51 @@ public class Day10 extends BaseDay<List<Day10.Machine>, Integer> {
     }
 
     private int findMinPresses(Machine m) {
-        
-        
-        
-        return 1;
+        int limit = 1 << m.buttons.size();
+        var buttonIndexes = range(1, limit)
+                .boxed()
+                .sorted(comparingInt(Integer::bitCount).thenComparingInt(Integer::intValue))
+                .map(Day10::oneBitIndexes)
+                .toList();
+
+        return buttonIndexes.stream()
+                .filter(buttonIdx -> lightsMatch(m, buttonIdx))
+                .findFirst()
+                .map(Set::size)
+                .orElseThrow();
+    }
+
+    private static boolean lightsMatch(Machine m, Set<Integer> buttons) {
+        var array = new boolean[m.lights.length];
+        for (int buttonIdx : buttons) {
+            var btns = m.buttons.get(buttonIdx);
+            for (int button : btns) {
+                array[button] = !array[button];
+            }
+        }
+        return Arrays.equals(m.lights, array);
+    }
+
+    public static Set<Integer> oneBitIndexes(int n) {
+        Set<Integer> indexes = new HashSet<>();
+
+        while (n != 0) {
+            int lsb = n & -n; // isolate lowest set bit
+            int index = Integer.numberOfTrailingZeros(lsb);
+            indexes.add(index);
+            n &= (n - 1); // clear lowest set bit
+        }
+        return indexes;
     }
 
     @Override
     public Integer solve2(List<Machine> parsedInput) {
 
+
         return 11;
     }
 
-    public record Machine(boolean[] lights, Set<Set<Integer>> buttons) {
+    public record Machine(boolean[] lights, List<Set<Integer>> buttons) {
         public static Machine parse(String input) {
             input = input.trim();
 
@@ -51,7 +87,7 @@ public class Day10 extends BaseDay<List<Day10.Machine>, Integer> {
                 lights[i] = lightsPart.charAt(i) == '#';
             }
 
-            Set<Set<Integer>> buttons = new HashSet<>();
+            List<Set<Integer>> buttons = new ArrayList<>();
 
             int pos = lightsEnd + 1;
             while (true) {
@@ -71,9 +107,7 @@ public class Day10 extends BaseDay<List<Day10.Machine>, Integer> {
                 pos = close + 1;
             }
 
-
             return new Machine(lights, buttons);
-
         }
     }
 }
