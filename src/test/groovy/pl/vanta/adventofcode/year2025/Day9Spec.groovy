@@ -35,6 +35,10 @@ class Day9Spec extends BaseSpec2024 {
     List<Map> getTestData2() {
         [
                 [result: 24],
+                [result: 40, suffix: '-p2'],
+                [result: 35, suffix: '-p3'],
+                [result: 66, suffix: '-p4'],
+                [result: 8, suffix: '-p5'],
         ]
     }
 }
