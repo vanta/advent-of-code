@@ -48,7 +48,7 @@ public class Day9 extends BaseDay<List<Pair<Integer, Integer>>, Long> {
 
     @Override
     public Long solve2(List<Pair<Integer, Integer>> parsedInput) {
-        draw(parsedInput);
+//        draw(parsedInput);
         
         long max = 0;
         var cache = new HashSet<Pair<Integer, Integer>>();
