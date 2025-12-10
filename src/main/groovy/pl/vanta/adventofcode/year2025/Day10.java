@@ -1,181 +1,37 @@
 package pl.vanta.adventofcode.year2025;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.commons.lang3.tuple.Pair;
-
-import static java.lang.Integer.parseInt;
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 import static java.util.Arrays.stream;
 
-public class Day10 extends BaseDay<List<Pair<Integer, Integer>>, Long> {
+public class Day10 extends BaseDay<List<Day10.Machine>, Integer> {
     @Override
     public int getDayNumber() {
         return 10;
     }
 
     @Override
-    public List<Pair<Integer, Integer>> parse(String input) {
+    public List<Machine> parse(String input) {
         return stream(input.split("\n"))
-                .map(l -> l.split(","))
-                .map(a -> Pair.of(parseInt(a[0]), parseInt(a[1])))
+                .map(Machine::parse)
                 .toList();
     }
 
     @Override
-    public Long solve(List<Pair<Integer, Integer>> parsedInput) {
-        long max = -1;
+    public Integer solve(List<Machine> parsedInput) {
 
-        for (int i = 0; i < parsedInput.size(); i++) {
-            var j1 = parsedInput.get(i);
-            for (int j = i + 1; j < parsedInput.size(); j++) {
-                var j2 = parsedInput.get(j);
-
-                long area = (long) abs(1 + j1.getLeft() - j2.getLeft()) * abs(1 + j1.getRight() - j2.getRight());
-                if (area > max) {
-                    max = area;
-                }
-            }
-        }
-
-        return max;
+        return 21;
     }
 
     @Override
-    public Long solve2(List<Pair<Integer, Integer>> parsedInput) {
-//        draw(parsedInput);
-        
-        long max = 0;
-        var cache = new HashSet<Pair<Integer, Integer>>();
+    public Integer solve2(List<Machine> parsedInput) {
 
-        for (int i = 0; i < parsedInput.size(); i++) {
-            var j1 = parsedInput.get(i);
-            for (int j = i + 1; j < parsedInput.size(); j++) {
-                var j2 = parsedInput.get(j);
-
-                long area = (1L + abs(j1.getLeft() - j2.getLeft())) * (1L + abs(j1.getRight() - j2.getRight()));
-                if (area > max) {
-                    var all = allRectanglePerimeterPoints(
-                            Pair.of(j1.getLeft(), j1.getRight()),
-                            Pair.of(j2.getLeft(), j2.getRight()));
-
-                    if (all.stream().allMatch(p -> inside(parsedInput, cache, p.getLeft(), p.getRight()))) {
-                        max = area;
-                    }
-                }
-            }
-        }
-        
-        System.out.println("Max area: " + max);
-        System.out.println("---------------------------------------------");
-        
-        return max;
+        return 11;
     }
 
-    private static boolean inside(List<Pair<Integer, Integer>> poly, Set<Pair<Integer, Integer>> cache, int px, int py) {
-        if (cache.contains(Pair.of(px, py))) {
-            return true;
-        }
-
-        if (isOnBoundary(Pair.of(px, py), poly)) {
-            cache.add(Pair.of(px, py));
-            return true;
-        }
-
-        boolean inside = false;
-        int n = poly.size();
-
-        for (int i = 0; i < n; i++) {
-            var a = poly.get(i);
-            var b = poly.get((i + 1) % n);
-
-            // Only consider vertical edges
-            if (a.getLeft().equals(b.getLeft())) {
-                int x = a.getLeft();
-
-                int yMin = min(a.getRight(), b.getRight());
-                int yMax = max(a.getRight(), b.getRight());
-
-                // Does the ray intersect this vertical edge?
-                if (py >= yMin && py < yMax && px < x) {
-                    inside = !inside;
-                }
-            }
-        }
-        if (inside) {
-            cache.add(Pair.of(px, py));
-        }
-
-        return inside;
-    }
-
-    private Set<Pair<Integer, Integer>> allRectanglePerimeterPoints(Pair<Integer, Integer> v1, Pair<Integer, Integer> v2) {
-        var minX = min(v1.getLeft(), v2.getLeft());
-        var maxX = max(v1.getLeft(), v2.getLeft());
-        var minY = min(v1.getRight(), v2.getRight());
-        var maxY = max(v1.getRight(), v2.getRight());
-
-        var points = new HashSet<Pair<Integer, Integer>>();
-        for (int x = minX; x <= maxX; x++) {
-            points.add(Pair.of(x, minY));
-            points.add(Pair.of(x, maxY));
-        }
-        for (int y = minY; y <= maxY; y++) {
-            points.add(Pair.of(minX, y));
-            points.add(Pair.of(maxX, y));
-        }
-        return points;
-    }
-
-    private static boolean isOnBoundary(Pair<Integer, Integer> p, List<Pair<Integer, Integer>> poly) {
-        int n = poly.size();
-
-        for (int i = 0; i < n; i++) {
-            var a = poly.get(i);
-            var b = poly.get((i + 1) % n);
-
-            // Horizontal edge
-            if (a.getRight().equals(b.getRight())) {
-                if (p.getRight().equals(a.getRight()) &&
-                        p.getLeft() >= min(a.getLeft(), b.getLeft()) &&
-                        p.getLeft() <= max(a.getLeft(), b.getLeft())) {
-                    return true;
-                }
-            }
-
-            // Vertical edge
-            if (a.getLeft().equals(b.getLeft())) {
-                if (p.getLeft().equals(a.getLeft()) &&
-                        p.getRight() >= min(a.getRight(), b.getRight()) &&
-                        p.getRight() <= max(a.getRight(), b.getRight())) {
-                    return true;
-                }
-            }
-        }
-        
-        return false;
-    }
-    
-    private void draw(Collection<Pair<Integer, Integer>> points) {
-        int minX = points.stream().mapToInt(Pair::getLeft).min().orElse(0);
-        int maxX = points.stream().mapToInt(Pair::getLeft).max().orElse(0);
-        int minY = points.stream().mapToInt(Pair::getRight).min().orElse(0);
-        int maxY = points.stream().mapToInt(Pair::getRight).max().orElse(0);
-
-        for (int y = minY; y <= maxY; y++) {
-            for (int x = minX; x <= maxX; x++) {
-                if (points.contains(Pair.of(x, y))) {
-                    System.out.print("#");
-                } else {
-                    System.out.print(".");
-                }
-            }
-            System.out.println();
+    public record Machine() {
+        public static Machine parse(String s) {
+            return null;
         }
     }
 }
