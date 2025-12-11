@@ -28,32 +28,51 @@ public class Day11 extends BaseDay<List<Day11.Input>, Integer> {
         var map = parsedInput.stream()
                 .collect(toMap(Input::label, Input::outputs));
 
-        return stepBack(map, "out", new ConcurrentHashMap<>());
+        return stepBack(map, new ConcurrentHashMap<>(), "out", "you");
     }
 
-    private static int stepBack(Map<String, Set<String>> map, String current, Map<String, Integer> cache) {
-        if ("you".equals(current)) {
+    private static int stepBack(Map<String, Set<String>> map, Map<String, Integer> cache, String start, String stop) {
+        if (stop.equals(start)) {
             return 1;
         }
 
-        if (!cache.containsKey(current)) {
+        if (!cache.containsKey(start)) {
             var temp = map.entrySet().stream()
-                    .filter(e -> e.getValue().contains(current))
+                    .filter(e -> e.getValue().contains(start))
                     .map(Map.Entry::getKey)
-                    .mapToInt(k -> stepBack(map, k, cache))
+                    .mapToInt(k -> stepBack(map, cache, k, stop))
                     .reduce(0, Integer::sum);
 
-            cache.put(current, temp);
+            cache.put(start, temp);
         }
 
-        return cache.get(current);
+        return cache.get(start);
     }
 
+    private static int stepBack2(Map<String, Set<String>> map, Map<String, Integer> cache, String start, String stop) {
+        if (stop.equals(start)) {
+            return 1;
+        }
+
+        if (!cache.containsKey(start)) {
+            var temp = map.entrySet().stream()
+                    .filter(e -> e.getValue().contains(start))
+                    .map(Map.Entry::getKey)
+                    .mapToInt(k -> stepBack2(map, cache, k, stop))
+                    .reduce(0, Integer::sum);
+
+            cache.put(start, temp);
+        }
+
+        return cache.get(start);
+    }
+    
     @Override
     public Integer solve2(List<Day11.Input> parsedInput) {
+        var map = parsedInput.stream()
+                .collect(toMap(Input::label, Input::outputs));
 
-
-        return 11;
+        return stepBack2(map, new ConcurrentHashMap<>(), "out", "svr");
     }
 
     public record Input(String label, Set<String> outputs) {
@@ -62,10 +81,5 @@ public class Day11 extends BaseDay<List<Day11.Input>, Integer> {
 
             return new Input(a[0], Set.of(a[1].split(" ")));
         }
-    }
-
-    public static <T, R> Function<T, R> memoize(Function<T, R> function) {
-        Map<T, R> cache = new HashMap<>();
-        return input -> cache.computeIfAbsent(input, function);
     }
 }
