@@ -70,7 +70,7 @@ public class Day11 extends BaseDay<List<Day11.Input>, Integer> {
             var temp = data.stream()
                     .filter(input -> input.outputs.contains(current))
                     .map(Input::label)
-                    .map(k -> stepBack2(data, cache, current + "," + currentPath, k, stop))
+                    .map(k -> stepBack2(data, cache, k + "," + currentPath, k, stop))
                     .reduce(Set.of(), Sets::union);
             return temp;
         
