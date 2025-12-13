@@ -9,6 +9,7 @@ import com.google.common.collect.Sets;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 
 public class Day11 extends BaseDay<List<Day11.Input>, Integer> {
     @Override
@@ -51,33 +52,35 @@ public class Day11 extends BaseDay<List<Day11.Input>, Integer> {
 
     @Override
     public Integer solve2(List<Day11.Input> parsedInput) {
-        return (int) stepBack2(parsedInput, new ConcurrentHashMap<>(), "", "out", "svr").stream()
+        var map = parsedInput.stream()
+                .collect(toMap(Input::label, Input::outputs));
+
+        var strings = stepInto(map, new ConcurrentHashMap<>(), "svr", "out");
+
+        return (int) strings.stream()
                 .filter(s -> s.contains("fft"))
                 .filter(s -> s.contains("dac"))
                 .count();
     }
 
-    private static Set<String> stepBack2(List<Input> data,
-                                         Map<String, Set<String>> cache,
-                                         String currentPath,
-                                         String current,
-                                         String stop) {
+    private static Set<String> stepInto(Map<String, Set<String>> data,
+                                        Map<String, Set<String>> cache,
+                                        String current,
+                                        String stop) {
+
         if (stop.equals(current)) {
-            return Set.of(current + "," + currentPath);
+            return Set.of(stop);
         }
 
-//        if (!cache.containsKey(current)) {
-            var temp = data.stream()
-                    .filter(input -> input.outputs.contains(current))
-                    .map(Input::label)
-                    .map(k -> stepBack2(data, cache, k + "," + currentPath, k, stop))
+        if (!cache.containsKey(current)) {
+            var temp = data.get(current).stream()
+                    .map(v -> stepInto(data, cache, v, stop))
+                    .map(set -> set.stream().map(s -> current + "," + s).collect(toSet()))
                     .reduce(Set.of(), Sets::union);
-            return temp;
-        
-//            cache.put(current, temp);
-//        }
+            cache.put(current, temp);
+        }
 
-//        return cache.get(current);
+        return cache.get(current);
     }
 
     public record Input(String label, Set<String> outputs) {
