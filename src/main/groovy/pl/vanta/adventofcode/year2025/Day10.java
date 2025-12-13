@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static java.lang.Integer.*;
 import static java.util.Arrays.stream;
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.IntStream.range;
@@ -56,12 +57,12 @@ public class Day10 extends BaseDay<List<Day10.Machine>, Integer> {
         return Arrays.equals(m.lights, array);
     }
 
-    public static Set<Integer> oneBitIndexes(int n) {
+    private static Set<Integer> oneBitIndexes(int n) {
         Set<Integer> indexes = new HashSet<>();
 
         while (n != 0) {
-            int lsb = n & -n; // isolate lowest set bit
-            int index = Integer.numberOfTrailingZeros(lsb);
+            int lsb = n & -n; // isolate the lowest set bit
+            int index = numberOfTrailingZeros(lsb);
             indexes.add(index);
             n &= (n - 1); // clear lowest set bit
         }
@@ -100,7 +101,7 @@ public class Day10 extends BaseDay<List<Day10.Machine>, Integer> {
                 Set<Integer> button = new HashSet<>();
                 if (!content.isEmpty()) {
                     for (String s : content.split(",")) {
-                        button.add(Integer.parseInt(s.trim()));
+                        button.add(parseInt(s.trim()));
                     }
                 }
                 buttons.add(button);
