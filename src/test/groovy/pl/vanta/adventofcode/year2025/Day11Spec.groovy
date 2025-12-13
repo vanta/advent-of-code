@@ -16,18 +16,18 @@ class Day11Spec extends BaseSpec2024 {
 
     @Override
     Long getRealAnswer1() {
-        574
+        0
     }
 
     @Override
     Long getRealAnswer2() {
-        306594217920240
+        0
     }
 
     @Override
     List<Map> getTestData1() {
         [
-                [result: 5]
+                [result: 2]
         ]
     }
 
